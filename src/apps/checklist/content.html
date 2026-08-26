@@ -22,7 +22,14 @@
       <input id="listTitle" class="cl-title" type="text" value="Einkaufsliste" maxlength="100">
       <p id="progressText" class="cl-progress-text" aria-live="polite">0 von 0 erledigt</p>
     </div>
-    <div class="cl-progress" aria-hidden="true"><span id="progressBar"></span></div>
+    <div class="cl-hero-tools">
+      <label class="cl-mode-switch" for="readMode" title="Zwischen Bearbeiten und kompakter Leseansicht wechseln">
+        <span>Edit</span>
+        <span class="cl-switch-track"><input id="readMode" type="checkbox" role="switch" aria-label="Read-Modus aktivieren"><span aria-hidden="true"></span></span>
+        <span>Read</span>
+      </label>
+      <div class="cl-progress" aria-hidden="true"><span id="progressBar"></span></div>
+    </div>
   </section>
 
   <section class="cl-card cl-profile-bar" aria-label="Profil und Listenaktionen">

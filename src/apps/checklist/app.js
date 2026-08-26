@@ -61,7 +61,7 @@
 
   function defaultState() {
     const active = listFromProfile(builtinProfiles[0]);
-    return { active, customProfiles: [], hideCompleted: false, tagFilters: [],
+    return { active, customProfiles: [], hideCompleted: false, tagFilters: [], viewMode: 'edit',
       savedLists: { 'profile:shopping': clone(active) },
       builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
@@ -86,6 +86,7 @@
         customProfiles: Array.isArray(value?.customProfiles) ? value.customProfiles.map(normalizeProfile).filter(Boolean) : [],
         hideCompleted: Boolean(value?.hideCompleted),
         tagFilters: model.normalizeTags(value?.tagFilters || []),
+        viewMode: value?.viewMode === 'read' ? 'read' : 'edit',
         savedLists,
         builtinProfileVersions: { ...(value?.builtinProfileVersions || {}) },
       };
@@ -187,6 +188,11 @@
   }
 
   function render() {
+    const readMode = state.viewMode === 'read';
+    document.querySelector('.cl-app').classList.toggle('is-read-mode', readMode);
+    $('readMode').checked = readMode;
+    $('readMode').setAttribute('aria-label', readMode ? 'Edit-Modus aktivieren' : 'Read-Modus aktivieren');
+    $('listTitle').readOnly = readMode;
     $('listTitle').value = state.active.title;
     $('hideCompleted').checked = state.hideCompleted;
     renderProfiles();
@@ -235,14 +241,18 @@
           item.tags.forEach((tag) => { const chip = document.createElement('span'); chip.className = 'cl-item-tag'; chip.textContent = tag; tags.appendChild(chip); });
           main.appendChild(tags);
         }
-        const actions = document.createElement('div'); actions.className = 'cl-actions';
-        actions.append(
-          button('✎', `${item.text} bearbeiten`, () => editItem(item)),
-          button('↑', `${item.text} nach oben`, () => moveItem(item.id, -1)),
-          button('↓', `${item.text} nach unten`, () => moveItem(item.id, 1)),
-          button('×', `${item.text} löschen`, () => deleteItem(item.id), true),
-        );
-        row.append(check, main, actions); list.appendChild(row);
+        row.append(check, main);
+        if (!readMode) {
+          const actions = document.createElement('div'); actions.className = 'cl-actions';
+          actions.append(
+            button('✎', `${item.text} bearbeiten`, () => editItem(item)),
+            button('↑', `${item.text} nach oben`, () => moveItem(item.id, -1)),
+            button('↓', `${item.text} nach unten`, () => moveItem(item.id, 1)),
+            button('×', `${item.text} löschen`, () => deleteItem(item.id), true),
+          );
+          row.appendChild(actions);
+        }
+        list.appendChild(row);
       }
       section.appendChild(list); container.appendChild(section);
     }
@@ -373,6 +383,12 @@
   $('editDialog').addEventListener('close', () => { editingItemId = null; $('editError').textContent = ''; });
   $('listTitle').addEventListener('change', () => { state.active.title = $('listTitle').value.trim() || 'Neue Checkliste'; save(); render(); });
   $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save(); render(); });
+  $('readMode').addEventListener('change', () => {
+    state.viewMode = $('readMode').checked ? 'read' : 'edit';
+    setMenu(false);
+    save(); render();
+    announce(state.viewMode === 'read' ? 'Read-Ansicht aktiviert.' : 'Edit-Ansicht aktiviert.');
+  });
   $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save(); render(); });
   $('profileSelect').addEventListener('change', () => {
     if (!$('profileSelect').value) { switchToFreeList(); return; }

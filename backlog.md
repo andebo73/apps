@@ -16,6 +16,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 - [x] Test-Suite ohne Shell-Glob plattformneutral unter Windows und Linux
   startbar machen.
+- [x] Umschaltbare, persistierte Read-Ansicht fuer eine kompakte Checkliste
+  ohne Bearbeitungsaktionen umsetzen.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

@@ -7,6 +7,9 @@ import vm from 'node:vm';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const source = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'model.js'), 'utf8');
+const appSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'app.js'), 'utf8');
+const contentSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'content.html'), 'utf8');
+const cssSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'app.css'), 'utf8');
 const context = { Date, console };
 vm.createContext(context);
 vm.runInContext(source, context);
@@ -95,4 +98,13 @@ test('empty or invalid imports fail with useful errors', () => {
   assert.throws(() => model.parseJson('{nope'), /nicht gültig/);
   assert.throws(() => model.parseMarkdown('# Nur eine Überschrift'), /keine Listeneinträge/);
   assert.throws(() => model.parseText('\n\n'), /keine Listeneinträge/);
+});
+
+test('read mode is switchable, persisted and removes editing controls', () => {
+  assert.match(contentSource, /id="readMode"[^>]+role="switch"/);
+  assert.match(appSource, /viewMode: 'edit'/);
+  assert.match(appSource, /value\?\.viewMode === 'read'/);
+  assert.match(appSource, /if \(!readMode\)/);
+  assert.match(cssSource, /\.cl-app\.is-read-mode \.cl-add-form/);
+  assert.match(cssSource, /\.cl-app\.is-read-mode \.cl-item-note/);
 });

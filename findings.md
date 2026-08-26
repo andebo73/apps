@@ -84,3 +84,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Ein zitierter Test-Glob wird von PowerShell und Linux-Shells unterschiedlich
   behandelt. `tools/test.mjs` listet die Suites deshalb selbst auf und startet
   Node mit expliziten, plattformneutralen Dateipfaden.
+- Die Read-Ansicht ist ein eigener persistierter UI-Modus. Sie entfernt
+  Profilwahl, Erfassung, Filter und Seitenmenue und erzeugt keine Aktionsbuttons
+  fuer Listeneintraege; nur die Checkboxen bleiben interaktiv.
