@@ -60,10 +60,10 @@
   }
 
   function defaultState() {
-    return {
-      active: listFromProfile(builtinProfiles[0]), customProfiles: [], hideCompleted: false,
-      tagFilters: [], builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION },
-    };
+    const active = listFromProfile(builtinProfiles[0]);
+    return { active, customProfiles: [], hideCompleted: false, tagFilters: [],
+      savedLists: { 'profile:shopping': clone(active) },
+      builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
 
   function normalizeProfile(profile) {
@@ -75,18 +75,27 @@
   function normalizeState(value) {
     const fallback = defaultState();
     try {
+      const savedLists = {};
+      if (value?.savedLists && typeof value.savedLists === 'object') {
+        for (const [key, list] of Object.entries(value.savedLists)) {
+          try { savedLists[key] = model.normalizeList(list); } catch (_) {}
+        }
+      }
       const normalized = {
         active: model.normalizeList(value?.active || fallback.active),
         customProfiles: Array.isArray(value?.customProfiles) ? value.customProfiles.map(normalizeProfile).filter(Boolean) : [],
         hideCompleted: Boolean(value?.hideCompleted),
         tagFilters: model.normalizeTags(value?.tagFilters || []),
+        savedLists,
         builtinProfileVersions: { ...(value?.builtinProfileVersions || {}) },
       };
       const shoppingVersion = Number(normalized.builtinProfileVersions.shopping || 0);
-      if (normalized.active.profile === 'shopping' && shoppingVersion < SHOPPING_PROFILE_VERSION) {
-        normalized.active.items = model.mergeProfileItems(normalized.active.items, builtinProfiles[0].items);
+      if (shoppingVersion < SHOPPING_PROFILE_VERSION) {
+        if (normalized.active.profile === 'shopping') normalized.active.items = model.mergeProfileItems(normalized.active.items, builtinProfiles[0].items);
+        if (normalized.savedLists['profile:shopping']) normalized.savedLists['profile:shopping'].items = model.mergeProfileItems(normalized.savedLists['profile:shopping'].items, builtinProfiles[0].items);
       }
       normalized.builtinProfileVersions.shopping = SHOPPING_PROFILE_VERSION;
+      if (!Object.keys(normalized.savedLists).length) normalized.savedLists[draftKey(normalized.active)] = clone(normalized.active);
       return normalized;
     } catch { return fallback; }
   }
@@ -102,9 +111,12 @@
   let editingItemId = null;
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
   const activeProfile = () => allProfiles().find((profile) => profile.id === state.active.profile);
+  function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
   function save() {
     state.active.updatedAt = new Date().toISOString();
+    state.savedLists = state.savedLists || {};
+    state.savedLists[draftKey(state.active)] = clone(state.active);
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
   }
 
@@ -274,6 +286,33 @@
     announce(`Neue Liste aus „${profile.name}“ erstellt.`);
   }
 
+  function switchToProfile(profile) {
+    save();
+    const stored = state.savedLists[`profile:${profile.id}`];
+    state.active = stored ? model.normalizeList(clone(stored)) : listFromProfile(profile);
+    state.tagFilters = [];
+    state.hideCompleted = false;
+    save(); render();
+    announce(`Arbeitsstand „${profile.name}“ geladen.`);
+  }
+
+  function switchToFreeList() {
+    save();
+    const stored = state.savedLists.free;
+    state.active = stored ? model.normalizeList(clone(stored)) : model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
+    state.tagFilters = [];
+    state.hideCompleted = false;
+    save(); render();
+    announce('Freie Checkliste geladen.');
+  }
+
+  function setMenu(open) {
+    $('sideMenu').classList.toggle('is-open', open);
+    $('menuBackdrop').hidden = !open;
+    $('menuToggle').setAttribute('aria-expanded', String(open));
+    $('menuToggle').setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+  }
+
   function renderProfileManager() {
     const host = $('profileList'); host.replaceChildren();
     for (const profile of allProfiles()) {
@@ -289,6 +328,7 @@
       if (!profile.builtin) actions.append(button('×', `${profile.name} löschen`, () => {
         if (!confirm(`Profil „${profile.name}“ löschen?`)) return;
         state.customProfiles = state.customProfiles.filter((candidate) => candidate.id !== profile.id);
+        delete state.savedLists[`profile:${profile.id}`];
         if (state.active.profile === profile.id) state.active.profile = '';
         save(); render(); renderProfileManager(); announce('Profil gelöscht.');
       }, true));
@@ -335,15 +375,13 @@
   $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save(); render(); });
   $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save(); render(); });
   $('profileSelect').addEventListener('change', () => {
+    if (!$('profileSelect').value) { switchToFreeList(); return; }
     const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
     if (!profile) return;
-    if (!confirm(`Aktuelle Liste ersetzen und eine neue Liste aus „${profile.name}“ erstellen?`)) {
-      renderProfiles(); return;
-    }
-    replaceWithProfile(profile);
+    switchToProfile(profile);
   });
   $('newBlankList').addEventListener('click', () => {
-    if (!confirm('Eine neue leere Checkliste erstellen? Die aktuelle Liste wird ersetzt.')) return;
+    save();
     state.active = model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
     state.tagFilters = [];
     state.hideCompleted = false;
@@ -354,7 +392,6 @@
   $('newFromProfile').addEventListener('click', () => {
     const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
     if (!profile) { announce('Bitte zuerst ein Profil auswählen.', true); return; }
-    if (!confirm(`Neue Liste aus „${profile.name}“ erstellen? Die aktuelle Liste wird ersetzt.`)) return;
     replaceWithProfile(profile);
   });
   $('saveProfile').addEventListener('click', () => {
@@ -391,6 +428,11 @@
   });
   $('exportJson').addEventListener('click', () => download(model.toJson(state.active), `${slug()}.json`, 'application/json;charset=utf-8'));
   $('exportMarkdown').addEventListener('click', () => download(model.toMarkdown(state.active), `${slug()}.md`, 'text/markdown;charset=utf-8'));
+  $('menuToggle').addEventListener('click', () => setMenu(!$('sideMenu').classList.contains('is-open')));
+  $('menuClose').addEventListener('click', () => setMenu(false));
+  $('menuBackdrop').addEventListener('click', () => setMenu(false));
+  $('sideMenu').querySelectorAll('.cl-menu-btn').forEach((control) => control.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setMenu(false); });
 
   window.qurixApp.serializeState = () => clone(state);
   window.qurixApp.hydrateState = (snapshot) => { state = normalizeState(snapshot); save(); render(); announce('Momentaufnahme wiederhergestellt.'); };

@@ -14,6 +14,10 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 ## Erledigt
 
+- [x] Sekundaere Checklistenaktionen in eine Desktop-Seitenleiste und ein
+  mobiles Burger-Menue verschieben.
+- [x] Profilbezogene Arbeitsstaende automatisch speichern und ohne Rueckfrage
+  zwischen ihnen wechseln.
 - [x] Profilauswahl und aktive Liste synchronisieren; freie Listen zeigen kein
   veraltetes Profil und eine Profilauswahl erzeugt die passende neue Liste.
 - [x] Leere neue Checklisten klar von neuen Listen aus einem Profil trennen.

@@ -65,4 +65,9 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   und Profilerzeugung sind deshalb nun getrennte Aktionen.
 - Das Profil-Dropdown darf keinen vorherigen DOM-Auswahlwert gegen den
   Anwendungszustand priorisieren. Freie Listen haben nun explizit kein Profil;
-  eine neue Auswahl wendet die Vorlage nach Bestaetigung direkt an.
+  eine neue Auswahl laedt direkt den automatisch gespeicherten Arbeitsstand.
+- Ein einzelner aktiver Listenstand reicht fuer stoerungsfreie Profilwechsel
+  nicht aus. Die App speichert deshalb nun je Profil sowie fuer freie Listen
+  einen eigenen Entwurf und laedt ihn beim Wechsel ohne Rueckfrage.
+- Seltene Aktionen liegen in einer kompakten Desktop-Iconleiste mit Tooltips;
+  mobil werden dieselben Aktionen als beschriftetes Burger-Menue angeboten.

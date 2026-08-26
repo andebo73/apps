@@ -135,8 +135,11 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 .qrx-footer-brand { display: flex; align-items: center; gap: var(--qrx-s-2); }
 .qrx-footer-brand a { color: var(--qrx-primary); font-weight: 500; }
 
-.cl-app{max-width:1080px;margin:0 auto;padding:var(--qrx-s-8) var(--qrx-s-5) var(--qrx-s-10);color:var(--qrx-text)}
+.cl-app{max-width:1180px;margin:0 auto;padding:var(--qrx-s-8) var(--qrx-s-5) var(--qrx-s-10) 86px;color:var(--qrx-text);position:relative}.cl-main{max-width:1080px;margin:0 auto}
 .cl-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cl-side-menu{position:fixed;z-index:25;top:7rem;left:max(1rem,calc(50vw - 580px));display:flex;flex-direction:column;gap:.35rem;width:52px;padding:.45rem;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius-lg);background:var(--qrx-surface);box-shadow:var(--qrx-shadow)}
+.cl-side-menu-head{display:none}.cl-menu-btn{position:relative;display:flex;align-items:center;justify-content:center;width:42px;min-height:42px;padding:.45rem;border:0;border-radius:var(--qrx-radius);background:transparent;color:var(--qrx-text-muted);font:600 .85rem var(--qrx-font-sans);cursor:pointer}.cl-menu-btn>span:first-child{font-family:var(--qrx-font-mono);font-size:1rem}.cl-menu-btn>span:last-child{display:none}.cl-menu-btn:hover,.cl-menu-btn:focus-visible{background:var(--qrx-bg-muted);color:var(--qrx-primary);outline:2px solid var(--qrx-primary);outline-offset:1px}.cl-menu-btn::after{content:attr(data-tooltip);position:absolute;z-index:30;left:calc(100% + .7rem);top:50%;width:max-content;max-width:260px;padding:.5rem .65rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-dark);color:var(--qrx-text-inverse);font:500 .78rem/1.35 var(--qrx-font-sans);box-shadow:var(--qrx-shadow);opacity:0;pointer-events:none;transform:translate(.25rem,-50%);transition:var(--qrx-transition)}.cl-menu-btn:hover::after,.cl-menu-btn:focus-visible::after{opacity:1;transform:translate(0,-50%)}.cl-menu-danger{color:var(--qrx-danger)}.cl-menu-separator{height:1px;margin:.2rem 0;background:var(--qrx-border)}
+.cl-menu-toggle{display:none;position:fixed;z-index:24;right:1rem;bottom:1rem;width:52px;height:52px;border:0;border-radius:999px;background:var(--qrx-gradient);color:var(--qrx-text-on-brand);font-size:1.35rem;box-shadow:var(--qrx-shadow-lg);cursor:pointer}.cl-menu-backdrop{position:fixed;z-index:26;inset:0;background:color-mix(in srgb,var(--qrx-bg-dark) 55%,transparent)}
 .cl-hero{display:grid;grid-template-columns:1fr minmax(180px,32%);gap:var(--qrx-s-8);align-items:end;margin-bottom:var(--qrx-s-6)}
 .cl-eyebrow{display:block;font-family:var(--qrx-font-mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--qrx-accent);font-weight:700}
 .cl-title{display:block;width:100%;margin:.15rem 0;padding:0;border:0;background:transparent;color:var(--qrx-text);font:700 clamp(2rem,6vw,3.4rem)/1.1 var(--qrx-font-sans);letter-spacing:-.03em}
@@ -146,7 +149,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 .cl-progress span{display:block;height:100%;width:0;background:var(--qrx-gradient);transition:width var(--qrx-transition)}
 .cl-card{background:var(--qrx-surface);border:1px solid var(--qrx-border);border-radius:var(--qrx-radius-lg);box-shadow:var(--qrx-shadow-sm)}
 .cl-profile-bar{display:flex;gap:var(--qrx-s-3);align-items:center;flex-wrap:wrap;padding:var(--qrx-s-4);margin-bottom:var(--qrx-s-4)}
-.cl-profile-bar label{font-weight:700}.cl-profile-bar select{min-width:180px}
+.cl-profile-bar label{font-weight:700}.cl-profile-bar select{min-width:220px}.cl-autosave{margin-left:auto;display:inline-flex;align-items:center;gap:.35rem;color:var(--qrx-success);font-size:.8rem;font-weight:650}
 .cl-btn{min-height:40px;padding:.55rem .9rem;border:1px solid var(--qrx-border-strong);border-radius:var(--qrx-radius);background:var(--qrx-surface);color:var(--qrx-text);font:600 .9rem var(--qrx-font-sans);cursor:pointer;transition:var(--qrx-transition)}
 .cl-btn:hover{border-color:var(--qrx-primary);color:var(--qrx-primary)}
 .cl-btn:focus-visible,.cl-icon-btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--qrx-primary);outline-offset:2px}
@@ -171,7 +174,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 .cl-dialog-inner{display:grid;gap:var(--qrx-s-3);padding:var(--qrx-s-5)}.cl-dialog header,.cl-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:var(--qrx-s-3)}.cl-dialog h2{margin:.1rem 0 0}.cl-dialog textarea{resize:vertical}.cl-dialog details{padding:.7rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle)}.cl-dialog details p{margin:.5rem 0 0}.cl-dialog footer{justify-content:flex-end;margin-top:var(--qrx-s-2)}.cl-error{min-height:1.4rem;margin:0;color:var(--qrx-danger)}
 .cl-profile-list{display:grid;gap:var(--qrx-s-2)}.cl-profile-row{display:grid;grid-template-columns:1fr auto;gap:var(--qrx-s-3);align-items:center;padding:.75rem;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius)}.cl-profile-row small{display:block;color:var(--qrx-text-muted)}
 .cl-edit-dialog{width:min(720px,calc(100% - 2rem))}.cl-edit-grid{display:grid;grid-template-columns:2fr 1fr;gap:var(--qrx-s-3)}.cl-edit-name,.cl-edit-note{grid-column:1/-1}
-@media(max-width:760px){.cl-app{padding:var(--qrx-s-5) var(--qrx-s-3)}.cl-hero{grid-template-columns:1fr;gap:var(--qrx-s-3)}.cl-add-form{grid-template-columns:1fr 1fr}.cl-field-main,.cl-add{grid-column:1/-1}.cl-toolbar .cl-btn{flex:1 1 45%}.cl-toolbar-spacer{display:none}.cl-toggle{width:100%;margin-bottom:.25rem}.cl-item{padding:.7rem}.cl-actions{flex-direction:column}.cl-profile-bar>*{flex:1 1 45%}.cl-profile-bar label{flex-basis:100%}}
+@media(max-width:760px){.cl-app{padding:var(--qrx-s-5) var(--qrx-s-3)}.cl-hero{grid-template-columns:1fr;gap:var(--qrx-s-3)}.cl-add-form{grid-template-columns:1fr 1fr}.cl-field-main,.cl-add{grid-column:1/-1}.cl-toggle{width:100%;margin-bottom:.25rem}.cl-item{padding:.7rem}.cl-actions{flex-direction:column}.cl-profile-bar label{flex-basis:100%}.cl-profile-bar select{flex:1 1 100%}.cl-autosave{margin-left:0}.cl-menu-toggle{display:grid;place-items:center}.cl-side-menu{top:0;right:0;left:auto;width:min(320px,88vw);height:100dvh;padding:var(--qrx-s-4);border:0;border-radius:0;box-shadow:var(--qrx-shadow-lg);transform:translateX(105%);transition:transform 180ms ease}.cl-side-menu.is-open{transform:translateX(0)}.cl-side-menu-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--qrx-s-2)}.cl-menu-btn{justify-content:flex-start;width:100%;min-height:46px;padding:.65rem .75rem;gap:.8rem}.cl-menu-btn>span:first-child{width:1.6rem;text-align:center}.cl-menu-btn>span:last-child{display:inline}.cl-menu-btn::after{display:none}}
 @media(max-width:520px){.cl-edit-grid{grid-template-columns:1fr}.cl-edit-name,.cl-edit-note{grid-column:auto}}
 .fdb-shell-mark{display:inline-grid;place-items:center;min-width:2.5rem;height:2.5rem;padding:0 .5rem;border-radius:var(--qrx-radius);background:var(--qrx-gradient);color:var(--qrx-text-on-brand);font-weight:800;letter-spacing:.04em}.fdb-shell-name{font-weight:700}
 </style>
@@ -200,11 +203,14 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 <section id="qrx-docs" class="qrx-shell-docs" hidden>
   <div class="qrx-shell-docs-inner">
 <h2>Checkliste</h2>
-<p>Die App verwaltet eine aktive Checkliste und wiederverwendbare Profile. Sie eignet sich für Einkaufs-, Pack- und Aufgabenlisten und speichert alle Änderungen automatisch im Browser.</p>
+<p>Die App verwaltet eine aktive Checkliste und wiederverwendbare Profile. Sie eignet sich für Einkaufs-, Pack- und Aufgabenlisten und speichert alle Änderungen sowie den Arbeitsstand jedes Profils automatisch im Browser.</p>
 <p>Über das Stiftsymbol öffnet sich ein Bearbeitungsdialog, in dem Bezeichnung, Menge, Kategorie, Tags und Notiz gemeinsam geändert werden können.</p>
 
+<h3>Konzentrierte Ansicht</h3>
+<p>Selten benötigte Aktionen befinden sich in der Seitenleiste. Auf dem Desktop erklären Tooltips beim Darüberfahren jede Aktion; auf kleinen Bildschirmen öffnet der runde Burger-Button das Menü mit vollständigen Beschriftungen. Profil, Eintragserfassung, Filter und Checkliste bleiben dauerhaft im Hauptbereich.</p>
+
 <h3>Profile und Listen</h3>
-<p>Mit <b>Leere Liste</b> entsteht eine vollständig neue Checkliste ohne Einträge und die Profilauswahl zeigt <b>Kein Profil · freie Liste</b>. Ein Profil ist dagegen eine Vorlage: Sobald ein Profil ausgewählt wird, kann nach Bestätigung eine unabhängige Kopie erzeugt werden. <b>Aus Profil erstellen</b> startet das aktuell aktive Profil erneut. Spätere Listenänderungen verändern das Profil nicht. Eigene Listen lassen sich mit <b>Als Profil speichern</b> wiederverwenden.</p>
+<p>Mit <b>Neue freie Liste</b> entsteht eine vollständig neue Checkliste ohne Einträge und die Profilauswahl zeigt <b>Kein Profil · freie Liste</b>. Beim Wechsel des Profils speichert die App den aktuellen Stand und lädt den zuletzt verwendeten Stand des Zielprofils ohne Rückfrage. <b>Profil neu starten</b> erzeugt bewusst eine frische Kopie der Vorlage. Eigene Listen lassen sich mit <b>Als Profil speichern</b> wiederverwenden.</p>
 <p>Wenn ein mitgeliefertes Profil erweitert wird, ergänzt die App fehlende Vorlageneinträge einmalig in einer daraus erzeugten aktiven Liste. Bereits gesetzte Häkchen, eigene Einträge und angepasste Mengen bleiben erhalten.</p>
 
 <h3>Tags und Filter</h3>
@@ -227,6 +233,22 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 
 <main id="qrx-app" class="qrx-shell-app">
 <div class="cl-app">
+  <button id="menuToggle" class="cl-menu-toggle" type="button" aria-controls="sideMenu" aria-expanded="false" aria-label="Menü öffnen">☰</button>
+  <div id="menuBackdrop" class="cl-menu-backdrop" hidden></div>
+  <aside id="sideMenu" class="cl-side-menu" aria-label="Weitere Aktionen">
+    <div class="cl-side-menu-head"><strong>Aktionen</strong><button id="menuClose" class="cl-icon-btn" type="button" aria-label="Menü schließen">×</button></div>
+    <button id="newBlankList" class="cl-menu-btn" type="button" data-tooltip="Neue freie Liste anlegen; der aktuelle Stand bleibt automatisch gespeichert"><span aria-hidden="true">＋</span><span>Neue freie Liste</span></button>
+    <button id="newFromProfile" class="cl-menu-btn" type="button" data-tooltip="Das aktive Profil auf seine Vorlage zurücksetzen"><span aria-hidden="true">↻</span><span>Profil neu starten</span></button>
+    <button id="saveProfile" class="cl-menu-btn" type="button" data-tooltip="Die aktuelle Liste als wiederverwendbares Profil speichern"><span aria-hidden="true">★</span><span>Als Profil speichern</span></button>
+    <button id="manageProfiles" class="cl-menu-btn" type="button" data-tooltip="Eigene Profile duplizieren oder löschen"><span aria-hidden="true">☷</span><span>Profile verwalten</span></button>
+    <div class="cl-menu-separator"></div>
+    <button id="openImport" class="cl-menu-btn" type="button" data-tooltip="Eine JSON-, Markdown- oder Textliste importieren"><span aria-hidden="true">⇥</span><span>Importieren</span></button>
+    <button id="exportJson" class="cl-menu-btn" type="button" data-tooltip="Vollständige Checkliste als JSON sichern"><span aria-hidden="true">{ }</span><span>JSON exportieren</span></button>
+    <button id="exportMarkdown" class="cl-menu-btn" type="button" data-tooltip="Lesbare Checkliste als Markdown exportieren"><span aria-hidden="true">M↓</span><span>Markdown exportieren</span></button>
+    <button id="resetList" class="cl-menu-btn cl-menu-danger" type="button" data-tooltip="Liste auf das aktive Profil zurücksetzen oder alle Häkchen entfernen"><span aria-hidden="true">⌫</span><span>Liste zurücksetzen</span></button>
+  </aside>
+
+  <div class="cl-main">
   <section class="cl-hero" aria-labelledby="cl-title-label">
     <div>
       <span class="cl-eyebrow">Universelle Checkliste</span>
@@ -240,10 +262,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   <section class="cl-card cl-profile-bar" aria-label="Profil und Listenaktionen">
     <label for="profileSelect">Profil</label>
     <select id="profileSelect"></select>
-    <button id="newBlankList" class="cl-btn cl-primary" type="button">Leere Liste</button>
-    <button id="newFromProfile" class="cl-btn" type="button">Aus Profil erstellen</button>
-    <button id="saveProfile" class="cl-btn" type="button">Als Profil speichern</button>
-    <button id="manageProfiles" class="cl-btn" type="button">Profile verwalten</button>
+    <span class="cl-autosave"><span aria-hidden="true">✓</span> Automatisch gespeichert</span>
   </section>
 
   <form id="addForm" class="cl-card cl-add-form">
@@ -269,11 +288,6 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 
   <section class="cl-toolbar" aria-label="Ansicht, Import und Export">
     <label class="cl-toggle"><input id="hideCompleted" type="checkbox"> Erledigte ausblenden</label>
-    <span class="cl-toolbar-spacer"></span>
-    <button id="openImport" class="cl-btn" type="button">Importieren</button>
-    <button id="exportJson" class="cl-btn" type="button">JSON exportieren</button>
-    <button id="exportMarkdown" class="cl-btn" type="button">Markdown exportieren</button>
-    <button id="resetList" class="cl-btn cl-danger" type="button">Zurücksetzen</button>
   </section>
 
   <section id="tagFilters" class="cl-tag-filters" aria-label="Nach Tags filtern" hidden>
@@ -288,6 +302,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   </div>
   <div id="listGroups" class="cl-groups" aria-label="Checklisten-Einträge"></div>
   <p id="statusMessage" class="cl-status" role="status" aria-live="polite"></p>
+  </div>
 
   <dialog id="importDialog" class="cl-dialog">
     <form method="dialog" class="cl-dialog-inner" id="importForm">
@@ -1045,10 +1060,10 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   }
 
   function defaultState() {
-    return {
-      active: listFromProfile(builtinProfiles[0]), customProfiles: [], hideCompleted: false,
-      tagFilters: [], builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION },
-    };
+    const active = listFromProfile(builtinProfiles[0]);
+    return { active, customProfiles: [], hideCompleted: false, tagFilters: [],
+      savedLists: { 'profile:shopping': clone(active) },
+      builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
 
   function normalizeProfile(profile) {
@@ -1060,18 +1075,27 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   function normalizeState(value) {
     const fallback = defaultState();
     try {
+      const savedLists = {};
+      if (value?.savedLists && typeof value.savedLists === 'object') {
+        for (const [key, list] of Object.entries(value.savedLists)) {
+          try { savedLists[key] = model.normalizeList(list); } catch (_) {}
+        }
+      }
       const normalized = {
         active: model.normalizeList(value?.active || fallback.active),
         customProfiles: Array.isArray(value?.customProfiles) ? value.customProfiles.map(normalizeProfile).filter(Boolean) : [],
         hideCompleted: Boolean(value?.hideCompleted),
         tagFilters: model.normalizeTags(value?.tagFilters || []),
+        savedLists,
         builtinProfileVersions: { ...(value?.builtinProfileVersions || {}) },
       };
       const shoppingVersion = Number(normalized.builtinProfileVersions.shopping || 0);
-      if (normalized.active.profile === 'shopping' && shoppingVersion < SHOPPING_PROFILE_VERSION) {
-        normalized.active.items = model.mergeProfileItems(normalized.active.items, builtinProfiles[0].items);
+      if (shoppingVersion < SHOPPING_PROFILE_VERSION) {
+        if (normalized.active.profile === 'shopping') normalized.active.items = model.mergeProfileItems(normalized.active.items, builtinProfiles[0].items);
+        if (normalized.savedLists['profile:shopping']) normalized.savedLists['profile:shopping'].items = model.mergeProfileItems(normalized.savedLists['profile:shopping'].items, builtinProfiles[0].items);
       }
       normalized.builtinProfileVersions.shopping = SHOPPING_PROFILE_VERSION;
+      if (!Object.keys(normalized.savedLists).length) normalized.savedLists[draftKey(normalized.active)] = clone(normalized.active);
       return normalized;
     } catch { return fallback; }
   }
@@ -1087,9 +1111,12 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   let editingItemId = null;
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
   const activeProfile = () => allProfiles().find((profile) => profile.id === state.active.profile);
+  function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
   function save() {
     state.active.updatedAt = new Date().toISOString();
+    state.savedLists = state.savedLists || {};
+    state.savedLists[draftKey(state.active)] = clone(state.active);
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
   }
 
@@ -1259,6 +1286,33 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     announce(`Neue Liste aus „${profile.name}“ erstellt.`);
   }
 
+  function switchToProfile(profile) {
+    save();
+    const stored = state.savedLists[`profile:${profile.id}`];
+    state.active = stored ? model.normalizeList(clone(stored)) : listFromProfile(profile);
+    state.tagFilters = [];
+    state.hideCompleted = false;
+    save(); render();
+    announce(`Arbeitsstand „${profile.name}“ geladen.`);
+  }
+
+  function switchToFreeList() {
+    save();
+    const stored = state.savedLists.free;
+    state.active = stored ? model.normalizeList(clone(stored)) : model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
+    state.tagFilters = [];
+    state.hideCompleted = false;
+    save(); render();
+    announce('Freie Checkliste geladen.');
+  }
+
+  function setMenu(open) {
+    $('sideMenu').classList.toggle('is-open', open);
+    $('menuBackdrop').hidden = !open;
+    $('menuToggle').setAttribute('aria-expanded', String(open));
+    $('menuToggle').setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+  }
+
   function renderProfileManager() {
     const host = $('profileList'); host.replaceChildren();
     for (const profile of allProfiles()) {
@@ -1274,6 +1328,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
       if (!profile.builtin) actions.append(button('×', `${profile.name} löschen`, () => {
         if (!confirm(`Profil „${profile.name}“ löschen?`)) return;
         state.customProfiles = state.customProfiles.filter((candidate) => candidate.id !== profile.id);
+        delete state.savedLists[`profile:${profile.id}`];
         if (state.active.profile === profile.id) state.active.profile = '';
         save(); render(); renderProfileManager(); announce('Profil gelöscht.');
       }, true));
@@ -1320,15 +1375,13 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save(); render(); });
   $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save(); render(); });
   $('profileSelect').addEventListener('change', () => {
+    if (!$('profileSelect').value) { switchToFreeList(); return; }
     const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
     if (!profile) return;
-    if (!confirm(`Aktuelle Liste ersetzen und eine neue Liste aus „${profile.name}“ erstellen?`)) {
-      renderProfiles(); return;
-    }
-    replaceWithProfile(profile);
+    switchToProfile(profile);
   });
   $('newBlankList').addEventListener('click', () => {
-    if (!confirm('Eine neue leere Checkliste erstellen? Die aktuelle Liste wird ersetzt.')) return;
+    save();
     state.active = model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
     state.tagFilters = [];
     state.hideCompleted = false;
@@ -1339,7 +1392,6 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   $('newFromProfile').addEventListener('click', () => {
     const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
     if (!profile) { announce('Bitte zuerst ein Profil auswählen.', true); return; }
-    if (!confirm(`Neue Liste aus „${profile.name}“ erstellen? Die aktuelle Liste wird ersetzt.`)) return;
     replaceWithProfile(profile);
   });
   $('saveProfile').addEventListener('click', () => {
@@ -1376,6 +1428,11 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
   });
   $('exportJson').addEventListener('click', () => download(model.toJson(state.active), `${slug()}.json`, 'application/json;charset=utf-8'));
   $('exportMarkdown').addEventListener('click', () => download(model.toMarkdown(state.active), `${slug()}.md`, 'text/markdown;charset=utf-8'));
+  $('menuToggle').addEventListener('click', () => setMenu(!$('sideMenu').classList.contains('is-open')));
+  $('menuClose').addEventListener('click', () => setMenu(false));
+  $('menuBackdrop').addEventListener('click', () => setMenu(false));
+  $('sideMenu').querySelectorAll('.cl-menu-btn').forEach((control) => control.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setMenu(false); });
 
   window.qurixApp.serializeState = () => clone(state);
   window.qurixApp.hydrateState = (snapshot) => { state = normalizeState(snapshot); save(); render(); announce('Momentaufnahme wiederhergestellt.'); };
