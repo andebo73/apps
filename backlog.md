@@ -23,6 +23,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 - [x] Mobiles Seitenmenue ueber dem dunklen Hintergrund klickbar darstellen.
 - [x] Checklisten als komprimierten Link mit lokal erzeugtem QR-Code ohne
   zusaetzlichen Datendienst teilen.
+- [x] Listen-Reset auf das Entfernen aller Haekchen begrenzen und den
+  vollstaendigen Profil-Reset als separate Aktion beibehalten.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

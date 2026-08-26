@@ -111,7 +111,6 @@
   let state = load();
   let editingItemId = null;
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
-  const activeProfile = () => allProfiles().find((profile) => profile.id === state.active.profile);
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
   function save() {
@@ -502,11 +501,9 @@
     } catch { $('shareUrl').select(); announce('Bitte den markierten Link kopieren.', true); }
   });
   $('resetList').addEventListener('click', () => {
-    const profile = activeProfile();
-    if (!confirm(profile ? `Liste auf das Profil „${profile.name}“ zurücksetzen?` : 'Alle Häkchen entfernen?')) return;
-    if (profile) state.active = listFromProfile(profile);
-    else state.active.items.forEach((item) => { item.checked = false; });
-    save(); render(); announce('Liste zurückgesetzt.');
+    if (!confirm('Alle Häkchen entfernen? Einträge und Änderungen bleiben erhalten.')) return;
+    state.active.items.forEach((item) => { item.checked = false; });
+    save(); render(); announce('Alle Häkchen entfernt.');
   });
   $('openImport').addEventListener('click', () => { $('importError').textContent = ''; $('importDialog').showModal(); });
   $('importFile').addEventListener('change', async () => {

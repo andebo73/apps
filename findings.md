@@ -97,3 +97,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   Gzip komprimiert und im URL-Fragment transportiert. Der QR-Code entsteht
   lokal im Browser; empfangene Listen werden als unabhaengige freie Kopie im
   Read-Modus gespeichert.
+- "Liste zuruecksetzen" und "Profil neu starten" haben getrennte Semantik:
+  Ersteres entfernt unabhaengig vom Profil nur Haekchen, letzteres ersetzt den
+  gesamten Arbeitsstand durch eine frische Kopie der Profilvorlage.

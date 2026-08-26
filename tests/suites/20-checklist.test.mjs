@@ -130,3 +130,11 @@ test('sharing uses an embedded URL fragment and local QR generation', () => {
   assert.match(appSource, /state\.viewMode = 'read'/);
   assert.doesNotMatch(appSource, /api\.qrserver|quickchart|chart\.googleapis/i);
 });
+
+test('reset list only clears checks while profile restart restores its template', () => {
+  const resetHandler = appSource.match(/\$\('resetList'\)\.addEventListener\('click',[\s\S]+?\n  \}\);/)?.[0] || '';
+  assert.match(resetHandler, /state\.active\.items\.forEach/);
+  assert.match(resetHandler, /item\.checked = false/);
+  assert.doesNotMatch(resetHandler, /listFromProfile|state\.active\s*=/);
+  assert.match(appSource, /function replaceWithProfile\(profile\)[\s\S]+?state\.active = listFromProfile\(profile\)/);
+});

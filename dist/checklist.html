@@ -213,7 +213,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 <p>Im Edit-Modus befinden sich selten benötigte Aktionen in der Seitenleiste. Auf dem Desktop erklären Tooltips beim Darüberfahren jede Aktion; auf kleinen Bildschirmen öffnet der runde Burger-Button das Menü mit vollständigen Beschriftungen.</p>
 
 <h3>Profile und Listen</h3>
-<p>Mit <b>Neue freie Liste</b> entsteht eine vollständig neue Checkliste ohne Einträge und die Profilauswahl zeigt <b>Kein Profil · freie Liste</b>. Beim Wechsel des Profils speichert die App den aktuellen Stand und lädt den zuletzt verwendeten Stand des Zielprofils ohne Rückfrage. <b>Profil neu starten</b> erzeugt bewusst eine frische Kopie der Vorlage. Eigene Listen lassen sich mit <b>Als Profil speichern</b> wiederverwenden.</p>
+<p>Mit <b>Neue freie Liste</b> entsteht eine vollständig neue Checkliste ohne Einträge und die Profilauswahl zeigt <b>Kein Profil · freie Liste</b>. Beim Wechsel des Profils speichert die App den aktuellen Stand und lädt den zuletzt verwendeten Stand des Zielprofils ohne Rückfrage. <b>Liste zurücksetzen</b> entfernt ausschließlich alle Häkchen und bewahrt Einträge sowie Änderungen. <b>Profil neu starten</b> verwirft dagegen den aktuellen Profilstand vollständig und erzeugt eine frische Kopie der Vorlage. Eigene Listen lassen sich mit <b>Als Profil speichern</b> wiederverwenden.</p>
 <p>Wenn ein mitgeliefertes Profil erweitert wird, ergänzt die App fehlende Vorlageneinträge einmalig in einer daraus erzeugten aktiven Liste. Bereits gesetzte Häkchen, eigene Einträge und angepasste Mengen bleiben erhalten.</p>
 
 <h3>Tags und Filter</h3>
@@ -252,7 +252,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     <button id="openImport" class="cl-menu-btn" type="button" aria-label="Importieren" data-tooltip="Eine JSON-, Markdown- oder Textliste importieren"><span aria-hidden="true">⇥</span><span>Importieren</span></button>
     <button id="exportJson" class="cl-menu-btn" type="button" aria-label="JSON exportieren" data-tooltip="Vollständige Checkliste als JSON sichern"><span aria-hidden="true">{ }</span><span>JSON exportieren</span></button>
     <button id="exportMarkdown" class="cl-menu-btn" type="button" aria-label="Markdown exportieren" data-tooltip="Lesbare Checkliste als Markdown exportieren"><span aria-hidden="true">M↓</span><span>Markdown exportieren</span></button>
-    <button id="resetList" class="cl-menu-btn cl-menu-danger" type="button" aria-label="Liste zurücksetzen" data-tooltip="Liste auf das aktive Profil zurücksetzen oder alle Häkchen entfernen"><span aria-hidden="true">⌫</span><span>Liste zurücksetzen</span></button>
+    <button id="resetList" class="cl-menu-btn cl-menu-danger" type="button" aria-label="Liste zurücksetzen" data-tooltip="Alle Häkchen entfernen; Einträge und Änderungen bleiben erhalten"><span aria-hidden="true">⌫</span><span>Liste zurücksetzen</span></button>
   </aside>
 
   <div class="cl-main">
@@ -3433,7 +3433,6 @@ var qrcode = function() {
   let state = load();
   let editingItemId = null;
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
-  const activeProfile = () => allProfiles().find((profile) => profile.id === state.active.profile);
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
   function save() {
@@ -3824,11 +3823,9 @@ var qrcode = function() {
     } catch { $('shareUrl').select(); announce('Bitte den markierten Link kopieren.', true); }
   });
   $('resetList').addEventListener('click', () => {
-    const profile = activeProfile();
-    if (!confirm(profile ? `Liste auf das Profil „${profile.name}“ zurücksetzen?` : 'Alle Häkchen entfernen?')) return;
-    if (profile) state.active = listFromProfile(profile);
-    else state.active.items.forEach((item) => { item.checked = false; });
-    save(); render(); announce('Liste zurückgesetzt.');
+    if (!confirm('Alle Häkchen entfernen? Einträge und Änderungen bleiben erhalten.')) return;
+    state.active.items.forEach((item) => { item.checked = false; });
+    save(); render(); announce('Alle Häkchen entfernt.');
   });
   $('openImport').addEventListener('click', () => { $('importError').textContent = ''; $('importDialog').showModal(); });
   $('importFile').addEventListener('change', async () => {
