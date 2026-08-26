@@ -1,0 +1,60 @@
+<header class="qrx-header">
+  <a class="qrx-home" href="./index.html" aria-label="FDB Apps Startseite">
+    <span class="fdb-mark" aria-hidden="true">FDB</span>
+    <span class="qrx-wordmark">FDB Apps</span>
+  </a>
+  <span class="qrx-tag"><span class="qrx-dot"></span><span data-de="Private Browser-Apps" data-en="Private browser apps">Private Browser-Apps</span></span>
+  <button id="langToggle" class="qrx-lang" type="button" aria-label="Switch to English" title="Switch to English">EN</button>
+</header>
+
+<main>
+  <section class="qrx-hero">
+    <span class="qrx-eyebrow" data-de="Local-first · ohne Backend" data-en="Local-first · no backend">Local-first · ohne Backend</span>
+    <h1 data-de="Kleine Werkzeuge. <span class='grad'>Direkt im Browser.</span>" data-en="Small tools. <span class='grad'>Right in your browser.</span>">Kleine Werkzeuge. <span class="grad">Direkt im Browser.</span></h1>
+    <p data-de="FDB Apps bündelt eigenständige WebApps, die ohne Installation auskommen und Daten möglichst lokal verarbeiten." data-en="FDB Apps brings together self-contained web apps that need no installation and process data locally whenever possible.">FDB Apps bündelt eigenständige WebApps, die ohne Installation auskommen und Daten möglichst lokal verarbeiten.</p>
+    <div class="qrx-pills">
+      <span class="qrx-pill" data-de="Keine Installation" data-en="No installation">Keine Installation</span>
+      <span class="qrx-pill" data-de="Lokale Verarbeitung" data-en="Local processing">Lokale Verarbeitung</span>
+      <span class="qrx-pill" data-de="Eigenständige HTML-Dateien" data-en="Self-contained HTML files">Eigenständige HTML-Dateien</span>
+    </div>
+  </section>
+
+  <section class="qrx-grid" aria-label="Apps">
+<!--SLOT:cards-->
+  </section>
+</main>
+
+<footer>
+  <span>© <span id="yr"></span> FDB Apps</span>
+  <span class="qrx-priv">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    <span data-de="Local-first entwickelt" data-en="Built local-first">Local-first entwickelt</span>
+  </span>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const button = document.getElementById('langToggle');
+  let lang = 'de';
+  try { lang = localStorage.getItem('fdb_apps_lang') || 'de'; } catch (_) {}
+
+  function setLanguage(next) {
+    lang = next === 'en' ? 'en' : 'de';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-de][data-en]').forEach((element) => {
+      element.innerHTML = element.dataset[lang];
+    });
+    button.textContent = lang === 'de' ? 'EN' : 'DE';
+    const label = lang === 'de' ? 'Switch to English' : 'Auf Deutsch wechseln';
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    try { localStorage.setItem('fdb_apps_lang', lang); } catch (_) {}
+  }
+
+  button.addEventListener('click', () => setLanguage(lang === 'de' ? 'en' : 'de'));
+  setLanguage(lang);
+})();
+</script>
+

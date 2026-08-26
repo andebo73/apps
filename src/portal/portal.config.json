@@ -1,0 +1,9 @@
+{
+  "title": "FDB Apps",
+  "lang": "de",
+  "theme": "fdb",
+  "output": "index.html",
+  "description": "Local-first WebApps von FDB Apps: eigenständig, ohne Installation und mit lokaler Datenverarbeitung.",
+  "fonts": [],
+  "apps": []
+}

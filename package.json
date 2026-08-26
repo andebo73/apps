@@ -1,0 +1,13 @@
+{
+  "name": "fdb-apps",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first single-file web apps by FDB Apps.",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build-fdb.mjs",
+    "test": "node --test --test-concurrency=1 \"tests/suites/*.test.mjs\"",
+    "upstream:check": "node tools/sync-upstream.mjs --check",
+    "upstream:apply": "node tools/sync-upstream.mjs --apply"
+  }
+}

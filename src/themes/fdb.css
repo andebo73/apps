@@ -1,0 +1,37 @@
+/* FDB Apps tokens. Technical --qrx-* names form the shared framework API. */
+:root {
+  --qrx-blue:#315B7D; --qrx-blue-dark:#23445F; --qrx-blue-light:#4B7799;
+  --qrx-green:#C66A3D; --qrx-green-dark:#A94F28; --qrx-green-light:#DF8960;
+  --qrx-gradient:linear-gradient(135deg,var(--qrx-blue) 0%,var(--qrx-green) 100%);
+  --qrx-primary:var(--qrx-blue); --qrx-primary-hover:var(--qrx-blue-dark);
+  --qrx-accent:var(--qrx-green); --qrx-accent-hover:var(--qrx-green-dark);
+  --qrx-bg:#FBFAF7; --qrx-bg-subtle:#F3F0E9; --qrx-bg-muted:#E9E4DA;
+  --qrx-surface:#FFFFFF; --qrx-bg-dark:#17232C;
+  --qrx-text:#202A31; --qrx-text-muted:#5F696E; --qrx-text-subtle:#879095;
+  --qrx-text-inverse:#FFFFFF; --qrx-text-on-brand:#FFFFFF;
+  --qrx-border:#DDD8CF; --qrx-border-strong:#C5BEB2;
+  --qrx-success:#2F7D5C; --qrx-warning:#B97818; --qrx-danger:#B74335;
+  --qrx-info:var(--qrx-blue);
+  --qrx-font-sans:"Segoe UI",Inter,system-ui,-apple-system,Roboto,sans-serif;
+  --qrx-font-mono:"Cascadia Code","JetBrains Mono",Consolas,monospace;
+  --qrx-s-1:.25rem; --qrx-s-2:.5rem; --qrx-s-3:.75rem; --qrx-s-4:1rem;
+  --qrx-s-5:1.25rem; --qrx-s-6:1.5rem; --qrx-s-8:2rem; --qrx-s-10:2.5rem;
+  --qrx-radius-sm:5px; --qrx-radius:9px; --qrx-radius-lg:14px;
+  --qrx-shadow-sm:0 1px 2px rgba(32,42,49,.06);
+  --qrx-shadow:0 5px 16px rgba(32,42,49,.10);
+  --qrx-shadow-lg:0 16px 38px rgba(32,42,49,.15);
+  --qrx-transition:150ms ease;
+}
+@media (prefers-color-scheme:dark) {
+  :root {
+    --qrx-bg:#17232C; --qrx-bg-subtle:#202F39; --qrx-bg-muted:#2A3B46;
+    --qrx-surface:#202F39; --qrx-text:#F3F0E9; --qrx-text-muted:#BAC2C5;
+    --qrx-text-subtle:#8F9CA2; --qrx-border:#344752; --qrx-border-strong:#4A5E69;
+    --qrx-shadow-sm:0 1px 2px rgba(0,0,0,.35);
+    --qrx-shadow:0 5px 16px rgba(0,0,0,.45);
+    --qrx-shadow-lg:0 16px 38px rgba(0,0,0,.55);
+    --qrx-primary:#78A6C8; --qrx-primary-hover:#96BCD6;
+    --qrx-accent:var(--qrx-green-light);
+  }
+}
+
