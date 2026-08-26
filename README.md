@@ -38,7 +38,8 @@ bleiben als stabile Framework-Schnittstelle erhalten.
 
 Die GitHub-Action `.github/workflows/quality.yml` fuehrt Snapshot-Pruefung,
 Tests, Build, Markencheck und einen Vergleich der committed `dist/`-Ausgabe aus.
-Ein Deployment ist bewusst noch nicht konfiguriert.
+Die Action `.github/workflows/deploy.yml` wiederholt diese Pruefungen bei Pushes
+auf `master` und veroeffentlicht anschliessend `dist/` ueber GitHub Pages.
 
 Das lokale Verzeichnis `_work/` ist fuer temporaere oder private Artefakte
 reserviert und wird vollstaendig von Git ignoriert.

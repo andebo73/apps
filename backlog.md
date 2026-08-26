@@ -14,6 +14,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 ## Erledigt
 
+- [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten
+  Qualitaetspruefungen einrichten.
 - [x] Sekundaere Checklistenaktionen in eine Desktop-Seitenleiste und ein
   mobiles Burger-Menue verschieben.
 - [x] Profilbezogene Arbeitsstaende automatisch speichern und ohne Rueckfrage

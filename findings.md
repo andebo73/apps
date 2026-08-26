@@ -71,3 +71,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   einen eigenen Entwurf und laedt ihn beim Wechsel ohne Rueckfrage.
 - Seltene Aktionen liegen in einer kompakten Desktop-Iconleiste mit Tooltips;
   mobil werden dieselben Aktionen als beschriftetes Burger-Menue angeboten.
+- Das GitHub-Pages-Deployment nutzt bewusst `npm run build` statt den
+  Upstream-Generator direkt aufzurufen, damit die FDB-Branding-Schicht vor dem
+  Upload angewendet wird. Deployt wird ausschliesslich `dist/`.
