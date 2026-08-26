@@ -37,5 +37,8 @@ test('checklist is emitted as a branded self-contained app', () => {
   assert.match(app, /id="editDialog"/);
   assert.match(app, /id="editText"/);
   assert.match(app, /id="editTags"/);
+  assert.match(app, /id="newBlankList"/);
+  assert.match(app, />Aus Profil erstellen</);
+  assert.match(app, /Kein Profil · freie Liste/);
   assert.doesNotMatch(app, /<!--SLOT:/);
 });

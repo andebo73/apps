@@ -60,3 +60,9 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Eintraege werden nun in einem responsiven Dialog mit allen Feldern gemeinsam
   bearbeitet; Abbrechen veraendert den Eintrag nicht und Speichern validiert die
   Bezeichnung vor der Uebernahme.
+- "Neue Liste" war als erneute Kopie des ausgewaehlten Profils missverstaendlich
+  und wirkte bei identischem Einkaufsprofil ohne sichtbaren Effekt. Leere Liste
+  und Profilerzeugung sind deshalb nun getrennte Aktionen.
+- Das Profil-Dropdown darf keinen vorherigen DOM-Auswahlwert gegen den
+  Anwendungszustand priorisieren. Freie Listen haben nun explizit kein Profil;
+  eine neue Auswahl wendet die Vorlage nach Bestaetigung direkt an.

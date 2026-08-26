@@ -130,15 +130,18 @@
 
   function renderProfiles() {
     const select = $('profileSelect');
-    const previous = select.value || state.active.profile || 'shopping';
     select.replaceChildren();
+    const none = document.createElement('option');
+    none.value = '';
+    none.textContent = 'Kein Profil · freie Liste';
+    select.appendChild(none);
     for (const profile of allProfiles()) {
       const option = document.createElement('option');
       option.value = profile.id;
       option.textContent = `${profile.name}${profile.builtin ? ' · mitgeliefert' : ''}`;
       select.appendChild(option);
     }
-    select.value = allProfiles().some((profile) => profile.id === previous) ? previous : 'shopping';
+    select.value = allProfiles().some((profile) => profile.id === state.active.profile) ? state.active.profile : '';
   }
 
   function renderCategories() {
@@ -263,6 +266,14 @@
     state.customProfiles.push(profile); save(); render(); return profile;
   }
 
+  function replaceWithProfile(profile) {
+    state.active = listFromProfile(profile);
+    state.tagFilters = [];
+    state.hideCompleted = false;
+    save(); render();
+    announce(`Neue Liste aus „${profile.name}“ erstellt.`);
+  }
+
   function renderProfileManager() {
     const host = $('profileList'); host.replaceChildren();
     for (const profile of allProfiles()) {
@@ -323,10 +334,28 @@
   $('listTitle').addEventListener('change', () => { state.active.title = $('listTitle').value.trim() || 'Neue Checkliste'; save(); render(); });
   $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save(); render(); });
   $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save(); render(); });
+  $('profileSelect').addEventListener('change', () => {
+    const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
+    if (!profile) return;
+    if (!confirm(`Aktuelle Liste ersetzen und eine neue Liste aus „${profile.name}“ erstellen?`)) {
+      renderProfiles(); return;
+    }
+    replaceWithProfile(profile);
+  });
+  $('newBlankList').addEventListener('click', () => {
+    if (!confirm('Eine neue leere Checkliste erstellen? Die aktuelle Liste wird ersetzt.')) return;
+    state.active = model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
+    state.tagFilters = [];
+    state.hideCompleted = false;
+    save(); render();
+    $('listTitle').focus(); $('listTitle').select();
+    announce('Neue leere Checkliste erstellt.');
+  });
   $('newFromProfile').addEventListener('click', () => {
     const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
-    if (!profile || !confirm(`Neue Liste aus „${profile.name}“ erstellen? Die aktuelle Liste wird ersetzt.`)) return;
-    state.active = listFromProfile(profile); state.tagFilters = []; save(); render(); announce('Neue Liste erstellt.');
+    if (!profile) { announce('Bitte zuerst ein Profil auswählen.', true); return; }
+    if (!confirm(`Neue Liste aus „${profile.name}“ erstellen? Die aktuelle Liste wird ersetzt.`)) return;
+    replaceWithProfile(profile);
   });
   $('saveProfile').addEventListener('click', () => {
     const name = prompt('Name des neuen Profils', state.active.title); if (!name?.trim()) return;

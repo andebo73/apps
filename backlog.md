@@ -14,6 +14,9 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 ## Erledigt
 
+- [x] Profilauswahl und aktive Liste synchronisieren; freie Listen zeigen kein
+  veraltetes Profil und eine Profilauswahl erzeugt die passende neue Liste.
+- [x] Leere neue Checklisten klar von neuen Listen aus einem Profil trennen.
 - [x] Schrittweise Prompt-Abfragen durch einen vollstaendigen Dialog zur
   Bearbeitung von Checklisten-Eintraegen ersetzen.
 - [x] Einkaufsprofil um typische Artikel fuer einen Wocheneinkauf erweitern.
