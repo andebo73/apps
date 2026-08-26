@@ -14,6 +14,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 ## Erledigt
 
+- [x] Test-Suite ohne Shell-Glob plattformneutral unter Windows und Linux
+  startbar machen.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

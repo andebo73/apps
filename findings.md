@@ -81,3 +81,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   Ein frischer Git-Checkout kann deshalb andere `dist/`-Dateien erzeugen, obwohl
   die Quellen identisch sind. CI baut und prueft die Artefakte, vergleicht sie
   aber nicht bytegenau mit den lokal committed Ausgaben.
+- Ein zitierter Test-Glob wird von PowerShell und Linux-Shells unterschiedlich
+  behandelt. `tools/test.mjs` listet die Suites deshalb selbst auf und startet
+  Node mit expliziten, plattformneutralen Dateipfaden.
