@@ -108,3 +108,9 @@ test('read mode is switchable, persisted and removes editing controls', () => {
   assert.match(cssSource, /\.cl-app\.is-read-mode \.cl-add-form/);
   assert.match(cssSource, /\.cl-app\.is-read-mode \.cl-item-note/);
 });
+
+test('checking an item updates in place without rebuilding the list', () => {
+  assert.match(appSource, /row\.classList\.toggle\('is-done', item\.checked\)/);
+  assert.match(appSource, /renderProgress\(\)/);
+  assert.doesNotMatch(contentSource, /id="emptyState"/);
+});

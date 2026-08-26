@@ -18,6 +18,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
   startbar machen.
 - [x] Umschaltbare, persistierte Read-Ansicht fuer eine kompakte Checkliste
   ohne Bearbeitungsaktionen umsetzen.
+- [x] Scrollposition beim Abhaken stabil halten und leeren Filterhinweis
+  entfernen.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

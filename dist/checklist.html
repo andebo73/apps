@@ -169,7 +169,6 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 .cl-item-check{width:1.25rem;height:1.25rem;accent-color:var(--qrx-success);cursor:pointer}.cl-item-main{min-width:0}.cl-item-line{display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap}.cl-item-name{font-weight:650;overflow-wrap:anywhere}.cl-item-quantity{font-family:var(--qrx-font-mono);font-size:.78rem;padding:.1rem .4rem;border-radius:999px;background:var(--qrx-bg-muted);color:var(--qrx-text-muted)}.cl-item-note{display:block;margin-top:.15rem;color:var(--qrx-text-subtle);font-size:.85rem}.cl-item.is-done .cl-item-name{text-decoration:line-through;color:var(--qrx-text-subtle)}
 .cl-item-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.35rem}.cl-item-tag{font-family:var(--qrx-font-mono);font-size:.68rem;padding:.08rem .38rem;border-radius:999px;background:color-mix(in srgb,var(--qrx-primary) 10%,transparent);color:var(--qrx-primary)}
 .cl-actions{display:flex;gap:.2rem}.cl-icon-btn{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:.25rem;border:0;border-radius:var(--qrx-radius-sm);background:transparent;color:var(--qrx-text-muted);font:600 1rem var(--qrx-font-sans);cursor:pointer}.cl-icon-btn:hover{background:var(--qrx-bg-muted);color:var(--qrx-primary)}
-.cl-empty{display:grid;gap:.35rem;place-items:center;text-align:center;padding:var(--qrx-s-10);border:1px dashed var(--qrx-border-strong);border-radius:var(--qrx-radius-lg);color:var(--qrx-text-muted)}
 .cl-status{min-height:1.5rem;margin:var(--qrx-s-4) 0;color:var(--qrx-success)}
 .cl-dialog{width:min(680px,calc(100% - 2rem));max-height:calc(100% - 2rem);padding:0;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius-lg);background:var(--qrx-surface);color:var(--qrx-text);box-shadow:var(--qrx-shadow-lg)}.cl-dialog::backdrop{background:color-mix(in srgb,var(--qrx-bg-dark) 62%,transparent)}
 .cl-dialog-inner{display:grid;gap:var(--qrx-s-3);padding:var(--qrx-s-5)}.cl-dialog header,.cl-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:var(--qrx-s-3)}.cl-dialog h2{margin:.1rem 0 0}.cl-dialog textarea{resize:vertical}.cl-dialog details{padding:.7rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle)}.cl-dialog details p{margin:.5rem 0 0}.cl-dialog footer{justify-content:flex-end;margin-top:var(--qrx-s-2)}.cl-error{min-height:1.4rem;margin:0;color:var(--qrx-danger)}
@@ -306,10 +305,6 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     <button id="clearTagFilters" class="cl-btn" type="button" hidden>Filter löschen</button>
   </section>
 
-  <div id="emptyState" class="cl-empty" hidden>
-    <strong id="emptyTitle">Die Checkliste ist leer.</strong>
-    <span id="emptyHint">Füge oben einen Eintrag hinzu oder importiere eine vorhandene Liste.</span>
-  </div>
   <div id="listGroups" class="cl-groups" aria-label="Checklisten-Einträge"></div>
   <p id="statusMessage" class="cl-status" role="status" aria-live="polite"></p>
   </div>
@@ -1197,6 +1192,13 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     $('clearTagFilters').hidden = state.tagFilters.length === 0;
   }
 
+  function renderProgress() {
+    const total = state.active.items.length;
+    const done = state.active.items.filter((item) => item.checked).length;
+    $('progressText').textContent = `${done} von ${total} erledigt`;
+    $('progressBar').style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+  }
+
   function render() {
     const readMode = state.viewMode === 'read';
     document.querySelector('.cl-app').classList.toggle('is-read-mode', readMode);
@@ -1208,10 +1210,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     renderProfiles();
     renderCategories();
     renderTagFilters();
-    const total = state.active.items.length;
-    const done = state.active.items.filter((item) => item.checked).length;
-    $('progressText').textContent = `${done} von ${total} erledigt`;
-    $('progressBar').style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+    renderProgress();
 
     const selectedTags = new Set(state.tagFilters.map((tag) => tag.toLocaleLowerCase('de')));
     const visible = state.active.items.filter((item) => {
@@ -1219,9 +1218,6 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
       if (!selectedTags.size) return true;
       return (item.tags || []).some((tag) => selectedTags.has(tag.toLocaleLowerCase('de')));
     });
-    $('emptyState').hidden = visible.length > 0;
-    $('emptyTitle').textContent = state.active.items.length ? 'Keine passenden Einträge.' : 'Die Checkliste ist leer.';
-    $('emptyHint').textContent = state.active.items.length ? 'Ändere die aktiven Filter, um wieder Einträge anzuzeigen.' : 'Füge oben einen Eintrag hinzu oder importiere eine vorhandene Liste.';
     const groups = new Map();
     visible.forEach((item) => {
       const category = item.category || 'Ohne Kategorie';
@@ -1239,7 +1235,13 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
         const row = document.createElement('li'); row.className = `cl-item${item.checked ? ' is-done' : ''}`;
         const check = document.createElement('input'); check.type = 'checkbox'; check.className = 'cl-item-check'; check.checked = item.checked;
         check.setAttribute('aria-label', `${item.text} erledigt`);
-        check.addEventListener('change', () => { item.checked = check.checked; save(); render(); });
+        check.addEventListener('change', () => {
+          item.checked = check.checked;
+          row.classList.toggle('is-done', item.checked);
+          save();
+          renderProgress();
+          if (state.hideCompleted && item.checked) row.remove();
+        });
         const main = document.createElement('div'); main.className = 'cl-item-main';
         const line = document.createElement('div'); line.className = 'cl-item-line';
         const name = document.createElement('span'); name.className = 'cl-item-name'; name.textContent = item.text; line.appendChild(name);

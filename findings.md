@@ -87,3 +87,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Die Read-Ansicht ist ein eigener persistierter UI-Modus. Sie entfernt
   Profilwahl, Erfassung, Filter und Seitenmenue und erzeugt keine Aktionsbuttons
   fuer Listeneintraege; nur die Checkboxen bleiben interaktiv.
+- Ein vollstaendiges Neurendern nach jedem Checkbox-Klick kann mobile Browser
+  an den Seitenanfang versetzen. Checkboxen aktualisieren deshalb Zeilenstatus
+  und Fortschritt direkt im bestehenden DOM.

@@ -187,6 +187,13 @@
     $('clearTagFilters').hidden = state.tagFilters.length === 0;
   }
 
+  function renderProgress() {
+    const total = state.active.items.length;
+    const done = state.active.items.filter((item) => item.checked).length;
+    $('progressText').textContent = `${done} von ${total} erledigt`;
+    $('progressBar').style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+  }
+
   function render() {
     const readMode = state.viewMode === 'read';
     document.querySelector('.cl-app').classList.toggle('is-read-mode', readMode);
@@ -198,10 +205,7 @@
     renderProfiles();
     renderCategories();
     renderTagFilters();
-    const total = state.active.items.length;
-    const done = state.active.items.filter((item) => item.checked).length;
-    $('progressText').textContent = `${done} von ${total} erledigt`;
-    $('progressBar').style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+    renderProgress();
 
     const selectedTags = new Set(state.tagFilters.map((tag) => tag.toLocaleLowerCase('de')));
     const visible = state.active.items.filter((item) => {
@@ -209,9 +213,6 @@
       if (!selectedTags.size) return true;
       return (item.tags || []).some((tag) => selectedTags.has(tag.toLocaleLowerCase('de')));
     });
-    $('emptyState').hidden = visible.length > 0;
-    $('emptyTitle').textContent = state.active.items.length ? 'Keine passenden Einträge.' : 'Die Checkliste ist leer.';
-    $('emptyHint').textContent = state.active.items.length ? 'Ändere die aktiven Filter, um wieder Einträge anzuzeigen.' : 'Füge oben einen Eintrag hinzu oder importiere eine vorhandene Liste.';
     const groups = new Map();
     visible.forEach((item) => {
       const category = item.category || 'Ohne Kategorie';
@@ -229,7 +230,13 @@
         const row = document.createElement('li'); row.className = `cl-item${item.checked ? ' is-done' : ''}`;
         const check = document.createElement('input'); check.type = 'checkbox'; check.className = 'cl-item-check'; check.checked = item.checked;
         check.setAttribute('aria-label', `${item.text} erledigt`);
-        check.addEventListener('change', () => { item.checked = check.checked; save(); render(); });
+        check.addEventListener('change', () => {
+          item.checked = check.checked;
+          row.classList.toggle('is-done', item.checked);
+          save();
+          renderProgress();
+          if (state.hideCompleted && item.checked) row.remove();
+        });
         const main = document.createElement('div'); main.className = 'cl-item-main';
         const line = document.createElement('div'); line.className = 'cl-item-line';
         const name = document.createElement('span'); name.className = 'cl-item-name'; name.textContent = item.text; line.appendChild(name);
