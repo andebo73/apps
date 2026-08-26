@@ -20,6 +20,7 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
   ohne Bearbeitungsaktionen umsetzen.
 - [x] Scrollposition beim Abhaken stabil halten und leeren Filterhinweis
   entfernen.
+- [x] Mobiles Seitenmenue ueber dem dunklen Hintergrund klickbar darstellen.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

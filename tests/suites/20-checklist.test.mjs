@@ -114,3 +114,9 @@ test('checking an item updates in place without rebuilding the list', () => {
   assert.match(appSource, /renderProgress\(\)/);
   assert.doesNotMatch(contentSource, /id="emptyState"/);
 });
+
+test('mobile menu is layered above its backdrop', () => {
+  const menuLayer = Number(cssSource.match(/\.cl-side-menu\{position:fixed;z-index:(\d+)/)?.[1]);
+  const backdropLayer = Number(cssSource.match(/\.cl-menu-backdrop\{position:fixed;z-index:(\d+)/)?.[1]);
+  assert.ok(menuLayer > backdropLayer, `menu layer ${menuLayer} must be above backdrop ${backdropLayer}`);
+});

@@ -90,3 +90,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Ein vollstaendiges Neurendern nach jedem Checkbox-Klick kann mobile Browser
   an den Seitenanfang versetzen. Checkboxen aktualisieren deshalb Zeilenstatus
   und Fortschritt direkt im bestehenden DOM.
+- Der mobile Menuehintergrund darf nicht ueber der Seitenleiste liegen, da er
+  sonst alle Klicks abfaengt. Das Menue hat deshalb einen hoeheren z-Index als
+  sein Backdrop; ein Test sichert diese Reihenfolge ab.
