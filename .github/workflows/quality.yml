@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Verify vendored upstream snapshot
         run: npm run upstream:verify
 

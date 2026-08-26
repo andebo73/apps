@@ -3,15 +3,16 @@
   <div id="menuBackdrop" class="cl-menu-backdrop" hidden></div>
   <aside id="sideMenu" class="cl-side-menu" aria-label="Weitere Aktionen">
     <div class="cl-side-menu-head"><strong>Aktionen</strong><button id="menuClose" class="cl-icon-btn" type="button" aria-label="Menü schließen">×</button></div>
-    <button id="newBlankList" class="cl-menu-btn" type="button" data-tooltip="Neue freie Liste anlegen; der aktuelle Stand bleibt automatisch gespeichert"><span aria-hidden="true">＋</span><span>Neue freie Liste</span></button>
-    <button id="newFromProfile" class="cl-menu-btn" type="button" data-tooltip="Das aktive Profil auf seine Vorlage zurücksetzen"><span aria-hidden="true">↻</span><span>Profil neu starten</span></button>
-    <button id="saveProfile" class="cl-menu-btn" type="button" data-tooltip="Die aktuelle Liste als wiederverwendbares Profil speichern"><span aria-hidden="true">★</span><span>Als Profil speichern</span></button>
-    <button id="manageProfiles" class="cl-menu-btn" type="button" data-tooltip="Eigene Profile duplizieren oder löschen"><span aria-hidden="true">☷</span><span>Profile verwalten</span></button>
+    <button id="newBlankList" class="cl-menu-btn" type="button" aria-label="Neue freie Liste" data-tooltip="Neue freie Liste anlegen; der aktuelle Stand bleibt automatisch gespeichert"><span aria-hidden="true">＋</span><span>Neue freie Liste</span></button>
+    <button id="newFromProfile" class="cl-menu-btn" type="button" aria-label="Profil neu starten" data-tooltip="Das aktive Profil auf seine Vorlage zurücksetzen"><span aria-hidden="true">↻</span><span>Profil neu starten</span></button>
+    <button id="saveProfile" class="cl-menu-btn" type="button" aria-label="Als Profil speichern" data-tooltip="Die aktuelle Liste als wiederverwendbares Profil speichern"><span aria-hidden="true">★</span><span>Als Profil speichern</span></button>
+    <button id="manageProfiles" class="cl-menu-btn" type="button" aria-label="Profile verwalten" data-tooltip="Eigene Profile duplizieren oder löschen"><span aria-hidden="true">☷</span><span>Profile verwalten</span></button>
     <div class="cl-menu-separator"></div>
-    <button id="openImport" class="cl-menu-btn" type="button" data-tooltip="Eine JSON-, Markdown- oder Textliste importieren"><span aria-hidden="true">⇥</span><span>Importieren</span></button>
-    <button id="exportJson" class="cl-menu-btn" type="button" data-tooltip="Vollständige Checkliste als JSON sichern"><span aria-hidden="true">{ }</span><span>JSON exportieren</span></button>
-    <button id="exportMarkdown" class="cl-menu-btn" type="button" data-tooltip="Lesbare Checkliste als Markdown exportieren"><span aria-hidden="true">M↓</span><span>Markdown exportieren</span></button>
-    <button id="resetList" class="cl-menu-btn cl-menu-danger" type="button" data-tooltip="Liste auf das aktive Profil zurücksetzen oder alle Häkchen entfernen"><span aria-hidden="true">⌫</span><span>Liste zurücksetzen</span></button>
+    <button id="shareList" class="cl-menu-btn" type="button" aria-label="Liste teilen" data-tooltip="Aktuelle Liste als Link und QR-Code weitergeben"><span aria-hidden="true">⌁</span><span>Liste teilen</span></button>
+    <button id="openImport" class="cl-menu-btn" type="button" aria-label="Importieren" data-tooltip="Eine JSON-, Markdown- oder Textliste importieren"><span aria-hidden="true">⇥</span><span>Importieren</span></button>
+    <button id="exportJson" class="cl-menu-btn" type="button" aria-label="JSON exportieren" data-tooltip="Vollständige Checkliste als JSON sichern"><span aria-hidden="true">{ }</span><span>JSON exportieren</span></button>
+    <button id="exportMarkdown" class="cl-menu-btn" type="button" aria-label="Markdown exportieren" data-tooltip="Lesbare Checkliste als Markdown exportieren"><span aria-hidden="true">M↓</span><span>Markdown exportieren</span></button>
+    <button id="resetList" class="cl-menu-btn cl-menu-danger" type="button" aria-label="Liste zurücksetzen" data-tooltip="Liste auf das aktive Profil zurücksetzen oder alle Häkchen entfernen"><span aria-hidden="true">⌫</span><span>Liste zurücksetzen</span></button>
   </aside>
 
   <div class="cl-main">
@@ -95,6 +96,18 @@
       <header><div><span class="cl-eyebrow">Vorlagen</span><h2>Profile verwalten</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
       <p>Mitgelieferte Profile können dupliziert, eigene Profile zusätzlich gelöscht werden.</p>
       <div id="profileList" class="cl-profile-list"></div>
+      <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="shareDialog" class="cl-dialog cl-share-dialog">
+    <form method="dialog" class="cl-dialog-inner">
+      <header><div><span class="cl-eyebrow">Ohne Cloud-Speicher</span><h2>Liste teilen</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
+      <p>Scanne den QR-Code mit dem Mobiltelefon. Die Liste ist komprimiert im Link enthalten und wird nicht an einen zusätzlichen Dienst übertragen.</p>
+      <div id="shareQr" class="cl-share-qr" aria-label="QR-Code der geteilten Checkliste"></div>
+      <label for="shareUrl">Teilbarer Link</label>
+      <div class="cl-share-link"><input id="shareUrl" type="text" readonly><button id="copyShareUrl" class="cl-btn" type="button">Link kopieren</button></div>
+      <p id="shareError" class="cl-error" role="alert"></p>
       <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
     </form>
   </dialog>

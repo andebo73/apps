@@ -1,9 +1,7 @@
 _work/
 node_modules/
-package-lock.json
 .env
 .env.local
 .vscode/
 tests/.cache/
 tests/artifacts/
-

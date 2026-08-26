@@ -12,5 +12,8 @@
     "upstream:check": "node tools/sync-upstream.mjs --check",
     "upstream:apply": "node tools/sync-upstream.mjs --apply",
     "upstream:apply:remove": "node tools/sync-upstream.mjs --apply --remove"
+  },
+  "devDependencies": {
+    "qrcode-generator": "^1.4.4"
   }
 }

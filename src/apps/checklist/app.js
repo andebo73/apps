@@ -363,6 +363,78 @@
     return state.active.title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'checkliste';
   }
 
+  function bytesToBase64Url(bytes) {
+    let binary = '';
+    for (let index = 0; index < bytes.length; index += 0x8000) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+    }
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+  }
+
+  function base64UrlToBytes(value) {
+    const base64 = value.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
+    const binary = atob(base64);
+    return Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  }
+
+  async function encodeSharedList(list) {
+    const source = new TextEncoder().encode(JSON.stringify({ version: 1, list }));
+    if (!window.CompressionStream) return `j.${bytesToBase64Url(source)}`;
+    const stream = new Blob([source]).stream().pipeThrough(new CompressionStream('gzip'));
+    return `g.${bytesToBase64Url(new Uint8Array(await new Response(stream).arrayBuffer()))}`;
+  }
+
+  async function decodeSharedList(payload) {
+    const separator = payload.indexOf('.');
+    const encoding = payload.slice(0, separator);
+    let bytes = base64UrlToBytes(payload.slice(separator + 1));
+    if (encoding === 'g') {
+      if (!window.DecompressionStream) throw new Error('Dieser Browser kann den komprimierten Link nicht öffnen.');
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    } else if (encoding !== 'j') throw new Error('Das Format des geteilten Links ist unbekannt.');
+    const shared = JSON.parse(new TextDecoder().decode(bytes));
+    if (shared?.version !== 1) throw new Error('Die Version des geteilten Links wird nicht unterstützt.');
+    return model.normalizeList(shared.list);
+  }
+
+  async function openShareDialog() {
+    const error = $('shareError'); error.textContent = '';
+    const host = $('shareQr'); host.replaceChildren();
+    try {
+      const payload = await encodeSharedList(state.active);
+      const url = new URL(window.location.href); url.hash = `share=${payload}`;
+      $('shareUrl').value = url.href;
+      const code = window.qrcode(0, 'M');
+      code.addData(url.href, 'Byte'); code.make();
+      host.innerHTML = code.createSvgTag(5, 4);
+      host.querySelector('svg')?.setAttribute('aria-hidden', 'true');
+    } catch (shareError) {
+      error.textContent = shareError.message || 'Die Liste konnte nicht geteilt werden.';
+    }
+    $('shareDialog').showModal();
+  }
+
+  async function importSharedList() {
+    const match = window.location.hash.match(/^#share=(.+)$/);
+    if (!match) return false;
+    try {
+      save();
+      state.active = await decodeSharedList(match[1]);
+      state.active.profile = '';
+      state.tagFilters = [];
+      state.hideCompleted = false;
+      state.viewMode = 'read';
+      history.replaceState(null, '', `${location.pathname}${location.search}`);
+      save();
+      announce(`Geteilte Liste „${state.active.title}“ geöffnet.`);
+      return true;
+    } catch (error) {
+      announce(error.message || 'Der geteilte Link konnte nicht geöffnet werden.', true);
+      return false;
+    }
+  }
+
   $('addForm').addEventListener('submit', (event) => {
     event.preventDefault();
     const item = model.normalizeItem({ text: $('itemText').value, quantity: $('itemQuantity').value, category: $('itemCategory').value, tags: $('itemTags').value });
@@ -422,6 +494,13 @@
     const profile = createProfile(name.trim(), state.active.items); state.active.profile = profile.id; save(); render(); announce('Profil gespeichert.');
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
+  $('shareList').addEventListener('click', openShareDialog);
+  $('copyShareUrl').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText($('shareUrl').value);
+      announce('Link kopiert.');
+    } catch { $('shareUrl').select(); announce('Bitte den markierten Link kopieren.', true); }
+  });
   $('resetList').addEventListener('click', () => {
     const profile = activeProfile();
     if (!confirm(profile ? `Liste auf das Profil „${profile.name}“ zurücksetzen?` : 'Alle Häkchen entfernen?')) return;
@@ -460,5 +539,5 @@
   window.qurixApp.serializeState = () => clone(state);
   window.qurixApp.hydrateState = (snapshot) => { state = normalizeState(snapshot); save(); render(); announce('Momentaufnahme wiederhergestellt.'); };
 
-  render();
+  importSharedList().finally(render);
 })();

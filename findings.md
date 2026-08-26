@@ -93,3 +93,7 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Der mobile Menuehintergrund darf nicht ueber der Seitenleiste liegen, da er
   sonst alle Klicks abfaengt. Das Menue hat deshalb einen hoeheren z-Index als
   sein Backdrop; ein Test sichert diese Reihenfolge ab.
+- Fuer die serverlose Uebergabe zwischen Geraeten wird die aktive Liste per
+  Gzip komprimiert und im URL-Fragment transportiert. Der QR-Code entsteht
+  lokal im Browser; empfangene Listen werden als unabhaengige freie Kopie im
+  Read-Modus gespeichert.

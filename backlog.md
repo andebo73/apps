@@ -21,6 +21,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 - [x] Scrollposition beim Abhaken stabil halten und leeren Filterhinweis
   entfernen.
 - [x] Mobiles Seitenmenue ueber dem dunklen Hintergrund klickbar darstellen.
+- [x] Checklisten als komprimierten Link mit lokal erzeugtem QR-Code ohne
+  zusaetzlichen Datendienst teilen.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

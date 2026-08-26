@@ -120,3 +120,13 @@ test('mobile menu is layered above its backdrop', () => {
   const backdropLayer = Number(cssSource.match(/\.cl-menu-backdrop\{position:fixed;z-index:(\d+)/)?.[1]);
   assert.ok(menuLayer > backdropLayer, `menu layer ${menuLayer} must be above backdrop ${backdropLayer}`);
 });
+
+test('sharing uses an embedded URL fragment and local QR generation', () => {
+  assert.match(contentSource, /id="shareList"/);
+  assert.match(contentSource, /id="shareList"[^>]+aria-label="Liste teilen"/);
+  assert.match(contentSource, /id="shareQr"/);
+  assert.match(appSource, /url\.hash = `share=\$\{payload\}`/);
+  assert.match(appSource, /window\.qrcode\(0, 'M'\)/);
+  assert.match(appSource, /state\.viewMode = 'read'/);
+  assert.doesNotMatch(appSource, /api\.qrserver|quickchart|chart\.googleapis/i);
+});
