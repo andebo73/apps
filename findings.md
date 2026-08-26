@@ -30,5 +30,12 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   und dokumentiert jeden Lauf in `_work/upstream-sync-report.md`.
 - Upstream-Loeschungen sind absichtlich zweistufig: normaler Apply blockiert;
   erst `upstream:apply:remove` entfernt eine lokal unveraenderte Datei.
-- Ein inhaltlich leerer Apply schreibt das Manifest nicht neu. Die drei
+- Ein inhaltlich leerer Apply schreibt das Manifest nicht neu. Die vier
   isolierten Sync-Szenarien und die zwei bestehenden Frameworktests sind gruen.
+- `upstream:verify` prueft alle Manifestdateien offline auf fehlende,
+  veraenderte und unerwartete Dateien. Damit ist kein qurix-Zugriff in CI noetig.
+- Der Markencheck entfernt Style-, Script- und Kommentarbereiche vor der Suche,
+  sodass technische `qrx-*`-/`qurixApp`-Bezeichner erlaubt bleiben, sichtbare
+  qurix-Marke aber fehlschlaegt.
+- Die Quality-CI laeuft auf `master` und `main` sowie fuer Pull Requests. Sie
+  deployt nicht und benoetigt nur lesenden Repository-Zugriff.

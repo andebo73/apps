@@ -12,6 +12,9 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 ## Erledigt
 
+- [x] GitHub Quality-CI fuer Snapshot, Tests, Build und Branding einrichten.
+- [x] Offlinefaehige Integritaetspruefung des vendorten Snapshots ergaenzen.
+- [x] Reproduzierbarkeit der committed `dist/`-Ausgabe in CI pruefen.
 - [x] Sync-Bericht unter `_work/` fuer jeden Check/Apply-Lauf erzeugen.
 - [x] Upstream-Loeschungen nur mit separater Removal-Freigabe anwenden.
 - [x] Konflikt-, Removal- und Idempotenzverhalten automatisiert testen.

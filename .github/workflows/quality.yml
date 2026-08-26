@@ -1,0 +1,42 @@
+name: Quality
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify vendored upstream snapshot
+        run: npm run upstream:verify
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build portal and apps
+        run: npm run build
+
+      - name: Check visible branding
+        run: npm run brand:check
+
+      - name: Verify committed build output
+        run: git diff --exit-code -- dist
+

@@ -19,9 +19,10 @@ const valueOf = (flag) => {
   return args[index + 1];
 };
 
-const mode = has('--apply') ? 'apply' : has('--check') ? 'check' : null;
-if (!mode || (has('--apply') && has('--check'))) {
-  console.error('Usage: node tools/sync-upstream.mjs (--check|--apply) [--remove] [--source PATH]');
+const selectedModes = ['--check', '--apply', '--verify'].filter(has);
+const mode = selectedModes.length === 1 ? selectedModes[0].slice(2) : null;
+if (!mode) {
+  console.error('Usage: node tools/sync-upstream.mjs (--check|--apply|--verify) [--remove] [--source PATH]');
   process.exit(2);
 }
 if (has('--remove') && mode !== 'apply') {
@@ -36,7 +37,7 @@ try {
   ROOT = resolve(valueOf('--root') || SCRIPT_ROOT);
   MANIFEST_PATH = resolve(valueOf('--manifest') || join(ROOT, 'upstream', 'manifest.json'));
   const initialManifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8'));
-  sourceRoot = resolve(valueOf('--source') || initialManifest.sourcePath);
+  sourceRoot = mode === 'verify' ? null : resolve(valueOf('--source') || initialManifest.sourcePath);
 } catch (error) {
   console.error(error.message);
   process.exit(2);
@@ -57,7 +58,7 @@ const safeRelative = (path) => {
   return posix(path);
 };
 
-if (!existsSync(sourceRoot)) {
+if (mode !== 'verify' && !existsSync(sourceRoot)) {
   console.error(`Upstream source does not exist: ${sourceRoot}`);
   process.exit(2);
 }
@@ -78,6 +79,24 @@ function listFiles(path) {
       const child = join(dir, entry.name);
       if (entry.isDirectory()) visit(child);
       else if (entry.isFile()) result.push(posix(relative(sourceRoot, child)));
+    }
+  };
+  visit(absolute);
+  return result;
+}
+
+function listTargetFiles(path) {
+  const relPath = safeRelative(path);
+  const absolute = resolve(ROOT, relPath);
+  if (!within(ROOT, absolute)) throw new Error(`Path escapes target root: ${path}`);
+  if (!existsSync(absolute)) return [];
+  if (statSync(absolute).isFile()) return [relPath];
+  const result = [];
+  const visit = (dir) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const child = join(dir, entry.name);
+      if (entry.isDirectory()) visit(child);
+      else if (entry.isFile()) result.push(posix(relative(ROOT, child)));
     }
   };
   visit(absolute);
@@ -114,6 +133,34 @@ function writeReport({ revision, updates, conflicts, removals, outcome }) {
   ].join('\n');
   mkdirSync(dirname(reportPath), { recursive: true });
   writeFileSync(reportPath, `${report.trimEnd()}\n`);
+}
+
+if (mode === 'verify') {
+  let actualFiles;
+  try {
+    actualFiles = [...new Set(manifest.paths.flatMap(listTargetFiles))].sort();
+  } catch (error) {
+    console.error(error.message);
+    process.exit(2);
+  }
+  const expectedFiles = Object.keys(manifest.files).sort();
+  const expectedSet = new Set(expectedFiles);
+  const actualSet = new Set(actualFiles);
+  const missing = expectedFiles.filter((rel) => !actualSet.has(rel));
+  const unexpected = actualFiles.filter((rel) => !expectedSet.has(rel));
+  const modified = expectedFiles.filter((rel) => {
+    const target = resolve(ROOT, safeRelative(rel));
+    return existsSync(target) && hashFile(target) !== manifest.files[rel];
+  });
+  if (missing.length || unexpected.length || modified.length) {
+    console.error('Upstream snapshot integrity check failed.');
+    missing.forEach((rel) => console.error(`  missing: ${rel}`));
+    unexpected.forEach((rel) => console.error(`  unexpected: ${rel}`));
+    modified.forEach((rel) => console.error(`  modified: ${rel}`));
+    process.exit(1);
+  }
+  console.log(`Upstream snapshot integrity verified (${expectedFiles.length} files at ${manifest.revision}).`);
+  process.exit(0);
 }
 
 let files;
@@ -202,4 +249,3 @@ if (manifestChanged) {
 }
 writeReport({ revision: currentRevision, updates, conflicts, removals, outcome: 'angewendet' });
 console.log(`Applied ${updates.length} update(s) and ${removals.length} removal(s); snapshot tracks ${files.length} files at ${currentRevision}.`);
-

@@ -64,13 +64,14 @@ Seitentitel, Metadaten, Farben, Schriften und Links werden dagegen konsequent au
 
 ## Umsetzung in Phasen
 
-Status: Phasen 1 bis 3 wurden am 2026-08-26 abgeschlossen. Der Snapshot umfasst
+Status: Phasen 1 bis 4 wurden am 2026-08-26 abgeschlossen. Der Snapshot umfasst
 20 Allowlist-Dateien aus qurix-Revision
 `d86620707ca0e906042e7f74868f8186d2696630`. Das sichtbare FDB-Branding liegt in
 einer lokalen Build-Schicht und veraendert keine synchronisierte Datei. Build,
 Tests, Marken-Scan und Sync-Check sind erfolgreich. Der Sync schreibt Berichte,
 blockiert lokale Konflikte und verlangt fuer Upstream-Loeschungen eine separate
-Freigabe. Als Naechstes folgt Phase 4.
+Freigabe. Die Quality-CI prueft Snapshot, Tests, Build, Branding und committed
+Build-Ausgaben ohne ein Deployment auszufuehren. Als Naechstes folgt Phase 5.
 
 ### 1. Upstream-Basis erfassen
 
@@ -133,6 +134,5 @@ ist versioniert.
 
 ## Naechster konkreter Schritt
 
-Phase 4 umsetzen: CI fuer Build, Tests, Marken- und Upstream-Snapshot-Pruefung
-einrichten. Das Pages-Deployment bleibt deaktiviert, bis Ziel-Repository und
-Veroeffentlichungswunsch feststehen.
+Phase 5 vorbereiten: Scope, Datenhaltung und Exportverhalten der ersten FDB-App
+festlegen und die App anschliessend nach dem bestehenden Modulvertrag umsetzen.

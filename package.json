@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "build": "node tools/build-fdb.mjs",
+    "brand:check": "node tools/check-branding.mjs",
     "test": "node --test --test-concurrency=1 \"tests/suites/*.test.mjs\"",
+    "upstream:verify": "node tools/sync-upstream.mjs --verify",
     "upstream:check": "node tools/sync-upstream.mjs --check",
     "upstream:apply": "node tools/sync-upstream.mjs --apply",
     "upstream:apply:remove": "node tools/sync-upstream.mjs --apply --remove"

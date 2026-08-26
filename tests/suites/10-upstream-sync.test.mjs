@@ -64,6 +64,20 @@ test('apply is idempotent and writes a report', () => {
   }
 });
 
+test('offline verification detects snapshot modification', () => {
+  const paths = fixture();
+  try {
+    run(paths, '--apply');
+    assert.match(run(paths, '--verify'), /integrity verified/);
+    writeFileSync(join(paths.target, 'framework', 'keep.txt'), 'modified\n');
+    const error = runFailure(paths, '--verify');
+    assert.equal(error.status, 1);
+    assert.match(error.stderr, /modified: framework\/keep\.txt/);
+  } finally {
+    rmSync(paths.base, { recursive: true, force: true });
+  }
+});
+
 test('local edits block an upstream update and are reported', () => {
   const paths = fixture();
   try {
@@ -97,4 +111,3 @@ test('upstream removals require explicit approval', () => {
     rmSync(paths.base, { recursive: true, force: true });
   }
 });
-
