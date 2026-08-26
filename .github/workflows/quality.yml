@@ -36,7 +36,3 @@ jobs:
 
       - name: Check visible branding
         run: npm run brand:check
-
-      - name: Verify committed build output
-        run: git diff --exit-code -- dist
-

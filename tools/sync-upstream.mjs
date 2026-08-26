@@ -46,7 +46,15 @@ try {
 const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8'));
 const reportPath = resolve(valueOf('--report') || join(ROOT, '_work', 'upstream-sync-report.md'));
 const posix = (value) => value.split(sep).join('/');
-const hashFile = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
+const hashFile = (path) => {
+  const bytes = readFileSync(path);
+  let canonical = bytes;
+  if (!bytes.includes(0)) {
+    const decoded = bytes.toString('utf8');
+    if (Buffer.from(decoded, 'utf8').equals(bytes)) canonical = Buffer.from(decoded.replace(/\r\n/g, '\n'), 'utf8');
+  }
+  return createHash('sha256').update(canonical).digest('hex');
+};
 const within = (base, path) => {
   const rel = relative(base, path);
   return rel === '' || (!rel.startsWith(`..${sep}`) && rel !== '..' && !isAbsolute(rel));
@@ -239,11 +247,13 @@ for (const rel of removals) {
   console.log(`removed ${rel}`);
 }
 
-const manifestChanged = updates.length || removals.length || manifest.revision !== currentRevision;
+const manifestChanged = updates.length || removals.length || manifest.revision !== currentRevision
+  || manifest.hashMode !== 'utf8-lf';
 if (manifestChanged) {
   manifest.sourcePath = posix(sourceRoot);
   manifest.revision = currentRevision;
   manifest.syncedAt = new Date().toISOString();
+  manifest.hashMode = 'utf8-lf';
   manifest.files = Object.fromEntries(files.map((rel) => [rel, hashFile(resolve(sourceRoot, rel))]));
   writeFileSync(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
 }

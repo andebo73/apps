@@ -14,6 +14,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
 
 ## Erledigt
 
+- [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
+  plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten
   Qualitaetspruefungen einrichten.
 - [x] Sekundaere Checklistenaktionen in eine Desktop-Seitenleiste und ein
@@ -33,7 +35,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
   fuer die Checklisten-App umsetzen.
 - [x] GitHub Quality-CI fuer Snapshot, Tests, Build und Branding einrichten.
 - [x] Offlinefaehige Integritaetspruefung des vendorten Snapshots ergaenzen.
-- [x] Reproduzierbarkeit der committed `dist/`-Ausgabe in CI pruefen.
+- [x] `dist/` in CI frisch bauen und die erzeugten Dateien vor Deployment
+  funktional und auf sichtbares Branding pruefen.
 - [x] Sync-Bericht unter `_work/` fuer jeden Check/Apply-Lauf erzeugen.
 - [x] Upstream-Loeschungen nur mit separater Removal-Freigabe anwenden.
 - [x] Konflikt-, Removal- und Idempotenzverhalten automatisiert testen.

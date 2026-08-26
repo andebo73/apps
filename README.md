@@ -37,7 +37,7 @@ Design-Token-Set liegt in `src/themes/fdb.css`. Die technischen `qrx-*`-Namen
 bleiben als stabile Framework-Schnittstelle erhalten.
 
 Die GitHub-Action `.github/workflows/quality.yml` fuehrt Snapshot-Pruefung,
-Tests, Build, Markencheck und einen Vergleich der committed `dist/`-Ausgabe aus.
+Tests, Build und Markencheck aus.
 Die Action `.github/workflows/deploy.yml` wiederholt diese Pruefungen bei Pushes
 auf `master` und veroeffentlicht anschliessend `dist/` ueber GitHub Pages.
 

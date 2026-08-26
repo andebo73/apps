@@ -74,3 +74,10 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Das GitHub-Pages-Deployment nutzt bewusst `npm run build` statt den
   Upstream-Generator direkt aufzurufen, damit die FDB-Branding-Schicht vor dem
   Upload angewendet wird. Deployt wird ausschliesslich `dist/`.
+- Roh-Hashes von Textdateien sind zwischen Windows-CRLF und Linux-LF nicht
+  portabel. Snapshot-Hashes kanonisieren deshalb valide UTF-8-Dateien auf LF;
+  Binaerdateien bleiben bytegenau.
+- Generierte Buildversionen des Upstream-Generators basieren auf Datei-mtimes.
+  Ein frischer Git-Checkout kann deshalb andere `dist/`-Dateien erzeugen, obwohl
+  die Quellen identisch sind. CI baut und prueft die Artefakte, vergleicht sie
+  aber nicht bytegenau mit den lokal committed Ausgaben.

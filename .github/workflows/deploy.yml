@@ -38,9 +38,6 @@ jobs:
       - name: Check visible branding
         run: npm run brand:check
 
-      - name: Verify committed build output
-        run: git diff --exit-code -- dist
-
       - name: Disable Jekyll
         run: touch dist/.nojekyll
 
@@ -62,4 +59,3 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
-

@@ -70,8 +70,8 @@ Status: Phasen 1 bis 5 wurden am 2026-08-26 abgeschlossen. Der Snapshot umfasst
 einer lokalen Build-Schicht und veraendert keine synchronisierte Datei. Build,
 Tests, Marken-Scan und Sync-Check sind erfolgreich. Der Sync schreibt Berichte,
 blockiert lokale Konflikte und verlangt fuer Upstream-Loeschungen eine separate
-Freigabe. Die Quality-CI prueft Snapshot, Tests, Build, Branding und committed
-Build-Ausgaben ohne ein Deployment auszufuehren. Die erste App "Checkliste" ist
+Freigabe. Die Quality-CI prueft Snapshot, Tests, Build und Branding ohne ein
+Deployment auszufuehren. Die erste App "Checkliste" ist
 als local-first MVP umgesetzt, getestet und im Portal eingebunden.
 
 ### 1. Upstream-Basis erfassen

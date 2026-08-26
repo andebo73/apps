@@ -32,6 +32,10 @@ Ein Apply ohne inhaltliche oder Revisionsaenderung schreibt das Manifest nicht
 neu. Wiederholte Apply-Laeufe sind damit idempotent; nur der ignorierte Bericht
 erhaelt einen neuen Zeitstempel.
 
+Hashes von validen UTF-8-Textdateien werden mit LF-Zeilenenden berechnet. Damit
+liefert derselbe Snapshot unter Windows und auf Linux identische Ergebnisse.
+Binaerdateien werden weiterhin unveraendert bytegenau gehasht.
+
 Eine abweichende Quelle kann einmalig angegeben werden:
 
 ```powershell

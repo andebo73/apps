@@ -78,6 +78,18 @@ test('offline verification detects snapshot modification', () => {
   }
 });
 
+test('offline verification treats CRLF and LF text as identical', () => {
+  const paths = fixture();
+  try {
+    writeFileSync(join(paths.source, 'framework', 'keep.txt'), 'first\r\nsecond\r\n');
+    run(paths, '--apply');
+    writeFileSync(join(paths.target, 'framework', 'keep.txt'), 'first\nsecond\n');
+    assert.match(run(paths, '--verify'), /integrity verified/);
+  } finally {
+    rmSync(paths.base, { recursive: true, force: true });
+  }
+});
+
 test('local edits block an upstream update and are reported', () => {
   const paths = fixture();
   try {
