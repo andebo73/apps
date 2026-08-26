@@ -1,0 +1,19 @@
+{
+  "name": "Checkliste",
+  "lang": "de",
+  "theme": "fdb",
+  "output": "checklist.html",
+  "title": "Checkliste – FDB Apps",
+  "card": {
+    "description": "Flexible Checklisten für Einkäufe, Reisen und Alltag. Mit Vorlagen, Tags, Filtern, lokalem Autospeichern sowie vielseitigem Import und Export.",
+    "description_en": "Flexible checklists for shopping, travel and everyday tasks. Includes templates, tags, filters, local autosave and versatile import and export.",
+    "tags": ["Checklisten", "Tags & Filter", "Local-first"],
+    "tags_en": ["Checklists", "Tags & filters", "Local-first"]
+  },
+  "fonts": [],
+  "inlineScripts": [
+    "../../shared/qrx-core.js",
+    "../../shared/qrx-i18n.js",
+    "model.js"
+  ]
+}

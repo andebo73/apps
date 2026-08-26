@@ -4,6 +4,12 @@ FDB Apps wird eine Sammlung lokaler, eigenstaendiger HTML-WebApps. Technische
 Grundlage ist das bestehende qurix-Apps-Framework. Solange beide Projekte
 parallel entwickelt werden, bleibt qurix der fachliche und technische Upstream.
 
+## Apps
+
+- **Checkliste** (`dist/checklist.html`): universelle Checklisten mit Profilen,
+  Tags und Filtern, lokalem Autospeichern sowie JSON-, Markdown- und Textimport.
+  Das mitgelieferte Startprofil deckt einen typischen Wocheneinkauf ab.
+
 Der aktuelle Stand ist die Projektinitialisierung. Der Umsetzungsplan steht in
 [`PLAN.md`](PLAN.md); offene Aufgaben, Beobachtungen und Rueckmeldungen an den
 Upstream werden getrennt in `backlog.md`, `findings.md` und `source.md` gepflegt.

@@ -5,5 +5,5 @@
   "output": "index.html",
   "description": "Local-first WebApps von FDB Apps: eigenständig, ohne Installation und mit lokaler Datenverarbeitung.",
   "fonts": [],
-  "apps": []
+  "apps": ["checklist"]
 }

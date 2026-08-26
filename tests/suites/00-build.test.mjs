@@ -27,3 +27,15 @@ test('upstream manifest has revision and hashes', () => {
   assert.ok(manifest.syncedAt);
   assert.ok(Object.keys(manifest.files).length > 0);
 });
+
+test('checklist is emitted as a branded self-contained app', () => {
+  const app = readFileSync(join(ROOT, 'dist', 'checklist.html'), 'utf8');
+  assert.match(app, /<title>Checkliste – FDB Apps<\/title>/);
+  assert.match(app, /window\.qurixApp\.serializeState/);
+  assert.match(app, /window\.qurixApp\.hydrateState/);
+  assert.match(app, /id="importDialog"/);
+  assert.match(app, /id="editDialog"/);
+  assert.match(app, /id="editText"/);
+  assert.match(app, /id="editTags"/);
+  assert.doesNotMatch(app, /<!--SLOT:/);
+});

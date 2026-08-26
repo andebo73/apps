@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkliste – FDB Apps</title>
+<style>
+/* FDB Apps tokens. Technical --qrx-* names form the shared framework API. */
+:root {
+  --qrx-blue:#315B7D; --qrx-blue-dark:#23445F; --qrx-blue-light:#4B7799;
+  --qrx-green:#C66A3D; --qrx-green-dark:#A94F28; --qrx-green-light:#DF8960;
+  --qrx-gradient:linear-gradient(135deg,var(--qrx-blue) 0%,var(--qrx-green) 100%);
+  --qrx-primary:var(--qrx-blue); --qrx-primary-hover:var(--qrx-blue-dark);
+  --qrx-accent:var(--qrx-green); --qrx-accent-hover:var(--qrx-green-dark);
+  --qrx-bg:#FBFAF7; --qrx-bg-subtle:#F3F0E9; --qrx-bg-muted:#E9E4DA;
+  --qrx-surface:#FFFFFF; --qrx-bg-dark:#17232C;
+  --qrx-text:#202A31; --qrx-text-muted:#5F696E; --qrx-text-subtle:#879095;
+  --qrx-text-inverse:#FFFFFF; --qrx-text-on-brand:#FFFFFF;
+  --qrx-border:#DDD8CF; --qrx-border-strong:#C5BEB2;
+  --qrx-success:#2F7D5C; --qrx-warning:#B97818; --qrx-danger:#B74335;
+  --qrx-info:var(--qrx-blue);
+  --qrx-font-sans:"Segoe UI",Inter,system-ui,-apple-system,Roboto,sans-serif;
+  --qrx-font-mono:"Cascadia Code","JetBrains Mono",Consolas,monospace;
+  --qrx-s-1:.25rem; --qrx-s-2:.5rem; --qrx-s-3:.75rem; --qrx-s-4:1rem;
+  --qrx-s-5:1.25rem; --qrx-s-6:1.5rem; --qrx-s-8:2rem; --qrx-s-10:2.5rem;
+  --qrx-radius-sm:5px; --qrx-radius:9px; --qrx-radius-lg:14px;
+  --qrx-shadow-sm:0 1px 2px rgba(32,42,49,.06);
+  --qrx-shadow:0 5px 16px rgba(32,42,49,.10);
+  --qrx-shadow-lg:0 16px 38px rgba(32,42,49,.15);
+  --qrx-transition:150ms ease;
+}
+@media (prefers-color-scheme:dark) {
+  :root {
+    --qrx-bg:#17232C; --qrx-bg-subtle:#202F39; --qrx-bg-muted:#2A3B46;
+    --qrx-surface:#202F39; --qrx-text:#F3F0E9; --qrx-text-muted:#BAC2C5;
+    --qrx-text-subtle:#8F9CA2; --qrx-border:#344752; --qrx-border-strong:#4A5E69;
+    --qrx-shadow-sm:0 1px 2px rgba(0,0,0,.35);
+    --qrx-shadow:0 5px 16px rgba(0,0,0,.45);
+    --qrx-shadow-lg:0 16px 38px rgba(0,0,0,.55);
+    --qrx-primary:#78A6C8; --qrx-primary-hover:#96BCD6;
+    --qrx-accent:var(--qrx-green-light);
+  }
+}
+
+/* === Reset & base === */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; font-family: var(--qrx-font-sans); font-size: 1rem; line-height: 1.6;
+  color: var(--qrx-text); background: var(--qrx-bg); -webkit-font-smoothing: antialiased;
+  display: flex; flex-direction: column; min-height: 100vh;
+}
+a { color: var(--qrx-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: var(--qrx-font-mono); font-size: 0.9em;
+       background: var(--qrx-bg-muted); padding: 0.1em 0.3em; border-radius: var(--qrx-radius-sm); }
+
+/* === Components === */
+.qrx-btn {
+  display: inline-flex; align-items: center; gap: var(--qrx-s-2);
+  padding: var(--qrx-s-2) var(--qrx-s-4); font: inherit; font-size: 0.875rem; font-weight: 500;
+  border: 1px solid var(--qrx-border-strong); border-radius: var(--qrx-radius);
+  background: var(--qrx-surface); color: var(--qrx-text);
+  cursor: pointer; transition: var(--qrx-transition);
+}
+.qrx-btn:hover { background: var(--qrx-bg-muted); border-color: var(--qrx-primary); }
+.qrx-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.qrx-btn-primary { background: var(--qrx-primary); color: var(--qrx-text-on-brand);
+                   border-color: var(--qrx-primary); }
+.qrx-btn-primary:hover:not(:disabled) { background: var(--qrx-primary-hover);
+                         border-color: var(--qrx-primary-hover); }
+.qrx-btn-accent { background: var(--qrx-accent); color: var(--qrx-text-on-brand);
+                  border-color: var(--qrx-accent); }
+.qrx-btn-accent:hover:not(:disabled) { background: var(--qrx-accent-hover);
+                        border-color: var(--qrx-accent-hover); }
+.qrx-btn-ghost { background: transparent; border-color: transparent; color: var(--qrx-text-muted); }
+.qrx-btn-ghost:hover { background: var(--qrx-bg-muted); color: var(--qrx-text); }
+.qrx-btn-sm { padding: var(--qrx-s-1) var(--qrx-s-3); font-size: 0.8125rem; }
+.qrx-btn-icon { padding: var(--qrx-s-2); }
+
+.qrx-input, .qrx-textarea, .qrx-select {
+  width: 100%; padding: var(--qrx-s-2) var(--qrx-s-3); font: inherit; font-size: 0.9375rem;
+  color: var(--qrx-text); background: var(--qrx-surface);
+  border: 1px solid var(--qrx-border-strong); border-radius: var(--qrx-radius);
+  transition: var(--qrx-transition);
+}
+.qrx-input:focus, .qrx-textarea:focus, .qrx-select:focus {
+  outline: none; border-color: var(--qrx-primary);
+  box-shadow: 0 0 0 3px rgba(21,107,142,0.18);
+}
+.qrx-label { display: block; margin-bottom: var(--qrx-s-2); font-size: 0.875rem;
+             font-weight: 500; color: var(--qrx-text-muted); }
+.qrx-form-group { margin-bottom: var(--qrx-s-4); }
+
+.qrx-card {
+  background: var(--qrx-surface); border: 1px solid var(--qrx-border);
+  border-radius: var(--qrx-radius-lg); padding: var(--qrx-s-6); box-shadow: var(--qrx-shadow-sm);
+}
+.qrx-card-accent { border-top: 3px solid; border-image: var(--qrx-gradient) 1; }
+
+/* === Shell layout === */
+.qrx-shell-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--qrx-s-3) var(--qrx-s-6);
+  background: var(--qrx-surface);
+  border-bottom: 1px solid var(--qrx-border);
+  position: sticky; top: 0; z-index: 10;
+}
+.qrx-header-brand { display: flex; align-items: center; gap: var(--qrx-s-3); }
+.qrx-header-home { display: inline-flex; align-items: center; gap: var(--qrx-s-3);
+                   text-decoration: none; color: inherit; }
+.qrx-header-home:hover { text-decoration: none; opacity: 0.85; }
+.qrx-header-logo { height: 40px; width: auto; flex-shrink: 0; display: block; }
+.qrx-header-title { margin: 0; font-size: 1.125rem; font-weight: 600;
+                    letter-spacing: -0.01em; color: var(--qrx-text); }
+.qrx-header-divider { width: 1px; height: 24px; background: var(--qrx-border);
+                      margin: 0 var(--qrx-s-2); }
+.qrx-header-app-label { font-size: 0.875rem; color: var(--qrx-text-muted); font-weight: 500; }
+
+.qrx-shell-docs {
+  background: var(--qrx-bg-subtle);
+  border-bottom: 1px solid var(--qrx-border);
+  padding: var(--qrx-s-8) var(--qrx-s-6);
+  border-left: 4px solid var(--qrx-accent);
+}
+.qrx-shell-docs-inner { max-width: 800px; margin: 0 auto; }
+.qrx-shell-docs h2 { margin-top: 0; color: var(--qrx-primary); }
+.qrx-shell-docs h3 { color: var(--qrx-text); }
+.qrx-shell-app { flex: 1; padding: var(--qrx-s-8) var(--qrx-s-6);
+                 max-width: 1200px; width: 100%; margin: 0 auto; }
+.qrx-shell-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--qrx-s-4);
+  padding: var(--qrx-s-3) var(--qrx-s-6); font-size: 0.8125rem; color: var(--qrx-text-muted);
+  background: var(--qrx-surface); border-top: 1px solid var(--qrx-border);
+}
+.qrx-footer-brand { display: flex; align-items: center; gap: var(--qrx-s-2); }
+.qrx-footer-brand a { color: var(--qrx-primary); font-weight: 500; }
+
+.cl-app{max-width:1080px;margin:0 auto;padding:var(--qrx-s-8) var(--qrx-s-5) var(--qrx-s-10);color:var(--qrx-text)}
+.cl-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.cl-hero{display:grid;grid-template-columns:1fr minmax(180px,32%);gap:var(--qrx-s-8);align-items:end;margin-bottom:var(--qrx-s-6)}
+.cl-eyebrow{display:block;font-family:var(--qrx-font-mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--qrx-accent);font-weight:700}
+.cl-title{display:block;width:100%;margin:.15rem 0;padding:0;border:0;background:transparent;color:var(--qrx-text);font:700 clamp(2rem,6vw,3.4rem)/1.1 var(--qrx-font-sans);letter-spacing:-.03em}
+.cl-title:focus{outline:2px solid var(--qrx-primary);outline-offset:4px;border-radius:var(--qrx-radius-sm)}
+.cl-progress-text{margin:.45rem 0 0;color:var(--qrx-text-muted)}
+.cl-progress{height:10px;border-radius:999px;background:var(--qrx-bg-muted);overflow:hidden;margin-bottom:.65rem}
+.cl-progress span{display:block;height:100%;width:0;background:var(--qrx-gradient);transition:width var(--qrx-transition)}
+.cl-card{background:var(--qrx-surface);border:1px solid var(--qrx-border);border-radius:var(--qrx-radius-lg);box-shadow:var(--qrx-shadow-sm)}
+.cl-profile-bar{display:flex;gap:var(--qrx-s-3);align-items:center;flex-wrap:wrap;padding:var(--qrx-s-4);margin-bottom:var(--qrx-s-4)}
+.cl-profile-bar label{font-weight:700}.cl-profile-bar select{min-width:180px}
+.cl-btn{min-height:40px;padding:.55rem .9rem;border:1px solid var(--qrx-border-strong);border-radius:var(--qrx-radius);background:var(--qrx-surface);color:var(--qrx-text);font:600 .9rem var(--qrx-font-sans);cursor:pointer;transition:var(--qrx-transition)}
+.cl-btn:hover{border-color:var(--qrx-primary);color:var(--qrx-primary)}
+.cl-btn:focus-visible,.cl-icon-btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--qrx-primary);outline-offset:2px}
+.cl-btn.cl-primary{background:var(--qrx-gradient);border-color:transparent;color:var(--qrx-text-on-brand)}
+.cl-btn.cl-danger{color:var(--qrx-danger)}
+.cl-add-form{display:grid;grid-template-columns:minmax(220px,2fr) minmax(100px,.6fr) minmax(140px,1fr) minmax(140px,1fr) auto;gap:var(--qrx-s-3);align-items:end;padding:var(--qrx-s-4);margin-bottom:var(--qrx-s-4)}
+.cl-field{display:grid;gap:.3rem}.cl-field label,.cl-dialog label{font-size:.8rem;font-weight:700;color:var(--qrx-text-muted)}
+.cl-field input,select,textarea,.cl-dialog input{width:100%;min-height:42px;padding:.62rem .72rem;border:1px solid var(--qrx-border-strong);border-radius:var(--qrx-radius);background:var(--qrx-bg);color:var(--qrx-text);font:inherit}
+.cl-add{height:42px}.cl-toolbar{display:flex;align-items:center;gap:var(--qrx-s-2);flex-wrap:wrap;margin:var(--qrx-s-4) 0}
+.cl-toolbar-spacer{flex:1}.cl-toggle{display:inline-flex;align-items:center;gap:.55rem;color:var(--qrx-text-muted);font-weight:600}.cl-toggle input{width:1.1rem;height:1.1rem;accent-color:var(--qrx-primary)}
+.cl-tag-filters{display:flex;align-items:center;gap:var(--qrx-s-2);flex-wrap:wrap;margin:calc(var(--qrx-s-2) * -1) 0 var(--qrx-s-5);padding:.7rem .8rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle)}.cl-tag-filters>strong{font-size:.82rem;color:var(--qrx-text-muted)}.cl-tag-buttons{display:flex;gap:.4rem;flex-wrap:wrap;flex:1}.cl-tag{padding:.28rem .62rem;border:1px solid var(--qrx-border-strong);border-radius:999px;background:var(--qrx-surface);color:var(--qrx-text-muted);font:600 .78rem var(--qrx-font-sans);cursor:pointer}.cl-tag:hover{border-color:var(--qrx-primary);color:var(--qrx-primary)}.cl-tag.is-active{border-color:var(--qrx-primary);background:var(--qrx-primary);color:var(--qrx-text-on-brand)}
+.cl-groups{display:grid;gap:var(--qrx-s-5)}
+.cl-group{background:var(--qrx-surface);border:1px solid var(--qrx-border);border-radius:var(--qrx-radius-lg);overflow:hidden;box-shadow:var(--qrx-shadow-sm)}
+.cl-group h2{margin:0;padding:.75rem 1rem;background:var(--qrx-bg-subtle);border-bottom:1px solid var(--qrx-border);font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;color:var(--qrx-text-muted)}
+.cl-list{list-style:none;margin:0;padding:0}.cl-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:var(--qrx-s-3);align-items:center;padding:.78rem 1rem;border-bottom:1px solid var(--qrx-border)}.cl-item:last-child{border-bottom:0}
+.cl-item-check{width:1.25rem;height:1.25rem;accent-color:var(--qrx-success);cursor:pointer}.cl-item-main{min-width:0}.cl-item-line{display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap}.cl-item-name{font-weight:650;overflow-wrap:anywhere}.cl-item-quantity{font-family:var(--qrx-font-mono);font-size:.78rem;padding:.1rem .4rem;border-radius:999px;background:var(--qrx-bg-muted);color:var(--qrx-text-muted)}.cl-item-note{display:block;margin-top:.15rem;color:var(--qrx-text-subtle);font-size:.85rem}.cl-item.is-done .cl-item-name{text-decoration:line-through;color:var(--qrx-text-subtle)}
+.cl-item-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.35rem}.cl-item-tag{font-family:var(--qrx-font-mono);font-size:.68rem;padding:.08rem .38rem;border-radius:999px;background:color-mix(in srgb,var(--qrx-primary) 10%,transparent);color:var(--qrx-primary)}
+.cl-actions{display:flex;gap:.2rem}.cl-icon-btn{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:.25rem;border:0;border-radius:var(--qrx-radius-sm);background:transparent;color:var(--qrx-text-muted);font:600 1rem var(--qrx-font-sans);cursor:pointer}.cl-icon-btn:hover{background:var(--qrx-bg-muted);color:var(--qrx-primary)}
+.cl-empty{display:grid;gap:.35rem;place-items:center;text-align:center;padding:var(--qrx-s-10);border:1px dashed var(--qrx-border-strong);border-radius:var(--qrx-radius-lg);color:var(--qrx-text-muted)}
+.cl-status{min-height:1.5rem;margin:var(--qrx-s-4) 0;color:var(--qrx-success)}
+.cl-dialog{width:min(680px,calc(100% - 2rem));max-height:calc(100% - 2rem);padding:0;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius-lg);background:var(--qrx-surface);color:var(--qrx-text);box-shadow:var(--qrx-shadow-lg)}.cl-dialog::backdrop{background:color-mix(in srgb,var(--qrx-bg-dark) 62%,transparent)}
+.cl-dialog-inner{display:grid;gap:var(--qrx-s-3);padding:var(--qrx-s-5)}.cl-dialog header,.cl-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:var(--qrx-s-3)}.cl-dialog h2{margin:.1rem 0 0}.cl-dialog textarea{resize:vertical}.cl-dialog details{padding:.7rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle)}.cl-dialog details p{margin:.5rem 0 0}.cl-dialog footer{justify-content:flex-end;margin-top:var(--qrx-s-2)}.cl-error{min-height:1.4rem;margin:0;color:var(--qrx-danger)}
+.cl-profile-list{display:grid;gap:var(--qrx-s-2)}.cl-profile-row{display:grid;grid-template-columns:1fr auto;gap:var(--qrx-s-3);align-items:center;padding:.75rem;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius)}.cl-profile-row small{display:block;color:var(--qrx-text-muted)}
+.cl-edit-dialog{width:min(720px,calc(100% - 2rem))}.cl-edit-grid{display:grid;grid-template-columns:2fr 1fr;gap:var(--qrx-s-3)}.cl-edit-name,.cl-edit-note{grid-column:1/-1}
+@media(max-width:760px){.cl-app{padding:var(--qrx-s-5) var(--qrx-s-3)}.cl-hero{grid-template-columns:1fr;gap:var(--qrx-s-3)}.cl-add-form{grid-template-columns:1fr 1fr}.cl-field-main,.cl-add{grid-column:1/-1}.cl-toolbar .cl-btn{flex:1 1 45%}.cl-toolbar-spacer{display:none}.cl-toggle{width:100%;margin-bottom:.25rem}.cl-item{padding:.7rem}.cl-actions{flex-direction:column}.cl-profile-bar>*{flex:1 1 45%}.cl-profile-bar label{flex-basis:100%}}
+@media(max-width:520px){.cl-edit-grid{grid-template-columns:1fr}.cl-edit-name,.cl-edit-note{grid-column:auto}}
+.fdb-shell-mark{display:inline-grid;place-items:center;min-width:2.5rem;height:2.5rem;padding:0 .5rem;border-radius:var(--qrx-radius);background:var(--qrx-gradient);color:var(--qrx-text-on-brand);font-weight:800;letter-spacing:.04em}.fdb-shell-name{font-weight:700}
+</style>
+</head>
+<body>
+
+<header class="qrx-shell-header">
+  <div class="qrx-header-brand">
+    <a class="qrx-header-home" href="index.html" aria-label="FDB Apps Startseite">
+      <span class="fdb-shell-mark" aria-hidden="true">FDB</span>
+      <span class="fdb-shell-name">FDB Apps</span>
+    </a>
+    <span class="qrx-header-divider" aria-hidden="true"></span>
+    <span class="qrx-header-app-label">Checkliste</span>
+  </div>
+  <nav>
+    <!-- Only shown once the app provides translations (qrx.i18n.hasNamespace). -->
+    <button class="qrx-btn qrx-btn-ghost" data-action="toggle-lang" hidden></button>
+    <button class="qrx-btn qrx-btn-ghost" data-action="toggle-docs"
+            aria-expanded="false" aria-controls="qrx-docs" data-qrx-i18n="shell.docs">
+      Documentation
+    </button>
+  </nav>
+</header>
+
+<section id="qrx-docs" class="qrx-shell-docs" hidden>
+  <div class="qrx-shell-docs-inner">
+<h2>Checkliste</h2>
+<p>Die App verwaltet eine aktive Checkliste und wiederverwendbare Profile. Sie eignet sich für Einkaufs-, Pack- und Aufgabenlisten und speichert alle Änderungen automatisch im Browser.</p>
+<p>Über das Stiftsymbol öffnet sich ein Bearbeitungsdialog, in dem Bezeichnung, Menge, Kategorie, Tags und Notiz gemeinsam geändert werden können.</p>
+
+<h3>Profile und Listen</h3>
+<p>Ein Profil ist eine Vorlage. Mit <b>Neue Liste</b> wird daraus eine unabhängige Checkliste erzeugt; spätere Änderungen verändern das Profil nicht. Eigene Listen lassen sich mit <b>Als Profil speichern</b> wiederverwenden.</p>
+<p>Wenn ein mitgeliefertes Profil erweitert wird, ergänzt die App fehlende Vorlageneinträge einmalig in einer daraus erzeugten aktiven Liste. Bereits gesetzte Häkchen, eigene Einträge und angepasste Mengen bleiben erhalten.</p>
+
+<h3>Tags und Filter</h3>
+<p>Jeder Eintrag kann mehrere, durch Kommas getrennte Tags erhalten, zum Beispiel <code>Bio, Angebot</code>. Oberhalb der Liste erscheinen alle verwendeten Tags als Filter. Sind mehrere Tags aktiv, werden Einträge angezeigt, die mindestens einen davon besitzen.</p>
+
+<h3>Import und Export</h3>
+<p>Importiert werden JSON, Markdown und einfacher Text. Bei einfachem Text wird jede nicht leere Zeile zu einem Eintrag. Markdown unterstützt Überschriften als Kategorien, Checkboxen und Hashtag-Tags wie <code>- [ ] Milch #Frühstück #Bio</code>. Ein Import kann direkt zur aktiven Liste oder zu einem neuen Profil werden.</p>
+<p>JSON bewahrt alle Felder verlustfrei. Markdown eignet sich besonders zum Teilen und für KI-generierte Listen. Der Importdialog enthält dafür einen Beispielprompt.</p>
+
+<h3>Lokale Speicherung</h3>
+<p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden ausschließlich im <code>localStorage</code> des Browsers gespeichert. Es gibt kein Backend und keine Cloud-Synchronisation. JSON-Export dient als transportables Backup.</p>
+
+<h3>HTML-Exporte</h3>
+<ul>
+  <li><b>Leer exportieren</b> erzeugt eine saubere App ohne persönliche Daten.</li>
+  <li><b>Mit Daten exportieren</b> bettet die aktive Liste und eigene Profile in die HTML-Datei ein. Diese Momentaufnahme bleibt vollständig bearbeitbar.</li>
+</ul>
+  </div>
+</section>
+
+<main id="qrx-app" class="qrx-shell-app">
+<div class="cl-app">
+  <section class="cl-hero" aria-labelledby="cl-title-label">
+    <div>
+      <span class="cl-eyebrow">Universelle Checkliste</span>
+      <label id="cl-title-label" class="cl-sr-only" for="listTitle">Titel der Checkliste</label>
+      <input id="listTitle" class="cl-title" type="text" value="Einkaufsliste" maxlength="100">
+      <p id="progressText" class="cl-progress-text" aria-live="polite">0 von 0 erledigt</p>
+    </div>
+    <div class="cl-progress" aria-hidden="true"><span id="progressBar"></span></div>
+  </section>
+
+  <section class="cl-card cl-profile-bar" aria-label="Profil und Listenaktionen">
+    <label for="profileSelect">Profil</label>
+    <select id="profileSelect"></select>
+    <button id="newFromProfile" class="cl-btn cl-primary" type="button">Neue Liste</button>
+    <button id="saveProfile" class="cl-btn" type="button">Als Profil speichern</button>
+    <button id="manageProfiles" class="cl-btn" type="button">Profile verwalten</button>
+  </section>
+
+  <form id="addForm" class="cl-card cl-add-form">
+    <div class="cl-field cl-field-main">
+      <label for="itemText">Neuer Eintrag</label>
+      <input id="itemText" type="text" required maxlength="160" placeholder="z. B. Milch">
+    </div>
+    <div class="cl-field">
+      <label for="itemQuantity">Menge</label>
+      <input id="itemQuantity" type="text" maxlength="40" placeholder="z. B. 2 l">
+    </div>
+    <div class="cl-field">
+      <label for="itemCategory">Kategorie</label>
+      <input id="itemCategory" type="text" maxlength="80" list="categorySuggestions" placeholder="optional">
+      <datalist id="categorySuggestions"></datalist>
+    </div>
+    <div class="cl-field">
+      <label for="itemTags">Tags</label>
+      <input id="itemTags" type="text" maxlength="160" placeholder="z. B. Bio, Angebot">
+    </div>
+    <button class="cl-btn cl-primary cl-add" type="submit">Hinzufügen</button>
+  </form>
+
+  <section class="cl-toolbar" aria-label="Ansicht, Import und Export">
+    <label class="cl-toggle"><input id="hideCompleted" type="checkbox"> Erledigte ausblenden</label>
+    <span class="cl-toolbar-spacer"></span>
+    <button id="openImport" class="cl-btn" type="button">Importieren</button>
+    <button id="exportJson" class="cl-btn" type="button">JSON exportieren</button>
+    <button id="exportMarkdown" class="cl-btn" type="button">Markdown exportieren</button>
+    <button id="resetList" class="cl-btn cl-danger" type="button">Zurücksetzen</button>
+  </section>
+
+  <section id="tagFilters" class="cl-tag-filters" aria-label="Nach Tags filtern" hidden>
+    <strong>Tags</strong>
+    <div id="tagFilterButtons" class="cl-tag-buttons"></div>
+    <button id="clearTagFilters" class="cl-btn" type="button" hidden>Filter löschen</button>
+  </section>
+
+  <div id="emptyState" class="cl-empty" hidden>
+    <strong id="emptyTitle">Die Checkliste ist leer.</strong>
+    <span id="emptyHint">Füge oben einen Eintrag hinzu oder importiere eine vorhandene Liste.</span>
+  </div>
+  <div id="listGroups" class="cl-groups" aria-label="Checklisten-Einträge"></div>
+  <p id="statusMessage" class="cl-status" role="status" aria-live="polite"></p>
+
+  <dialog id="importDialog" class="cl-dialog">
+    <form method="dialog" class="cl-dialog-inner" id="importForm">
+      <header><div><span class="cl-eyebrow">JSON · Markdown · Text</span><h2>Checkliste importieren</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
+      <label for="importFormat">Format</label>
+      <select id="importFormat"><option value="auto">Automatisch erkennen</option><option value="json">JSON</option><option value="markdown">Markdown</option><option value="text">Einfacher Text</option></select>
+      <label for="importText">Inhalt</label>
+      <textarea id="importText" rows="12" placeholder="# Wocheneinkauf&#10;&#10;## Obst &amp; Gemüse&#10;- [ ] 2x Paprika"></textarea>
+      <label class="cl-file-label" for="importFile">Oder Datei auswählen</label>
+      <input id="importFile" type="file" accept=".json,.md,.markdown,.txt,application/json,text/markdown,text/plain">
+      <label for="importTarget">Übernehmen als</label>
+      <select id="importTarget"><option value="list">Neue aktive Checkliste</option><option value="profile">Neues Profil</option></select>
+      <details><summary>Prompt für eine KI</summary><p>„Erstelle eine Checkliste als Markdown. Verwende eine H1-Überschrift, H2-Kategorien und Einträge im Format <code>- [ ] Menge Bezeichnung</code>.“</p></details>
+      <p id="importError" class="cl-error" role="alert"></p>
+      <footer><button class="cl-btn" value="cancel">Abbrechen</button><button id="confirmImport" class="cl-btn cl-primary" value="default">Importieren</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="profilesDialog" class="cl-dialog">
+    <form method="dialog" class="cl-dialog-inner">
+      <header><div><span class="cl-eyebrow">Vorlagen</span><h2>Profile verwalten</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
+      <p>Mitgelieferte Profile können dupliziert, eigene Profile zusätzlich gelöscht werden.</p>
+      <div id="profileList" class="cl-profile-list"></div>
+      <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="editDialog" class="cl-dialog cl-edit-dialog">
+    <form method="dialog" class="cl-dialog-inner" id="editForm">
+      <header><div><span class="cl-eyebrow">Eintrag</span><h2>Eintrag bearbeiten</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
+      <div class="cl-edit-grid">
+        <div class="cl-field cl-edit-name">
+          <label for="editText">Bezeichnung</label>
+          <input id="editText" type="text" required maxlength="160">
+        </div>
+        <div class="cl-field">
+          <label for="editQuantity">Menge</label>
+          <input id="editQuantity" type="text" maxlength="40" placeholder="z. B. 2 l">
+        </div>
+        <div class="cl-field">
+          <label for="editCategory">Kategorie</label>
+          <input id="editCategory" type="text" maxlength="80" list="categorySuggestions" placeholder="optional">
+        </div>
+        <div class="cl-field">
+          <label for="editTags">Tags</label>
+          <input id="editTags" type="text" maxlength="160" placeholder="Kommagetrennt">
+        </div>
+        <div class="cl-field cl-edit-note">
+          <label for="editNote">Notiz</label>
+          <textarea id="editNote" rows="4" maxlength="500" placeholder="optional"></textarea>
+        </div>
+      </div>
+      <p id="editError" class="cl-error" role="alert"></p>
+      <footer><button class="cl-btn" value="cancel">Abbrechen</button><button id="saveEdit" class="cl-btn cl-primary" value="default">Änderungen speichern</button></footer>
+    </form>
+  </dialog>
+</div>
+</main>
+
+<footer class="qrx-shell-footer">
+  <div class="qrx-footer-brand">
+    <strong>FDB Apps</strong>
+    &middot; <a href="index.html">App-Übersicht</a>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button class="qrx-btn" data-action="export-html"
+            data-qrx-i18n="shell.exportBlank" data-qrx-i18n-title="shell.exportBlankHint"
+            title="Download a blank copy of this app — no entered data">
+      Export blank
+    </button>
+    <button class="qrx-btn qrx-btn-primary" data-action="export-html-state"
+            data-qrx-i18n="shell.exportState" data-qrx-i18n-title="shell.exportStateHint"
+            title="Download a snapshot including all currently entered data">
+      Export with data
+    </button>
+  </div>
+</footer>
+
+<script>
+// ============================================================================
+// qrx.core — the DOM-independent basics every qurix app needs.
+//
+// Included via app.config.json "inlineScripts": "../../shared/qrx-core.js".
+// Loaded before the app script, so an app can just call qrx.core.*.
+//
+// Everything here replaces code that used to exist two to six times over. Where
+// the copies differed, the safest variant won; the notes say which and why.
+// ============================================================================
+(function () {
+  'use strict';
+  const qrx = (window.qrx = window.qrx || {});
+
+  // --- HTML escaping -------------------------------------------------------
+  // Escapes five characters, not three: quotes included, so the result is safe
+  // in text nodes AND in attributes. That makes the old separate escapeAttr()
+  // unnecessary. The null guard renders empty instead of the literal "null".
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // --- Downloads -----------------------------------------------------------
+  // Accepts a Blob, an ArrayBuffer, a typed array or a string, so the three
+  // former signatures (buffer+mime / blob / string+mime) all collapse here.
+  // The <a> is attached to the document because Firefox ignores detached ones.
+  function download(data, filename, mime) {
+    const blob = (data instanceof Blob)
+      ? data
+      : new Blob([data], { type: mime || 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  // --- Timing --------------------------------------------------------------
+  function debounce(fn, ms) {
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  // --- Formatting ----------------------------------------------------------
+  // The locale is always explicit. The apps used to disagree silently: the
+  // profiler hard-coded de-DE, the converter mixed en-US with the browser
+  // default, the cleaner used the browser default. qrx.i18n will later supply
+  // the active language; until then every caller states what it wants.
+  const DASH = '—';
+
+  function bytes(n) {
+    if (n == null || isNaN(n)) return DASH;
+    if (n < 1024) return `${n} B`;
+    const u = ['KB', 'MB', 'GB', 'TB'];
+    let v = n / 1024, i = 0;
+    while (v >= 1024 && i < u.length - 1) { v /= 1024; i++; }
+    // adaptive precision: 12.34 MB, but 123 MB
+    return `${v.toFixed(v >= 100 ? 0 : v >= 10 ? 1 : 2)} ${u[i]}`;
+  }
+
+  function number(n, locale) {
+    if (n == null) return DASH;
+    if (typeof n === 'bigint') return n.toLocaleString(locale);
+    const num = Number(n);
+    if (isNaN(num)) return DASH;
+    return num.toLocaleString(locale);
+  }
+
+  function duration(ms) {
+    if (ms == null || isNaN(ms)) return DASH;
+    if (ms < 1) return '<1 ms';
+    if (ms < 1000) return `${Math.round(ms)} ms`;
+    return `${(ms / 1000).toFixed(ms < 10000 ? 2 : 1)} s`;
+  }
+
+  // Renders a Date the way its SQL column type implies: DATE without a time,
+  // TIME without a date, everything else as "YYYY-MM-DD HH:MM:SS".
+  function dateByType(d, colType) {
+    if (!(d instanceof Date) || isNaN(d.getTime())) return String(d);
+    const T = String(colType || '').toUpperCase();
+    const iso = d.toISOString();
+    if (T === 'DATE') return iso.slice(0, 10);
+    if (T === 'TIME') return iso.slice(11, 19);
+    return iso.slice(0, 10) + ' ' + iso.slice(11, 19);
+  }
+
+  // --- localStorage --------------------------------------------------------
+  // Every access is guarded: private windows, disabled storage and quota
+  // errors must never take an app down. Reads fall back, writes report false.
+  const storage = {
+    get(key, fallback = null) {
+      try {
+        const v = localStorage.getItem(key);
+        return v === null ? fallback : v;
+      } catch (_) { return fallback; }
+    },
+    set(key, value) {
+      try { localStorage.setItem(key, String(value)); return true; }
+      catch (_) { return false; }
+    },
+    remove(key) {
+      try { localStorage.removeItem(key); return true; }
+      catch (_) { return false; }
+    },
+    getJSON(key, fallback = null) {
+      try {
+        const v = localStorage.getItem(key);
+        return v === null ? fallback : JSON.parse(v);
+      } catch (_) { return fallback; }   // also covers corrupt JSON
+    },
+    setJSON(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+      catch (_) { return false; }
+    },
+  };
+
+  qrx.core = {
+    escapeHtml,
+    download,
+    debounce,
+    fmt: { bytes, number, duration, dateByType, DASH },
+    storage,
+  };
+})();
+</script>
+
+<script>
+// ============================================================================
+// qrx.i18n — German/English for shell, widgets and apps.
+//
+// Design points that matter:
+//
+//  * Dictionaries are REGISTERED, not imported. Every widget ships its own
+//    strings under its own namespace, so a widget works the same in a German
+//    app and an English one. Nothing hard-codes text any more.
+//
+//  * The starting language comes from <html lang> (the build writes it from
+//    app.config.json). A user choice overrides it and is stored under one key
+//    for all qurix apps, so the language follows you from app to app.
+//
+//  * Number and date formats follow the language — one switch, not two
+//    settings that can drift apart (which is exactly what happened before:
+//    de-DE in the profiler, en-US and browser default in the converter).
+//
+//  * Static markup uses data-qrx-i18n attributes and is translated in place, so
+//    content.html does not have to move into JavaScript.
+// ============================================================================
+(function () {
+  'use strict';
+  const qrx = (window.qrx = window.qrx || {});
+
+  const SUPPORTED = ['de', 'en'];
+  const STORAGE_KEY = 'qrx_lang';
+  const LOCALES = { de: 'de-DE', en: 'en-GB' };
+
+  const dicts = Object.create(null);          // namespace -> { de: {...}, en: {...} }
+  const listeners = new Set();
+
+  function docLang() {
+    const l = (document.documentElement.getAttribute('lang') || '').slice(0, 2).toLowerCase();
+    return SUPPORTED.includes(l) ? l : 'en';
+  }
+
+  let current = (() => {
+    const stored = qrx.core ? qrx.core.storage.get(STORAGE_KEY) : null;
+    return SUPPORTED.includes(stored) ? stored : docLang();
+  })();
+
+  const registerListeners = new Set();
+
+  function register(namespace, tables) {
+    const slot = dicts[namespace] || (dicts[namespace] = { de: {}, en: {} });
+    for (const lang of SUPPORTED) Object.assign(slot[lang], (tables && tables[lang]) || {});
+    apply();
+    registerListeners.forEach(fn => {
+      try { fn(namespace); } catch (e) { console.warn('qrx.i18n register listener failed', e); }
+    });
+    return qrx.i18n;
+  }
+
+  // "namespace.key" — falls back to the other language and finally to the key
+  // itself, so a missing translation degrades to something readable instead of
+  // an empty label.
+  function lookup(key, lang) {
+    const dot = key.indexOf('.');
+    if (dot < 0) return undefined;
+    const ns = dicts[key.slice(0, dot)];
+    if (!ns) return undefined;
+    return ns[lang] ? ns[lang][key.slice(dot + 1)] : undefined;
+  }
+
+  function t(key, params) {
+    let s = lookup(key, current);
+    if (s === undefined) s = lookup(key, current === 'de' ? 'en' : 'de');
+    if (s === undefined) return key;
+    if (params) {
+      s = String(s).replace(/\{(\w+)\}/g, (m, name) =>
+        (params[name] === undefined ? m : String(params[name])));
+    }
+    return s;
+  }
+
+  // Translates an element tree in place:
+  //   <h2 data-qrx-i18n="app.title">              -> textContent
+  //   <input data-qrx-i18n-placeholder="app.hint"> -> placeholder attribute
+  //   also -title, -aria-label, -value
+  //
+  // The attribute is prefixed on purpose: wm2026-spielplan ships its own
+  // translation layer that uses the bare data-i18n attribute, and a shared
+  // module must never fight an app for its markup.
+  //
+  // An unresolved key is left alone rather than written into the page — a
+  // missing translation should show the original text, not "app.title".
+  const ATTRS = ['placeholder', 'title', 'aria-label', 'value'];
+  function apply(root) {
+    const scope = root || document;
+    if (!scope.querySelectorAll) return;
+    scope.querySelectorAll('[data-qrx-i18n]').forEach(el => {
+      const key = el.getAttribute('data-qrx-i18n');
+      const val = t(key);
+      if (val !== key) el.textContent = val;
+    });
+    for (const a of ATTRS) {
+      scope.querySelectorAll(`[data-qrx-i18n-${a}]`).forEach(el => {
+        const key = el.getAttribute(`data-qrx-i18n-${a}`);
+        const val = t(key);
+        if (val !== key) el.setAttribute(a, val);
+      });
+    }
+    // Whole blocks per language — used for the documentation, which is prose:
+    // one key per sentence would be unreadable and unmaintainable.
+    const blocks = scope.querySelectorAll('[data-qrx-docs]');
+    if (blocks.length) {
+      blocks.forEach(el => { el.hidden = el.getAttribute('data-qrx-docs') !== current; });
+    }
+  }
+
+  function setLang(lang) {
+    if (!SUPPORTED.includes(lang) || lang === current) return;
+    current = lang;
+    if (qrx.core) qrx.core.storage.set(STORAGE_KEY, lang);
+    document.documentElement.setAttribute('lang', lang);
+    apply();
+    listeners.forEach(fn => { try { fn(lang); } catch (e) { console.warn('qrx.i18n listener failed', e); } });
+  }
+
+  qrx.i18n = {
+    SUPPORTED,
+    register,
+    t,
+    apply,
+    setLang,
+    lang: () => current,
+    /** BCP-47 tag for toLocaleString etc. — derived from the language. */
+    locale: () => LOCALES[current],
+    /** True once the app itself has registered strings (the shell uses this
+     *  to decide whether offering a language switch would help or would only
+     *  produce a half-translated screen). */
+    hasNamespace: (ns) => !!dicts[ns],
+    /** Test/debug view of what is registered. */
+    dicts: () => dicts,
+    onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },
+    /** Fires when a dictionary is registered — an app may do that long after
+     *  the shell has rendered. */
+    onRegister(fn) { registerListeners.add(fn); return () => registerListeners.delete(fn); },
+  };
+
+  // translate whatever is already in the document
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => apply());
+  } else { apply(); }
+})();
+</script>
+
+<script>
+(function (root) {
+  'use strict';
+
+  const FORMAT = 'fdb-checklist';
+  const VERSION = 1;
+  let sequence = 0;
+  const id = (prefix = 'item') => `${prefix}-${Date.now().toString(36)}-${(++sequence).toString(36)}`;
+  const text = (value) => String(value == null ? '' : value).trim();
+
+  function normalizeTags(value) {
+    const values = Array.isArray(value) ? value : text(value).split(',');
+    const seen = new Set();
+    return values.map(text).filter((tag) => {
+      const key = tag.toLocaleLowerCase('de');
+      if (!tag || seen.has(key)) return false;
+      seen.add(key); return true;
+    });
+  }
+
+  function normalizeItem(value, index = 0) {
+    const source = typeof value === 'string' ? { text: value } : (value || {});
+    const label = text(source.text ?? source.label ?? source.name);
+    if (!label) return null;
+    return {
+      id: text(source.id) || id(`item${index + 1}`),
+      text: label,
+      checked: Boolean(source.checked ?? source.done ?? false),
+      quantity: text(source.quantity ?? source.amount),
+      category: text(source.category ?? source.group),
+      note: text(source.note ?? source.notes),
+      tags: normalizeTags(source.tags ?? source.tag),
+    };
+  }
+
+  function normalizeItems(items) {
+    if (!Array.isArray(items)) throw new Error('Die Checkliste muss ein Feld "items" enthalten.');
+    return items.map(normalizeItem).filter(Boolean);
+  }
+
+  function mergeProfileItems(currentItems, templateItems) {
+    const current = normalizeItems(currentItems || []);
+    const template = normalizeItems(templateItems || []);
+    const byText = new Map(current.map((item) => [item.text.toLocaleLowerCase('de'), item]));
+    for (const templateItem of template) {
+      const key = templateItem.text.toLocaleLowerCase('de');
+      const existing = byText.get(key);
+      if (existing) {
+        if (!existing.quantity) existing.quantity = templateItem.quantity;
+        if (!existing.category) existing.category = templateItem.category;
+        existing.tags = normalizeTags([...(existing.tags || []), ...templateItem.tags]);
+        continue;
+      }
+      current.push(templateItem);
+      byText.set(key, templateItem);
+    }
+    return current;
+  }
+
+  function normalizeList(value, fallbackTitle = 'Neue Checkliste') {
+    const source = Array.isArray(value) ? { items: value } : (value || {});
+    return {
+      format: FORMAT,
+      version: VERSION,
+      title: text(source.title) || fallbackTitle,
+      profile: text(source.profile),
+      items: normalizeItems(source.items || []),
+      createdAt: text(source.createdAt) || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  function parseJson(input) {
+    let value;
+    try { value = JSON.parse(input); }
+    catch { throw new Error('Das JSON ist nicht gültig.'); }
+    if (value && value.format && value.format !== FORMAT) {
+      throw new Error(`Unbekanntes Format: ${value.format}`);
+    }
+    return normalizeList(value);
+  }
+
+  function parseMarkdown(input) {
+    const lines = String(input).split(/\r?\n/);
+    let title = '';
+    let category = '';
+    const items = [];
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line) continue;
+      const heading = line.match(/^(#{1,6})\s+(.+)$/);
+      if (heading) {
+        if (heading[1].length === 1 && !title) title = text(heading[2]);
+        else category = text(heading[2]);
+        continue;
+      }
+      const match = line.match(/^[-*+]\s+(?:\[([ xX])\]\s*)?(.+)$/);
+      if (!match) continue;
+      let label = text(match[2]);
+      let quantity = '';
+      const tags = [];
+      label = label.replace(/\s+#([\p{L}\p{N}_-]+)/gu, (_, tag) => { tags.push(tag.replace(/-/g, ' ')); return ''; }).trim();
+      const quantityMatch = label.match(/^(\d+(?:[.,]\d+)?\s*(?:x|kg|g|l|ml|stk\.?|packungen?)?)\s+(.+)$/i);
+      if (quantityMatch) {
+        quantity = text(quantityMatch[1]);
+        label = text(quantityMatch[2]);
+      }
+      const item = normalizeItem({ text: label, checked: /x/i.test(match[1] || ''), quantity, category, tags }, items.length);
+      if (item) items.push(item);
+    }
+    if (!items.length) throw new Error('Im Markdown wurden keine Listeneinträge gefunden.');
+    return normalizeList({ title: title || 'Importierte Checkliste', items });
+  }
+
+  function parseText(input) {
+    const items = String(input).split(/\r?\n/)
+      .map((line) => line.trim().replace(/^[-*+]\s+/, ''))
+      .filter(Boolean).map((line, index) => normalizeItem(line, index)).filter(Boolean);
+    if (!items.length) throw new Error('Der Text enthält keine Listeneinträge.');
+    return normalizeList({ title: 'Importierte Checkliste', items });
+  }
+
+  function detectFormat(input) {
+    const value = String(input).trim();
+    if (/^[\[{]/.test(value)) return 'json';
+    if (/^#{1,6}\s|^[-*+]\s+\[[ xX]\]/m.test(value)) return 'markdown';
+    return 'text';
+  }
+
+  function parse(input, format = 'auto') {
+    const selected = format === 'auto' ? detectFormat(input) : format;
+    if (selected === 'json') return parseJson(input);
+    if (selected === 'markdown') return parseMarkdown(input);
+    if (selected === 'text') return parseText(input);
+    throw new Error(`Nicht unterstütztes Importformat: ${selected}`);
+  }
+
+  function toJson(list) {
+    return `${JSON.stringify(normalizeList(list), null, 2)}\n`;
+  }
+
+  function toMarkdown(list) {
+    const value = normalizeList(list);
+    const groups = new Map();
+    value.items.forEach((item) => {
+      const group = item.category || '';
+      if (!groups.has(group)) groups.set(group, []);
+      groups.get(group).push(item);
+    });
+    const lines = [`# ${value.title}`, ''];
+    for (const [category, items] of groups) {
+      if (category) lines.push(`## ${category}`, '');
+      for (const item of items) {
+        const quantity = item.quantity ? `${item.quantity} ` : '';
+        const note = item.note ? ` — ${item.note}` : '';
+        const tags = item.tags.length ? ` ${item.tags.map((tag) => `#${tag.replace(/\s+/g, '-')}`).join(' ')}` : '';
+        lines.push(`- [${item.checked ? 'x' : ' '}] ${quantity}${item.text}${note}${tags}`);
+      }
+      lines.push('');
+    }
+    return `${lines.join('\n').trimEnd()}\n`;
+  }
+
+  root.fdbChecklistModel = {
+    FORMAT, VERSION, detectFormat, normalizeItem, normalizeItems, normalizeList, normalizeTags, mergeProfileItems,
+    parse, parseJson, parseMarkdown, parseText, toJson, toMarkdown,
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  // === Language ===
+  // The shell always speaks both languages. The switch is only offered once the
+  // app itself registered translations — otherwise switching would produce a
+  // half-translated screen, which is worse than no switch at all.
+  window.qrx.i18n.register('shell', {
+    de: {
+      docs: 'Dokumentation',
+      exportBlank: 'Leer exportieren',
+      exportBlankHint: 'Lädt eine leere Kopie dieser App herunter — ohne eingegebene Daten',
+      exportState: 'Mit Daten exportieren',
+      exportStateHint: 'Lädt eine Momentaufnahme inklusive aller eingegebenen Daten herunter',
+      builtBy: 'Erstellt von',
+      switchTo: 'English',
+      switchToHint: 'Switch this app to English',
+    },
+    en: {
+      docs: 'Documentation',
+      exportBlank: 'Export blank',
+      exportBlankHint: 'Download a blank copy of this app — no entered data',
+      exportState: 'Export with data',
+      exportStateHint: 'Download a snapshot including all currently entered data',
+      builtBy: 'Built by',
+      switchTo: 'Deutsch',
+      switchToHint: 'Diese App auf Deutsch umstellen',
+    },
+  });
+
+  const langBtn = document.querySelector('[data-action="toggle-lang"]');
+  function renderLangBtn() {
+    if (!langBtn) return;
+    const i18n = window.qrx.i18n;
+    langBtn.hidden = !i18n.hasNamespace('app');
+    langBtn.textContent = i18n.t('shell.switchTo');
+    langBtn.setAttribute('title', i18n.t('shell.switchToHint'));
+    langBtn.setAttribute('lang', i18n.lang() === 'de' ? 'en' : 'de');
+  }
+  if (langBtn) {
+    langBtn.addEventListener('click', () => {
+      const i18n = window.qrx.i18n;
+      i18n.setLang(i18n.lang() === 'de' ? 'en' : 'de');
+    });
+    window.qrx.i18n.onChange(renderLangBtn);
+    window.qrx.i18n.onRegister(renderLangBtn);   // apps register later than the shell
+    renderLangBtn();
+    document.addEventListener('DOMContentLoaded', renderLangBtn);
+  }
+
+  // === Docs toggle ===
+  const docsBtn = document.querySelector('[data-action="toggle-docs"]');
+  const docs = document.getElementById('qrx-docs');
+  docsBtn.addEventListener('click', () => {
+    const open = !docs.hasAttribute('hidden');
+    if (open) { docs.setAttribute('hidden', ''); docsBtn.setAttribute('aria-expanded', 'false'); }
+    else      { docs.removeAttribute('hidden');   docsBtn.setAttribute('aria-expanded', 'true');
+                docs.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+
+  // === Build version ===
+  // Baked into the [data-build-version] span at build time (newest source
+  // mtime, format YYMMDD-HHMMSS); read here only for the export filename.
+  const versionEl = document.querySelector('[data-build-version]');
+
+  // === App state hooks ===
+  window.qurixApp = window.qurixApp || {};
+
+  // Capture the pristine app region BEFORE any data is rendered into it, so a
+  // blank export can be restored to this clean state. (Runs synchronously at
+  // parse time, before DOMContentLoaded / any user interaction.)
+  const pristineApp = document.getElementById('qrx-app');
+  const pristineAppHTML = pristineApp ? pristineApp.innerHTML : null;
+
+  function hydrate() {
+    const el = document.getElementById('qrx-app-state');
+    if (!el || !window.qurixApp.hydrateState) return;
+    try { window.qurixApp.hydrateState(JSON.parse(el.textContent)); }
+    catch (e) { console.warn('qurix: state hydrate failed', e); }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hydrate);
+  } else { hydrate(); }
+
+  // === Export logic ===
+  function syncFormState(clone) {
+    const liveIn = document.querySelectorAll('input');
+    const cIn = clone.querySelectorAll('input');
+    liveIn.forEach((live, i) => {
+      const c = cIn[i]; if (!c) return;
+      if (live.type === 'password' || live.type === 'file') return;
+      if (live.type === 'checkbox' || live.type === 'radio') {
+        if (live.checked) c.setAttribute('checked', ''); else c.removeAttribute('checked');
+      } else { c.setAttribute('value', live.value); }
+    });
+    const liveTa = document.querySelectorAll('textarea');
+    const cTa = clone.querySelectorAll('textarea');
+    liveTa.forEach((live, i) => { if (cTa[i]) cTa[i].textContent = live.value; });
+    const liveSel = document.querySelectorAll('select');
+    const cSel = clone.querySelectorAll('select');
+    liveSel.forEach((live, i) => {
+      const c = cSel[i]; if (!c) return;
+      Array.from(c.options).forEach((opt, j) => {
+        if (live.options[j] && live.options[j].selected) opt.setAttribute('selected', '');
+        else opt.removeAttribute('selected');
+      });
+    });
+    const liveDet = document.querySelectorAll('details');
+    const cDet = clone.querySelectorAll('details');
+    liveDet.forEach((live, i) => {
+      const c = cDet[i]; if (!c) return;
+      if (live.open) c.setAttribute('open', ''); else c.removeAttribute('open');
+    });
+  }
+
+  async function writeAppState(clone) {
+    if (!window.qurixApp.serializeState) return;
+    let stateData;
+    // serializeState may be async (e.g. reading IndexedDB); await works for sync returns too.
+    try { stateData = await window.qurixApp.serializeState(); }
+    catch (e) { console.warn('qurix: state serialize failed', e); return; }
+    let s = clone.querySelector('#qrx-app-state');
+    if (!s) {
+      s = clone.ownerDocument.createElement('script');
+      s.type = 'application/json';
+      s.id = 'qrx-app-state';
+      clone.querySelector('body').appendChild(s);
+    }
+    s.textContent = JSON.stringify(stateData);
+  }
+
+  function download(clone, suffix) {
+    const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const title = (document.title || 'qurix-app').replace(/\s+/g, '-');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title}-${versionEl.textContent}${suffix ? '-' + suffix : ''}.html`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  document.querySelector('[data-action="export-html"]').addEventListener('click', () => {
+    const clone = document.documentElement.cloneNode(true);
+    const oldState = clone.querySelector('#qrx-app-state');
+    if (oldState) oldState.remove();
+    // Restore the pristine app region — clears any data the app rendered into
+    // the DOM (tables, results, lists, etc.) so the blank export is truly blank.
+    const cApp = clone.querySelector('#qrx-app');
+    if (cApp && pristineAppHTML !== null) cApp.innerHTML = pristineAppHTML;
+    download(clone);
+  });
+
+  document.querySelector('[data-action="export-html-state"]').addEventListener('click', async () => {
+    const clone = document.documentElement.cloneNode(true);
+    syncFormState(clone);
+    await writeAppState(clone);
+    download(clone, 'snapshot');
+  });
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  const model = window.fdbChecklistModel;
+  const STORAGE_KEY = 'fdb_apps_checklist_v1';
+  const SHOPPING_PROFILE_VERSION = 2;
+  const $ = (id) => document.getElementById(id);
+  const clone = (value) => JSON.parse(JSON.stringify(value));
+  const newId = (prefix) => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+
+  const builtinProfiles = [{
+    id: 'shopping',
+    name: 'Einkaufsliste',
+    builtin: true,
+    items: [
+      { text: 'Äpfel', quantity: '1 kg', category: 'Obst & Gemüse', tags: ['Frisch', 'Snack'] },
+      { text: 'Bananen', quantity: '1 Bund', category: 'Obst & Gemüse', tags: ['Frisch', 'Snack'] },
+      { text: 'Zitronen', quantity: '2', category: 'Obst & Gemüse', tags: ['Frisch', 'Kochen'] },
+      { text: 'Kartoffeln', quantity: '1,5 kg', category: 'Obst & Gemüse', tags: ['Basis', 'Kochen'] },
+      { text: 'Zwiebeln', quantity: '1 Netz', category: 'Obst & Gemüse', tags: ['Basis', 'Kochen'] },
+      { text: 'Karotten', quantity: '1 Bund', category: 'Obst & Gemüse', tags: ['Frisch', 'Kochen'] },
+      { text: 'Paprika', quantity: '3', category: 'Obst & Gemüse', tags: ['Frisch', 'Kochen'] },
+      { text: 'Tomaten', quantity: '500 g', category: 'Obst & Gemüse', tags: ['Frisch', 'Salat'] },
+      { text: 'Gurke', quantity: '1', category: 'Obst & Gemüse', tags: ['Frisch', 'Salat'] },
+      { text: 'Blattsalat', quantity: '1', category: 'Obst & Gemüse', tags: ['Frisch', 'Salat'] },
+      { text: 'Brot', quantity: '1', category: 'Backwaren', tags: ['Basis', 'Frühstück'] },
+      { text: 'Brötchen', quantity: '6', category: 'Backwaren', tags: ['Frühstück'] },
+      { text: 'Milch', quantity: '2 l', category: 'Kühlregal', tags: ['Basis', 'Frühstück'] },
+      { text: 'Butter', quantity: '1 Packung', category: 'Kühlregal', tags: ['Basis', 'Frühstück'] },
+      { text: 'Naturjoghurt', quantity: '4 Becher', category: 'Kühlregal', tags: ['Frühstück', 'Snack'] },
+      { text: 'Käse', quantity: '1 Packung', category: 'Kühlregal', tags: ['Frühstück'] },
+      { text: 'Eier', quantity: '10', category: 'Kühlregal', tags: ['Basis', 'Kochen'] },
+      { text: 'Aufschnitt', quantity: '1 Packung', category: 'Kühlregal', tags: ['Frühstück'] },
+      { text: 'Hackfleisch oder Tofu', quantity: '500 g', category: 'Fleisch & Alternativen', tags: ['Kochen', 'Wochenplan'] },
+      { text: 'Hähnchen oder Alternative', quantity: '500 g', category: 'Fleisch & Alternativen', tags: ['Kochen', 'Wochenplan'] },
+      { text: 'Nudeln', quantity: '500 g', category: 'Vorräte', tags: ['Basis', 'Kochen'] },
+      { text: 'Reis', quantity: '500 g', category: 'Vorräte', tags: ['Basis', 'Kochen'] },
+      { text: 'Tomatenstücke', quantity: '2 Dosen', category: 'Vorräte', tags: ['Basis', 'Kochen'] },
+      { text: 'Kidneybohnen', quantity: '1 Dose', category: 'Vorräte', tags: ['Kochen', 'Wochenplan'] },
+      { text: 'Haferflocken', quantity: '500 g', category: 'Vorräte', tags: ['Frühstück', 'Basis'] },
+      { text: 'Mehl', quantity: '1 kg', category: 'Vorräte', tags: ['Basis', 'Backen'] },
+      { text: 'Kaffee oder Tee', quantity: '1 Packung', category: 'Vorräte', tags: ['Frühstück'] },
+      { text: 'Tiefkühlgemüse', quantity: '1 Packung', category: 'Tiefkühl', tags: ['Vorrat', 'Kochen'] },
+      { text: 'Mineralwasser', quantity: '1 Kasten', category: 'Getränke', tags: ['Getränke'] },
+      { text: 'Saft', quantity: '1 Flasche', category: 'Getränke', tags: ['Getränke', 'Frühstück'] },
+      { text: 'Nüsse', quantity: '1 Packung', category: 'Snacks', tags: ['Snack', 'Vorrat'] },
+      { text: 'Schokolade', quantity: '1 Tafel', category: 'Snacks', tags: ['Snack'] },
+      { text: 'Toilettenpapier', quantity: '1 Packung', category: 'Haushalt', tags: ['Haushalt', 'Vorrat'] },
+      { text: 'Spülmittel', quantity: '1 Flasche', category: 'Haushalt', tags: ['Haushalt'] },
+      { text: 'Müllbeutel', quantity: '1 Rolle', category: 'Haushalt', tags: ['Haushalt', 'Vorrat'] },
+    ],
+  }];
+
+  function freshItems(items) {
+    return model.normalizeItems(items.map((item) => ({ ...item, id: '', checked: false })));
+  }
+
+  function listFromProfile(profile) {
+    return model.normalizeList({ title: profile.name, profile: profile.id, items: freshItems(profile.items) });
+  }
+
+  function defaultState() {
+    return {
+      active: listFromProfile(builtinProfiles[0]), customProfiles: [], hideCompleted: false,
+      tagFilters: [], builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION },
+    };
+  }
+
+  function normalizeProfile(profile) {
+    const name = String(profile?.name || '').trim();
+    if (!name) return null;
+    return { id: String(profile.id || newId('profile')), name, builtin: false, items: model.normalizeItems(profile.items || []) };
+  }
+
+  function normalizeState(value) {
+    const fallback = defaultState();
+    try {
+      const normalized = {
+        active: model.normalizeList(value?.active || fallback.active),
+        customProfiles: Array.isArray(value?.customProfiles) ? value.customProfiles.map(normalizeProfile).filter(Boolean) : [],
+        hideCompleted: Boolean(value?.hideCompleted),
+        tagFilters: model.normalizeTags(value?.tagFilters || []),
+        builtinProfileVersions: { ...(value?.builtinProfileVersions || {}) },
+      };
+      const shoppingVersion = Number(normalized.builtinProfileVersions.shopping || 0);
+      if (normalized.active.profile === 'shopping' && shoppingVersion < SHOPPING_PROFILE_VERSION) {
+        normalized.active.items = model.mergeProfileItems(normalized.active.items, builtinProfiles[0].items);
+      }
+      normalized.builtinProfileVersions.shopping = SHOPPING_PROFILE_VERSION;
+      return normalized;
+    } catch { return fallback; }
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? normalizeState(JSON.parse(raw)) : defaultState();
+    } catch { return defaultState(); }
+  }
+
+  let state = load();
+  let editingItemId = null;
+  const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
+  const activeProfile = () => allProfiles().find((profile) => profile.id === state.active.profile);
+
+  function save() {
+    state.active.updatedAt = new Date().toISOString();
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  }
+
+  function announce(message, error = false) {
+    const element = $('statusMessage');
+    element.textContent = message;
+    element.style.color = error ? 'var(--qrx-danger)' : 'var(--qrx-success)';
+    clearTimeout(announce.timer);
+    announce.timer = setTimeout(() => { element.textContent = ''; }, 4500);
+  }
+
+  function button(label, title, action, danger = false) {
+    const element = document.createElement('button');
+    element.type = 'button';
+    element.className = 'cl-icon-btn';
+    if (danger) element.style.color = 'var(--qrx-danger)';
+    element.textContent = label;
+    element.title = title;
+    element.setAttribute('aria-label', title);
+    element.addEventListener('click', action);
+    return element;
+  }
+
+  function renderProfiles() {
+    const select = $('profileSelect');
+    const previous = select.value || state.active.profile || 'shopping';
+    select.replaceChildren();
+    for (const profile of allProfiles()) {
+      const option = document.createElement('option');
+      option.value = profile.id;
+      option.textContent = `${profile.name}${profile.builtin ? ' · mitgeliefert' : ''}`;
+      select.appendChild(option);
+    }
+    select.value = allProfiles().some((profile) => profile.id === previous) ? previous : 'shopping';
+  }
+
+  function renderCategories() {
+    const categories = [...new Set(state.active.items.map((item) => item.category).filter(Boolean))].sort();
+    $('categorySuggestions').replaceChildren(...categories.map((category) => {
+      const option = document.createElement('option'); option.value = category; return option;
+    }));
+  }
+
+  function renderTagFilters() {
+    const tags = model.normalizeTags(state.active.items.flatMap((item) => item.tags || []))
+      .sort((a, b) => a.localeCompare(b, 'de'));
+    const available = new Set(tags.map((tag) => tag.toLocaleLowerCase('de')));
+    state.tagFilters = state.tagFilters.filter((tag) => available.has(tag.toLocaleLowerCase('de')));
+    const selected = new Set(state.tagFilters.map((tag) => tag.toLocaleLowerCase('de')));
+    const host = $('tagFilterButtons'); host.replaceChildren();
+    for (const tag of tags) {
+      const key = tag.toLocaleLowerCase('de');
+      const control = document.createElement('button');
+      control.type = 'button'; control.className = `cl-tag${selected.has(key) ? ' is-active' : ''}`;
+      control.textContent = tag; control.setAttribute('aria-pressed', String(selected.has(key)));
+      control.addEventListener('click', () => {
+        if (selected.has(key)) state.tagFilters = state.tagFilters.filter((value) => value.toLocaleLowerCase('de') !== key);
+        else state.tagFilters.push(tag);
+        save(); render();
+      });
+      host.appendChild(control);
+    }
+    $('tagFilters').hidden = tags.length === 0;
+    $('clearTagFilters').hidden = state.tagFilters.length === 0;
+  }
+
+  function render() {
+    $('listTitle').value = state.active.title;
+    $('hideCompleted').checked = state.hideCompleted;
+    renderProfiles();
+    renderCategories();
+    renderTagFilters();
+    const total = state.active.items.length;
+    const done = state.active.items.filter((item) => item.checked).length;
+    $('progressText').textContent = `${done} von ${total} erledigt`;
+    $('progressBar').style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+
+    const selectedTags = new Set(state.tagFilters.map((tag) => tag.toLocaleLowerCase('de')));
+    const visible = state.active.items.filter((item) => {
+      if (state.hideCompleted && item.checked) return false;
+      if (!selectedTags.size) return true;
+      return (item.tags || []).some((tag) => selectedTags.has(tag.toLocaleLowerCase('de')));
+    });
+    $('emptyState').hidden = visible.length > 0;
+    $('emptyTitle').textContent = state.active.items.length ? 'Keine passenden Einträge.' : 'Die Checkliste ist leer.';
+    $('emptyHint').textContent = state.active.items.length ? 'Ändere die aktiven Filter, um wieder Einträge anzuzeigen.' : 'Füge oben einen Eintrag hinzu oder importiere eine vorhandene Liste.';
+    const groups = new Map();
+    visible.forEach((item) => {
+      const category = item.category || 'Ohne Kategorie';
+      if (!groups.has(category)) groups.set(category, []);
+      groups.get(category).push(item);
+    });
+
+    const container = $('listGroups');
+    container.replaceChildren();
+    for (const [category, items] of groups) {
+      const section = document.createElement('section'); section.className = 'cl-group';
+      const heading = document.createElement('h2'); heading.textContent = category; section.appendChild(heading);
+      const list = document.createElement('ul'); list.className = 'cl-list';
+      for (const item of items) {
+        const row = document.createElement('li'); row.className = `cl-item${item.checked ? ' is-done' : ''}`;
+        const check = document.createElement('input'); check.type = 'checkbox'; check.className = 'cl-item-check'; check.checked = item.checked;
+        check.setAttribute('aria-label', `${item.text} erledigt`);
+        check.addEventListener('change', () => { item.checked = check.checked; save(); render(); });
+        const main = document.createElement('div'); main.className = 'cl-item-main';
+        const line = document.createElement('div'); line.className = 'cl-item-line';
+        const name = document.createElement('span'); name.className = 'cl-item-name'; name.textContent = item.text; line.appendChild(name);
+        if (item.quantity) { const quantity = document.createElement('span'); quantity.className = 'cl-item-quantity'; quantity.textContent = item.quantity; line.appendChild(quantity); }
+        main.appendChild(line);
+        if (item.note) { const note = document.createElement('span'); note.className = 'cl-item-note'; note.textContent = item.note; main.appendChild(note); }
+        if (item.tags?.length) {
+          const tags = document.createElement('div'); tags.className = 'cl-item-tags';
+          item.tags.forEach((tag) => { const chip = document.createElement('span'); chip.className = 'cl-item-tag'; chip.textContent = tag; tags.appendChild(chip); });
+          main.appendChild(tags);
+        }
+        const actions = document.createElement('div'); actions.className = 'cl-actions';
+        actions.append(
+          button('✎', `${item.text} bearbeiten`, () => editItem(item)),
+          button('↑', `${item.text} nach oben`, () => moveItem(item.id, -1)),
+          button('↓', `${item.text} nach unten`, () => moveItem(item.id, 1)),
+          button('×', `${item.text} löschen`, () => deleteItem(item.id), true),
+        );
+        row.append(check, main, actions); list.appendChild(row);
+      }
+      section.appendChild(list); container.appendChild(section);
+    }
+  }
+
+  function editItem(item) {
+    editingItemId = item.id;
+    $('editText').value = item.text;
+    $('editQuantity').value = item.quantity;
+    $('editCategory').value = item.category;
+    $('editTags').value = item.tags.join(', ');
+    $('editNote').value = item.note;
+    $('editError').textContent = '';
+    $('editDialog').showModal();
+    $('editText').focus();
+  }
+
+  function moveItem(itemId, delta) {
+    const index = state.active.items.findIndex((item) => item.id === itemId);
+    const target = index + delta;
+    if (index < 0 || target < 0 || target >= state.active.items.length) return;
+    [state.active.items[index], state.active.items[target]] = [state.active.items[target], state.active.items[index]];
+    save(); render();
+  }
+
+  function deleteItem(itemId) {
+    state.active.items = state.active.items.filter((item) => item.id !== itemId);
+    save(); render(); announce('Eintrag gelöscht.');
+  }
+
+  function createProfile(name, items) {
+    const profile = normalizeProfile({ id: newId('profile'), name, items: clone(items) });
+    state.customProfiles.push(profile); save(); render(); return profile;
+  }
+
+  function renderProfileManager() {
+    const host = $('profileList'); host.replaceChildren();
+    for (const profile of allProfiles()) {
+      const row = document.createElement('div'); row.className = 'cl-profile-row';
+      const info = document.createElement('div');
+      const name = document.createElement('strong'); name.textContent = profile.name;
+      const meta = document.createElement('small'); meta.textContent = `${profile.items.length} Einträge · ${profile.builtin ? 'mitgeliefert' : 'eigenes Profil'}`;
+      info.append(name, meta);
+      const actions = document.createElement('div'); actions.className = 'cl-actions';
+      actions.append(button('⧉', `${profile.name} duplizieren`, () => {
+        createProfile(`${profile.name} – Kopie`, profile.items); renderProfileManager(); announce('Profil dupliziert.');
+      }));
+      if (!profile.builtin) actions.append(button('×', `${profile.name} löschen`, () => {
+        if (!confirm(`Profil „${profile.name}“ löschen?`)) return;
+        state.customProfiles = state.customProfiles.filter((candidate) => candidate.id !== profile.id);
+        if (state.active.profile === profile.id) state.active.profile = '';
+        save(); render(); renderProfileManager(); announce('Profil gelöscht.');
+      }, true));
+      row.append(info, actions); host.appendChild(row);
+    }
+  }
+
+  function download(content, filename, type) {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = filename;
+    document.body.appendChild(anchor); anchor.click(); anchor.remove(); URL.revokeObjectURL(url);
+  }
+
+  function slug() {
+    return state.active.title.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'checkliste';
+  }
+
+  $('addForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const item = model.normalizeItem({ text: $('itemText').value, quantity: $('itemQuantity').value, category: $('itemCategory').value, tags: $('itemTags').value });
+    if (!item) return;
+    state.active.items.push(item); $('itemText').value = ''; $('itemQuantity').value = ''; $('itemTags').value = ''; $('itemText').focus();
+    save(); render(); announce('Eintrag hinzugefügt.');
+  });
+  $('saveEdit').addEventListener('click', (event) => {
+    event.preventDefault();
+    const item = state.active.items.find((candidate) => candidate.id === editingItemId);
+    const label = $('editText').value.trim();
+    if (!item) { $('editError').textContent = 'Der Eintrag wurde nicht gefunden.'; return; }
+    if (!label) { $('editError').textContent = 'Bitte eine Bezeichnung eingeben.'; $('editText').focus(); return; }
+    Object.assign(item, {
+      text: label,
+      quantity: $('editQuantity').value.trim(),
+      category: $('editCategory').value.trim(),
+      tags: model.normalizeTags($('editTags').value),
+      note: $('editNote').value.trim(),
+    });
+    editingItemId = null;
+    $('editDialog').close();
+    save(); render(); announce('Eintrag aktualisiert.');
+  });
+  $('editDialog').addEventListener('close', () => { editingItemId = null; $('editError').textContent = ''; });
+  $('listTitle').addEventListener('change', () => { state.active.title = $('listTitle').value.trim() || 'Neue Checkliste'; save(); render(); });
+  $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save(); render(); });
+  $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save(); render(); });
+  $('newFromProfile').addEventListener('click', () => {
+    const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
+    if (!profile || !confirm(`Neue Liste aus „${profile.name}“ erstellen? Die aktuelle Liste wird ersetzt.`)) return;
+    state.active = listFromProfile(profile); state.tagFilters = []; save(); render(); announce('Neue Liste erstellt.');
+  });
+  $('saveProfile').addEventListener('click', () => {
+    const name = prompt('Name des neuen Profils', state.active.title); if (!name?.trim()) return;
+    const profile = createProfile(name.trim(), state.active.items); state.active.profile = profile.id; save(); render(); announce('Profil gespeichert.');
+  });
+  $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
+  $('resetList').addEventListener('click', () => {
+    const profile = activeProfile();
+    if (!confirm(profile ? `Liste auf das Profil „${profile.name}“ zurücksetzen?` : 'Alle Häkchen entfernen?')) return;
+    if (profile) state.active = listFromProfile(profile);
+    else state.active.items.forEach((item) => { item.checked = false; });
+    save(); render(); announce('Liste zurückgesetzt.');
+  });
+  $('openImport').addEventListener('click', () => { $('importError').textContent = ''; $('importDialog').showModal(); });
+  $('importFile').addEventListener('change', async () => {
+    const file = $('importFile').files[0]; if (!file) return;
+    $('importText').value = await file.text();
+    if (/\.json$/i.test(file.name)) $('importFormat').value = 'json';
+    else if (/\.(md|markdown)$/i.test(file.name)) $('importFormat').value = 'markdown';
+    else $('importFormat').value = 'text';
+  });
+  $('confirmImport').addEventListener('click', (event) => {
+    event.preventDefault(); $('importError').textContent = '';
+    try {
+      const imported = model.parse($('importText').value, $('importFormat').value);
+      if ($('importTarget').value === 'profile') {
+        createProfile(imported.title, imported.items); announce('Profil importiert.');
+      } else {
+        state.active = imported; state.tagFilters = []; save(); render(); announce(`${imported.items.length} Einträge importiert.`);
+      }
+      $('importDialog').close(); $('importText').value = ''; $('importFile').value = '';
+    } catch (error) { $('importError').textContent = error.message; }
+  });
+  $('exportJson').addEventListener('click', () => download(model.toJson(state.active), `${slug()}.json`, 'application/json;charset=utf-8'));
+  $('exportMarkdown').addEventListener('click', () => download(model.toMarkdown(state.active), `${slug()}.md`, 'text/markdown;charset=utf-8'));
+
+  window.qurixApp.serializeState = () => clone(state);
+  window.qurixApp.hydrateState = (snapshot) => { state = normalizeState(snapshot); save(); render(); announce('Momentaufnahme wiederhergestellt.'); };
+
+  render();
+})();
+</script>
+
+</body>
+</html>

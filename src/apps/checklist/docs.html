@@ -1,0 +1,23 @@
+<h2>Checkliste</h2>
+<p>Die App verwaltet eine aktive Checkliste und wiederverwendbare Profile. Sie eignet sich für Einkaufs-, Pack- und Aufgabenlisten und speichert alle Änderungen automatisch im Browser.</p>
+<p>Über das Stiftsymbol öffnet sich ein Bearbeitungsdialog, in dem Bezeichnung, Menge, Kategorie, Tags und Notiz gemeinsam geändert werden können.</p>
+
+<h3>Profile und Listen</h3>
+<p>Ein Profil ist eine Vorlage. Mit <b>Neue Liste</b> wird daraus eine unabhängige Checkliste erzeugt; spätere Änderungen verändern das Profil nicht. Eigene Listen lassen sich mit <b>Als Profil speichern</b> wiederverwenden.</p>
+<p>Wenn ein mitgeliefertes Profil erweitert wird, ergänzt die App fehlende Vorlageneinträge einmalig in einer daraus erzeugten aktiven Liste. Bereits gesetzte Häkchen, eigene Einträge und angepasste Mengen bleiben erhalten.</p>
+
+<h3>Tags und Filter</h3>
+<p>Jeder Eintrag kann mehrere, durch Kommas getrennte Tags erhalten, zum Beispiel <code>Bio, Angebot</code>. Oberhalb der Liste erscheinen alle verwendeten Tags als Filter. Sind mehrere Tags aktiv, werden Einträge angezeigt, die mindestens einen davon besitzen.</p>
+
+<h3>Import und Export</h3>
+<p>Importiert werden JSON, Markdown und einfacher Text. Bei einfachem Text wird jede nicht leere Zeile zu einem Eintrag. Markdown unterstützt Überschriften als Kategorien, Checkboxen und Hashtag-Tags wie <code>- [ ] Milch #Frühstück #Bio</code>. Ein Import kann direkt zur aktiven Liste oder zu einem neuen Profil werden.</p>
+<p>JSON bewahrt alle Felder verlustfrei. Markdown eignet sich besonders zum Teilen und für KI-generierte Listen. Der Importdialog enthält dafür einen Beispielprompt.</p>
+
+<h3>Lokale Speicherung</h3>
+<p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden ausschließlich im <code>localStorage</code> des Browsers gespeichert. Es gibt kein Backend und keine Cloud-Synchronisation. JSON-Export dient als transportables Backup.</p>
+
+<h3>HTML-Exporte</h3>
+<ul>
+  <li><b>Leer exportieren</b> erzeugt eine saubere App ohne persönliche Daten.</li>
+  <li><b>Mit Daten exportieren</b> bettet die aktive Liste und eigene Profile in die HTML-Datei ein. Diese Momentaufnahme bleibt vollständig bearbeitbar.</li>
+</ul>

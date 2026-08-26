@@ -39,3 +39,24 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   qurix-Marke aber fehlschlaegt.
 - Die Quality-CI laeuft auf `master` und `main` sowie fuer Pull Requests. Sie
   deployt nicht und benoetigt nur lesenden Repository-Zugriff.
+- Die Checklistenlogik liegt in einem eigenen Modellmodul. Dadurch lassen sich
+  JSON-, Markdown- und Textimport sowie Exporte ohne Browser testen.
+- Die erste App erzeugt eine eigenstaendige `dist/checklist.html`, nutzt das
+  FDB-Theme und unterstuetzt sowohl lokale Speicherung als auch die
+  Framework-Snapshot-Hooks.
+- Eine automatisierte visuelle `file://`-Pruefung bleibt in der aktuellen
+  Browserumgebung blockiert; Modell-, Build-, Branding- und Snapshottests sind
+  erfolgreich.
+- Tags werden rueckwaertskompatibel als Array je Eintrag gespeichert. Alte
+  Listen ohne `tags` werden beim Laden automatisch mit einem leeren Array
+  normalisiert.
+- Markdown transportiert Tags als Hashtags; mehrere aktive UI-Filter sind als
+  ODER-Verknuepfung umgesetzt, damit breite Einkaufsansichten praktikabel
+  bleiben.
+- Mitgelieferte Profile benoetigen eine eigene Versionsmigration: Andernfalls
+  verdeckt eine aeltere, lokal gespeicherte aktive Liste neue Vorlageninhalte.
+  Version 2 des Einkaufsprofils fuehrt fehlende Artikel und Tags zusammen, ohne
+  vorhandene Haken, Mengen oder eigene Eintraege zu verlieren.
+- Eintraege werden nun in einem responsiven Dialog mit allen Feldern gemeinsam
+  bearbeitet; Abbrechen veraendert den Eintrag nicht und Speichern validiert die
+  Bezeichnung vor der Uebernahme.
