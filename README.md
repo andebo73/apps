@@ -15,10 +15,13 @@ npm run build           # erzeugt dist/index.html und spaeter alle Apps
 npm test                # prueft den lokalen Framework-Snapshot
 npm run upstream:check  # zeigt neue qurix-Frameworkaenderungen an
 npm run upstream:apply  # uebernimmt freigegebene Upstream-Pfade
+npm run upstream:apply:remove # bestaetigt gemeldete Upstream-Loeschungen
 ```
 
 Der aktuell uebernommene qurix-Stand und die geschuetzten Dateihashes stehen in
 [`upstream/manifest.json`](upstream/manifest.json).
+Jeder Sync-Lauf erzeugt zusaetzlich den ignorierten Bericht
+`_work/upstream-sync-report.md`.
 
 Sichtbares Branding wird nach dem qurix-Build durch `tools/build-fdb.mjs`
 angewendet. Marke und Links stehen in `brand.config.json`; das vorlaeufige

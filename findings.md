@@ -26,3 +26,9 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - Die Browsersteuerung dieser Umgebung blockiert lokale `file://`-Navigation.
   Eine automatische visuelle Kontrolle war deshalb nicht moeglich; Build,
   Markup- und Markenpruefung waren erfolgreich.
+- Der Sync unterscheidet jetzt Updates, lokale Konflikte und Upstream-Loeschungen
+  und dokumentiert jeden Lauf in `_work/upstream-sync-report.md`.
+- Upstream-Loeschungen sind absichtlich zweistufig: normaler Apply blockiert;
+  erst `upstream:apply:remove` entfernt eine lokal unveraenderte Datei.
+- Ein inhaltlich leerer Apply schreibt das Manifest nicht neu. Die drei
+  isolierten Sync-Szenarien und die zwei bestehenden Frameworktests sind gruen.

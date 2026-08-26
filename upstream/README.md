@@ -10,6 +10,7 @@ Build unveraendert und ohne Zugriff auf den Upstream funktioniert.
 ```powershell
 npm run upstream:check
 npm run upstream:apply
+npm run upstream:apply:remove
 ```
 
 `upstream:check` vergleicht den eingecheckten Snapshot mit dem aktuellen
@@ -21,6 +22,16 @@ Wenn eine Snapshot-Datei seit dem letzten Sync lokal geaendert wurde, wird der
 Vorgang abgebrochen. Solche Anpassungen gehoeren entweder in FDB-eigene Dateien
 oder zuerst in den qurix-Upstream.
 
+Jeder Lauf schreibt `_work/upstream-sync-report.md` mit Updates, lokalen
+Konflikten und im Upstream entfernten Dateien. Eine Upstream-Loeschung wird von
+`upstream:apply` nur gemeldet und blockiert den Apply-Lauf. Erst der separate
+Befehl `upstream:apply:remove` entfernt sie, sofern die lokale Datei seit dem
+letzten Sync unveraendert ist. Der Bericht sollte davor geprueft werden.
+
+Ein Apply ohne inhaltliche oder Revisionsaenderung schreibt das Manifest nicht
+neu. Wiederholte Apply-Laeufe sind damit idempotent; nur der ignorierte Bericht
+erhaelt einen neuen Zeitstempel.
+
 Eine abweichende Quelle kann einmalig angegeben werden:
 
 ```powershell
@@ -29,4 +40,3 @@ node tools/sync-upstream.mjs --check --source D:/pfad/zu/qurix/apps
 
 FDB-eigene Bereiche wie `src/apps`, `src/portal` und `src/themes/fdb*` stehen
 nicht in der Allowlist und werden vom Werkzeug nicht veraendert.
-

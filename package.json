@@ -8,6 +8,7 @@
     "build": "node tools/build-fdb.mjs",
     "test": "node --test --test-concurrency=1 \"tests/suites/*.test.mjs\"",
     "upstream:check": "node tools/sync-upstream.mjs --check",
-    "upstream:apply": "node tools/sync-upstream.mjs --apply"
+    "upstream:apply": "node tools/sync-upstream.mjs --apply",
+    "upstream:apply:remove": "node tools/sync-upstream.mjs --apply --remove"
   }
 }
