@@ -27,6 +27,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
   vollstaendigen Profil-Reset als separate Aktion beibehalten.
 - [x] Optionale Google-Drive-Synchronisation mit App-Ordner, automatischem
   Speichern, Aktualisierung und Konfliktschutz umsetzen.
+- [x] Drive-Synchronisation gegen Aenderungen waehrend laufender Uploads
+  absichern, automatisch wiederholen und regelmaessig aktualisieren.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten

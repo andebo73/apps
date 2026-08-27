@@ -104,3 +104,7 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   Scope `drive.file` ohne eigenes Backend verwenden. Kurzlebige Zugriffstoken
   bleiben nur im Speicher; dauerhafte App-, Ordner- und Dateikennungen liegen
   lokal. Drive-Dateiversionen verhindern stilles Ueberschreiben bei Konflikten.
+- Ein einfaches Dirty-Flag reicht bei asynchronen Uploads nicht: Eine Aenderung
+  waehrend eines laufenden Requests kann sonst vom Abschluss des aelteren
+  Uploads geloescht werden. Eine lokale Revisionsnummer, Folge-Queue,
+  exponentielle Wiederholung und Remote-Polling machen den Abgleich robust.

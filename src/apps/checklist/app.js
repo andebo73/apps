@@ -121,15 +121,23 @@
 
   let state = load();
   let editingItemId = null;
-  const driveRuntime = { accessToken: '', expiresAt: 0, tokenClient: null, syncing: false, timer: null };
+  const driveRuntime = {
+    accessToken: '', expiresAt: 0, tokenClient: null, syncing: false,
+    timer: null, pollTimer: null, revision: state.drive.dirty ? 1 : 0,
+    retryDelay: 3000, conflict: false, lastStatus: '', lastKind: '',
+  };
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
   function save(options = {}) {
-    state.active.updatedAt = new Date().toISOString();
+    if (!options.remote) state.active.updatedAt = new Date().toISOString();
     state.savedLists = state.savedLists || {};
     state.savedLists[draftKey(state.active)] = clone(state.active);
-    if (!options.remote) state.drive.dirty = true;
+    if (!options.remote) {
+      state.drive.dirty = true;
+      driveRuntime.revision += 1;
+      updateDriveQuickStatus('Ausstehende Änderungen', 'busy');
+    }
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
     if (!options.remote) scheduleDriveSync();
   }
@@ -213,6 +221,7 @@
     $('readMode').checked = readMode;
     $('readMode').setAttribute('aria-label', readMode ? 'Edit-Modus aktivieren' : 'Read-Modus aktivieren');
     $('listTitle').readOnly = readMode;
+    updateDriveQuickStatus();
     $('listTitle').value = state.active.title;
     $('hideCompleted').checked = state.hideCompleted;
     renderProfiles();
@@ -449,6 +458,8 @@
   }
 
   function setDriveStatus(message, kind = '') {
+    driveRuntime.lastStatus = message;
+    driveRuntime.lastKind = kind;
     $('driveStatus').textContent = message;
     $('driveIndicator').className = `cl-drive-indicator${kind ? ` is-${kind}` : ''}`;
     $('driveError').textContent = kind === 'error' ? message : '';
@@ -457,6 +468,25 @@
     $('syncDriveNow').disabled = !connected || !state.drive.folderId;
     $('loadDriveNow').disabled = !connected || !state.drive.fileId;
     $('overwriteDrive').disabled = !connected || !state.drive.fileId;
+    updateDriveQuickStatus(message, kind);
+  }
+
+  function updateDriveQuickStatus(message = '', kind = '') {
+    const control = $('driveQuickStatus');
+    if (!control) return;
+    const configured = Boolean(state.drive.clientId || state.drive.folderId || driveRuntime.accessToken);
+    control.hidden = !configured;
+    if (!kind && driveRuntime.conflict) kind = 'error';
+    const indicator = control.querySelector('.cl-drive-indicator');
+    indicator.className = `cl-drive-indicator${kind ? ` is-${kind}` : ''}`;
+    let label = 'Drive · verbinden';
+    if (driveRuntime.accessToken && state.drive.dirty) label = 'Drive · ausstehend';
+    else if (driveRuntime.accessToken) label = 'Drive · aktuell';
+    if (kind === 'busy') label = 'Drive · synchronisiert …';
+    if (kind === 'error') label = driveRuntime.conflict ? 'Drive · Konflikt' : 'Drive · Fehler';
+    control.lastElementChild.textContent = label;
+    control.title = message || label;
+    control.setAttribute('aria-label', `${label}. Google-Drive-Dialog öffnen`);
   }
 
   function driveHeaders(json = false) {
@@ -485,17 +515,20 @@
   }
 
   async function createDriveFile() {
+    const uploadRevision = driveRuntime.revision;
+    const body = driveFileBody();
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify({ name: 'checklist.json', parents: [state.drive.folderId], mimeType: 'application/json' })], { type: 'application/json' }));
-    form.append('file', new Blob([driveFileBody()], { type: 'application/json' }));
+    form.append('file', new Blob([body], { type: 'application/json' }));
     const file = await driveRequest('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,version,modifiedTime', {
       method: 'POST', headers: driveHeaders(), body: form,
     });
     state.drive.fileId = file.id;
     state.drive.fileVersion = String(file.version || '');
-    state.drive.dirty = false;
+    state.drive.dirty = driveRuntime.revision !== uploadRevision;
     state.drive.lastSync = new Date().toISOString();
     save({ remote: true });
+    if (state.drive.dirty) scheduleDriveSync();
     return file;
   }
 
@@ -516,7 +549,10 @@
   }
 
   async function pullDriveFile(file) {
+    clearTimeout(driveRuntime.timer);
     state.active = await readDriveFile(file.id);
+    driveRuntime.revision += 1;
+    driveRuntime.conflict = false;
     state.drive.fileId = file.id;
     state.drive.fileVersion = String(file.version || '');
     state.drive.dirty = false;
@@ -529,6 +565,9 @@
   async function uploadDriveFile() {
     if (!driveRuntime.accessToken || !state.drive.fileId || driveRuntime.syncing) return;
     driveRuntime.syncing = true;
+    const uploadRevision = driveRuntime.revision;
+    const body = driveFileBody();
+    let nextDelay = 1200;
     setDriveStatus('Synchronisierung läuft …', 'busy');
     try {
       const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
@@ -536,22 +575,39 @@
         throw new Error('Die Liste wurde auf einem anderen Gerät geändert. Bitte den Drive-Stand laden oder die lokale Liste bewusst überschreiben.');
       }
       const updated = await driveRequest(`https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(state.drive.fileId)}?uploadType=media&fields=id,version,modifiedTime`, {
-        method: 'PATCH', headers: driveHeaders(true), body: driveFileBody(),
+        method: 'PATCH', headers: driveHeaders(true), body,
       });
       state.drive.fileVersion = String(updated.version || '');
-      state.drive.dirty = false;
+      state.drive.dirty = driveRuntime.revision !== uploadRevision;
       state.drive.lastSync = new Date().toISOString();
+      driveRuntime.retryDelay = 3000;
+      driveRuntime.conflict = false;
       save({ remote: true });
-      setDriveStatus(`Synchronisiert um ${new Date().toLocaleTimeString('de', { hour: '2-digit', minute: '2-digit' })}.`, 'connected');
+      setDriveStatus(state.drive.dirty ? 'Neuere Änderungen werden anschließend synchronisiert …' : `Synchronisiert um ${new Date().toLocaleTimeString('de', { hour: '2-digit', minute: '2-digit' })}.`, state.drive.dirty ? 'busy' : 'connected');
     } catch (error) {
+      driveRuntime.conflict = /anderen Gerät geändert|Drive und lokale Liste/.test(error.message);
       setDriveStatus(error.message, 'error');
-    } finally { driveRuntime.syncing = false; }
+      if (driveRuntime.accessToken && state.drive.dirty && !driveRuntime.conflict) {
+        nextDelay = driveRuntime.retryDelay;
+        driveRuntime.retryDelay = Math.min(driveRuntime.retryDelay * 2, 30000);
+      }
+    } finally {
+      driveRuntime.syncing = false;
+      if (state.drive.dirty && !driveRuntime.conflict) scheduleDriveSync(nextDelay);
+    }
   }
 
-  function scheduleDriveSync() {
+  function scheduleDriveSync(delay = 1200) {
     clearTimeout(driveRuntime.timer);
-    if (!driveRuntime.accessToken || !state.drive.fileId || !state.drive.dirty) return;
-    driveRuntime.timer = setTimeout(uploadDriveFile, 1200);
+    if (!driveRuntime.accessToken || !state.drive.fileId || !state.drive.dirty || driveRuntime.conflict) return;
+    driveRuntime.timer = setTimeout(uploadDriveFile, delay);
+  }
+
+  function startDrivePolling() {
+    clearInterval(driveRuntime.pollTimer);
+    driveRuntime.pollTimer = setInterval(() => {
+      if (document.visibilityState === 'visible' && navigator.onLine) refreshDriveIfChanged();
+    }, 10000);
   }
 
   async function connectDriveFolder() {
@@ -591,6 +647,8 @@
         if (token.error) { setDriveStatus(token.error_description || token.error, 'error'); return; }
         driveRuntime.accessToken = token.access_token;
         driveRuntime.expiresAt = Date.now() + Number(token.expires_in || 3600) * 1000;
+        driveRuntime.conflict = false;
+        startDrivePolling();
         setDriveStatus('Mit Google verbunden.', 'connected');
         try { if (state.drive.folderId) await connectDriveFolder(); } catch (error) { setDriveStatus(error.message, 'error'); }
       },
@@ -637,6 +695,7 @@
       const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version`, { headers: driveHeaders() });
       state.drive.fileVersion = String(remote.version || '');
       state.drive.dirty = true;
+      driveRuntime.conflict = false;
       await uploadDriveFile();
     } catch (error) { setDriveStatus(error.message, 'error'); }
   }
@@ -647,6 +706,7 @@
       const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
       if (String(remote.version || '') === state.drive.fileVersion) return;
       if (state.drive.dirty) {
+        driveRuntime.conflict = true;
         setDriveStatus('Drive und lokale Liste wurden geändert. Öffne Google Drive und entscheide, welchen Stand du behalten möchtest.', 'error');
         return;
       }
@@ -715,12 +775,17 @@
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
   $('shareList').addEventListener('click', openShareDialog);
-  $('driveSync').addEventListener('click', () => {
+  function openDriveDialog() {
     $('driveClientId').value = state.drive.clientId;
     $('driveFolderId').value = state.drive.folderId;
-    setDriveStatus(driveRuntime.accessToken ? 'Mit Google Drive verbunden.' : 'Nicht verbunden', driveRuntime.accessToken ? 'connected' : '');
+    setDriveStatus(
+      driveRuntime.lastStatus || (driveRuntime.accessToken ? 'Mit Google Drive verbunden.' : 'Nicht verbunden'),
+      driveRuntime.lastKind || (driveRuntime.accessToken ? 'connected' : ''),
+    );
     $('driveDialog').showModal();
-  });
+  }
+  $('driveSync').addEventListener('click', openDriveDialog);
+  $('driveQuickStatus').addEventListener('click', openDriveDialog);
   $('connectDrive').addEventListener('click', () => {
     try { initDriveClient(); } catch (error) { setDriveStatus(error.message, 'error'); }
   });
@@ -767,6 +832,8 @@
   $('sideMenu').querySelectorAll('.cl-menu-btn').forEach((control) => control.addEventListener('click', () => setMenu(false)));
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setMenu(false); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshDriveIfChanged(); });
+  window.addEventListener('focus', refreshDriveIfChanged);
+  window.addEventListener('online', () => { refreshDriveIfChanged(); scheduleDriveSync(250); });
 
   window.qurixApp.serializeState = () => {
     const snapshot = clone(state);
