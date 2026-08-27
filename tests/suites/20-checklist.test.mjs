@@ -153,9 +153,18 @@ test('Google Drive sync uses least-privilege browser authorization and conflict 
 test('Drive autosync preserves in-flight edits, retries failures and polls remote changes', () => {
   assert.match(contentSource, /id="driveQuickStatus"/);
   assert.match(appSource, /uploadRevision = driveRuntime\.revision/);
-  assert.match(appSource, /state\.drive\.dirty = driveRuntime\.revision !== uploadRevision/);
+  assert.match(appSource, /state\.drive\.dirty = checklistFingerprint\(state\.active\) !== uploadFingerprint \|\| driveRuntime\.revision !== uploadRevision/);
   assert.match(appSource, /retryDelay: 3000/);
   assert.match(appSource, /Math\.min\(driveRuntime\.retryDelay \* 2, 30000\)/);
   assert.match(appSource, /setInterval\([\s\S]+?10000\)/);
   assert.match(appSource, /window\.addEventListener\('online'/);
+});
+
+test('local view settings do not dirty or synchronize the Drive checklist', () => {
+  const readHandler = appSource.match(/\$\('readMode'\)\.addEventListener\('change',[\s\S]+?\n  \}\);/)?.[0] || '';
+  const hideHandler = appSource.match(/\$\('hideCompleted'\)\.addEventListener\('change',[^\n]+/)?.[0] || '';
+  assert.match(readHandler, /save\(\{ localOnly: true \}\)/);
+  assert.match(hideHandler, /save\(\{ localOnly: true \}\)/);
+  assert.match(appSource, /delete comparable\.updatedAt/);
+  assert.match(appSource, /syncedFingerprint/);
 });

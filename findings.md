@@ -108,3 +108,6 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
   waehrend eines laufenden Requests kann sonst vom Abschluss des aelteren
   Uploads geloescht werden. Eine lokale Revisionsnummer, Folge-Queue,
   exponentielle Wiederholung und Remote-Polling machen den Abgleich robust.
+- Edit/Read, Filter und andere lokale Ansichtsoptionen gehoeren nicht zum
+  Drive-Dokument. Ein Fingerabdruck des tatsaechlichen Listeninhalts verhindert,
+  dass solche UI-Aenderungen einen Upload oder Scheinkonflikt ausloesen.

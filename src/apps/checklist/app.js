@@ -10,6 +10,18 @@
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const newId = (prefix) => `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
 
+  function checklistFingerprint(list) {
+    const comparable = clone(list);
+    delete comparable.updatedAt;
+    const source = JSON.stringify(comparable);
+    let hash = 2166136261;
+    for (let index = 0; index < source.length; index += 1) {
+      hash ^= source.charCodeAt(index);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(36);
+  }
+
   const builtinProfiles = [{
     id: 'shopping',
     name: 'Einkaufsliste',
@@ -64,7 +76,7 @@
   function defaultState() {
     const active = listFromProfile(builtinProfiles[0]);
     return { active, customProfiles: [], hideCompleted: false, tagFilters: [], viewMode: 'edit',
-      drive: { clientId: '', folderId: '', fileId: '', fileVersion: '', dirty: false, lastSync: '' },
+      drive: { clientId: '', folderId: '', fileId: '', fileVersion: '', syncedFingerprint: '', dirty: false, lastSync: '' },
       savedLists: { 'profile:shopping': clone(active) },
       builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
@@ -95,6 +107,7 @@
           folderId: String(value?.drive?.folderId || ''),
           fileId: String(value?.drive?.fileId || ''),
           fileVersion: String(value?.drive?.fileVersion || ''),
+          syncedFingerprint: String(value?.drive?.syncedFingerprint || ''),
           dirty: Boolean(value?.drive?.dirty),
           lastSync: String(value?.drive?.lastSync || ''),
         },
@@ -120,6 +133,9 @@
   }
 
   let state = load();
+  if (state.drive.fileVersion && !state.drive.syncedFingerprint && !state.drive.dirty) {
+    state.drive.syncedFingerprint = checklistFingerprint(state.active);
+  }
   let editingItemId = null;
   const driveRuntime = {
     accessToken: '', expiresAt: 0, tokenClient: null, syncing: false,
@@ -130,16 +146,20 @@
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
   function save(options = {}) {
-    if (!options.remote) state.active.updatedAt = new Date().toISOString();
+    const listChanged = !options.remote && !options.localOnly;
+    if (listChanged) state.active.updatedAt = new Date().toISOString();
     state.savedLists = state.savedLists || {};
     state.savedLists[draftKey(state.active)] = clone(state.active);
     if (!options.remote) {
-      state.drive.dirty = true;
-      driveRuntime.revision += 1;
-      updateDriveQuickStatus('Ausstehende Änderungen', 'busy');
+      const fingerprint = checklistFingerprint(state.active);
+      state.drive.dirty = state.drive.syncedFingerprint
+        ? fingerprint !== state.drive.syncedFingerprint
+        : state.drive.dirty || listChanged;
+      if (listChanged) driveRuntime.revision += 1;
+      if (state.drive.dirty) updateDriveQuickStatus('Ausstehende Änderungen', 'busy');
     }
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
-    if (!options.remote) scheduleDriveSync();
+    if (!options.remote && state.drive.dirty) scheduleDriveSync();
   }
 
   function announce(message, error = false) {
@@ -200,7 +220,7 @@
       control.addEventListener('click', () => {
         if (selected.has(key)) state.tagFilters = state.tagFilters.filter((value) => value.toLocaleLowerCase('de') !== key);
         else state.tagFilters.push(tag);
-        save(); render();
+        save({ localOnly: true }); render();
       });
       host.appendChild(control);
     }
@@ -314,7 +334,7 @@
 
   function createProfile(name, items) {
     const profile = normalizeProfile({ id: newId('profile'), name, items: clone(items) });
-    state.customProfiles.push(profile); save(); render(); return profile;
+    state.customProfiles.push(profile); save({ localOnly: true }); render(); return profile;
   }
 
   function replaceWithProfile(profile) {
@@ -326,7 +346,7 @@
   }
 
   function switchToProfile(profile) {
-    save();
+    save({ localOnly: true });
     const stored = state.savedLists[`profile:${profile.id}`];
     state.active = stored ? model.normalizeList(clone(stored)) : listFromProfile(profile);
     state.tagFilters = [];
@@ -336,7 +356,7 @@
   }
 
   function switchToFreeList() {
-    save();
+    save({ localOnly: true });
     const stored = state.savedLists.free;
     state.active = stored ? model.normalizeList(clone(stored)) : model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
     state.tagFilters = [];
@@ -366,10 +386,11 @@
       }));
       if (!profile.builtin) actions.append(button('×', `${profile.name} löschen`, () => {
         if (!confirm(`Profil „${profile.name}“ löschen?`)) return;
+        const activeProfileDeleted = state.active.profile === profile.id;
         state.customProfiles = state.customProfiles.filter((candidate) => candidate.id !== profile.id);
         delete state.savedLists[`profile:${profile.id}`];
-        if (state.active.profile === profile.id) state.active.profile = '';
-        save(); render(); renderProfileManager(); announce('Profil gelöscht.');
+        if (activeProfileDeleted) state.active.profile = '';
+        save(activeProfileDeleted ? {} : { localOnly: true }); render(); renderProfileManager(); announce('Profil gelöscht.');
       }, true));
       row.append(info, actions); host.appendChild(row);
     }
@@ -516,6 +537,7 @@
 
   async function createDriveFile() {
     const uploadRevision = driveRuntime.revision;
+    const uploadFingerprint = checklistFingerprint(state.active);
     const body = driveFileBody();
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify({ name: 'checklist.json', parents: [state.drive.folderId], mimeType: 'application/json' })], { type: 'application/json' }));
@@ -525,7 +547,8 @@
     });
     state.drive.fileId = file.id;
     state.drive.fileVersion = String(file.version || '');
-    state.drive.dirty = driveRuntime.revision !== uploadRevision;
+    state.drive.syncedFingerprint = uploadFingerprint;
+    state.drive.dirty = checklistFingerprint(state.active) !== uploadFingerprint || driveRuntime.revision !== uploadRevision;
     state.drive.lastSync = new Date().toISOString();
     save({ remote: true });
     if (state.drive.dirty) scheduleDriveSync();
@@ -555,6 +578,7 @@
     driveRuntime.conflict = false;
     state.drive.fileId = file.id;
     state.drive.fileVersion = String(file.version || '');
+    state.drive.syncedFingerprint = checklistFingerprint(state.active);
     state.drive.dirty = false;
     state.drive.lastSync = new Date().toISOString();
     save({ remote: true });
@@ -566,6 +590,7 @@
     if (!driveRuntime.accessToken || !state.drive.fileId || driveRuntime.syncing) return;
     driveRuntime.syncing = true;
     const uploadRevision = driveRuntime.revision;
+    const uploadFingerprint = checklistFingerprint(state.active);
     const body = driveFileBody();
     let nextDelay = 1200;
     setDriveStatus('Synchronisierung läuft …', 'busy');
@@ -578,7 +603,8 @@
         method: 'PATCH', headers: driveHeaders(true), body,
       });
       state.drive.fileVersion = String(updated.version || '');
-      state.drive.dirty = driveRuntime.revision !== uploadRevision;
+      state.drive.syncedFingerprint = uploadFingerprint;
+      state.drive.dirty = checklistFingerprint(state.active) !== uploadFingerprint || driveRuntime.revision !== uploadRevision;
       state.drive.lastSync = new Date().toISOString();
       driveRuntime.retryDelay = 3000;
       driveRuntime.conflict = false;
@@ -624,11 +650,16 @@
       const loadRemote = confirm('Im Drive-Ordner wurde eine Checkliste gefunden. Den Drive-Stand laden?\n\n„Abbrechen“ behält den lokalen Stand; er wird noch nicht überschrieben.');
       if (loadRemote) { await pullDriveFile(file); return; }
       state.drive.fileVersion = String(file.version || '');
+      state.drive.syncedFingerprint = checklistFingerprint(state.active);
       save({ remote: true });
       setDriveStatus('Lokaler Stand beibehalten. Mit „Jetzt synchronisieren“ kann er hochgeladen werden.', 'connected');
       return;
     }
     setDriveStatus('Mit Google Drive verbunden.', 'connected');
+    if (!state.drive.syncedFingerprint) {
+      state.drive.syncedFingerprint = checklistFingerprint(state.active);
+      save({ remote: true });
+    }
     scheduleDriveSync();
   }
 
@@ -741,14 +772,14 @@
   });
   $('editDialog').addEventListener('close', () => { editingItemId = null; $('editError').textContent = ''; });
   $('listTitle').addEventListener('change', () => { state.active.title = $('listTitle').value.trim() || 'Neue Checkliste'; save(); render(); });
-  $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save(); render(); });
+  $('hideCompleted').addEventListener('change', () => { state.hideCompleted = $('hideCompleted').checked; save({ localOnly: true }); render(); });
   $('readMode').addEventListener('change', () => {
     state.viewMode = $('readMode').checked ? 'read' : 'edit';
     setMenu(false);
-    save(); render();
+    save({ localOnly: true }); render();
     announce(state.viewMode === 'read' ? 'Read-Ansicht aktiviert.' : 'Edit-Ansicht aktiviert.');
   });
-  $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save(); render(); });
+  $('clearTagFilters').addEventListener('click', () => { state.tagFilters = []; save({ localOnly: true }); render(); });
   $('profileSelect').addEventListener('change', () => {
     if (!$('profileSelect').value) { switchToFreeList(); return; }
     const profile = allProfiles().find((candidate) => candidate.id === $('profileSelect').value);
@@ -756,7 +787,7 @@
     switchToProfile(profile);
   });
   $('newBlankList').addEventListener('click', () => {
-    save();
+    save({ localOnly: true });
     state.active = model.normalizeList({ title: 'Neue Checkliste', profile: '', items: [] });
     state.tagFilters = [];
     state.hideCompleted = false;

@@ -29,6 +29,8 @@ Fortlaufende Aufgaben, die nicht sofort umgesetzt werden.
   Speichern, Aktualisierung und Konfliktschutz umsetzen.
 - [x] Drive-Synchronisation gegen Aenderungen waehrend laufender Uploads
   absichern, automatisch wiederholen und regelmaessig aktualisieren.
+- [x] Lokale Ansichtseinstellungen vom Drive-Aenderungsstatus trennen und
+  Konflikte anhand des tatsaechlichen Listeninhalts bewerten.
 - [x] Upstream-Snapshot-Hashes fuer Windows- und Linux-Zeilenenden
   plattformunabhaengig machen.
 - [x] GitHub-Pages-Deployment fuer `dist/` mit vorgeschalteten
