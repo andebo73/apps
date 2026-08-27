@@ -11,6 +11,12 @@
     "tags_en": ["Checklists", "Tags & filters", "Local-first"]
   },
   "fonts": [],
+  "headAssets": [
+    {
+      "src": "https://accounts.google.com/gsi/client",
+      "comment": "Google Identity Services for optional Drive synchronization"
+    }
+  ],
   "inlineScripts": [
     "../../shared/qrx-core.js",
     "../../shared/qrx-i18n.js",

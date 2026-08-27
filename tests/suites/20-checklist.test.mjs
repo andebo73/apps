@@ -10,6 +10,7 @@ const source = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'model.js'), 
 const appSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'app.js'), 'utf8');
 const contentSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'content.html'), 'utf8');
 const cssSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'app.css'), 'utf8');
+const configSource = readFileSync(join(ROOT, 'src', 'apps', 'checklist', 'app.config.json'), 'utf8');
 const context = { Date, console };
 vm.createContext(context);
 vm.runInContext(source, context);
@@ -137,4 +138,14 @@ test('reset list only clears checks while profile restart restores its template'
   assert.match(resetHandler, /item\.checked = false/);
   assert.doesNotMatch(resetHandler, /listFromProfile|state\.active\s*=/);
   assert.match(appSource, /function replaceWithProfile\(profile\)[\s\S]+?state\.active = listFromProfile\(profile\)/);
+});
+
+test('Google Drive sync uses least-privilege browser authorization and conflict controls', () => {
+  assert.match(configSource, /https:\/\/accounts\.google\.com\/gsi\/client/);
+  assert.match(appSource, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/);
+  assert.match(appSource, /fileVersion/);
+  assert.match(appSource, /Die Liste wurde auf einem anderen Gerät geändert/);
+  assert.match(contentSource, /id="loadDriveNow"/);
+  assert.match(contentSource, /id="overwriteDrive"/);
+  assert.doesNotMatch(appSource, /client_secret|refresh_token/i);
 });

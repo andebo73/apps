@@ -26,6 +26,12 @@ npm run upstream:apply  # uebernimmt freigegebene Upstream-Pfade
 npm run upstream:apply:remove # bestaetigt gemeldete Upstream-Loeschungen
 ```
 
+Die optionale Google-Drive-Synchronisation wird zur Laufzeit in der
+Checklisten-App konfiguriert. Erforderlich sind eine aktivierte Google Drive API
+und eine OAuth-Client-ID fuer eine Webanwendung, deren autorisierte
+JavaScript-Quelle der veroeffentlichten GitHub-Pages-Adresse entspricht. Es
+werden keine OAuth-Client-Secrets im Repository benoetigt oder unterstuetzt.
+
 Der aktuell uebernommene qurix-Stand und die geschuetzten Dateihashes stehen in
 [`upstream/manifest.json`](upstream/manifest.json).
 Jeder Sync-Lauf erzeugt zusaetzlich den ignorierten Bericht

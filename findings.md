@@ -100,3 +100,7 @@ Beobachtungen, Fehler und Auffaelligkeiten waehrend der Entwicklung.
 - "Liste zuruecksetzen" und "Profil neu starten" haben getrennte Semantik:
   Ersteres entfernt unabhaengig vom Profil nur Haekchen, letzteres ersetzt den
   gesamten Arbeitsstand durch eine frische Kopie der Profilvorlage.
+- Eine statische Browser-App kann Drive ueber Google Identity Services und den
+  Scope `drive.file` ohne eigenes Backend verwenden. Kurzlebige Zugriffstoken
+  bleiben nur im Speicher; dauerhafte App-, Ordner- und Dateikennungen liegen
+  lokal. Drive-Dateiversionen verhindern stilles Ueberschreiben bei Konflikten.

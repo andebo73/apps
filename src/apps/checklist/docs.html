@@ -21,7 +21,13 @@
 <p><b>Liste teilen</b> erzeugt einen komprimierten Link und den passenden QR-Code. Die vollständige Checkliste befindet sich im Fragment des Links und wird nicht an einen zusätzlichen QR- oder Speicherdienst übertragen. Nach dem Scannen öffnet das Mobiltelefon eine unabhängige lokale Kopie direkt im Read-Modus. Spätere Änderungen werden nicht zwischen den Geräten synchronisiert.</p>
 
 <h3>Lokale Speicherung</h3>
-<p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden ausschließlich im <code>localStorage</code> des Browsers gespeichert. Es gibt kein Backend und keine Cloud-Synchronisation. JSON-Export dient als transportables Backup.</p>
+<p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden grundsätzlich im <code>localStorage</code> des Browsers gespeichert. JSON-Export dient als transportables Backup. Optional kann die aktive Liste zusätzlich mit Google Drive synchronisiert werden.</p>
+
+<h3>Google-Drive-Synchronisation</h3>
+<p>Unter <b>Google Drive</b> kann eine Google OAuth-Client-ID hinterlegt werden. Nach der Anmeldung legt die App auf Wunsch den Ordner <code>FDB Apps Checklisten</code> und darin die Datei <code>checklist.json</code> an. Änderungen werden nach kurzer Verzögerung hochgeladen; beim Zurückkehren zur App wird nach einem neueren Drive-Stand gesucht.</p>
+<p>Der Ordner kann in Google Drive mit Schreibrechten geteilt werden. Auf einem weiteren Gerät werden dieselbe OAuth-Client-ID und die Ordner-ID eingetragen. Die App verwendet ausschließlich den eingeschränkten Scope <code>drive.file</code>. Zugriffstoken bleiben im Arbeitsspeicher und werden weder lokal gespeichert noch exportiert.</p>
+<p>Wenn lokale und entfernte Liste parallel geändert wurden, stoppt die automatische Synchronisation. Mit <b>Drive-Stand laden</b> werden lokale Änderungen verworfen; <b>Drive überschreiben</b> ersetzt den entfernten Stand bewusst durch die lokale Liste.</p>
+<p>Für die Einrichtung muss in der Google Cloud Console die Drive API aktiviert und eine OAuth-Client-ID vom Typ Webanwendung erstellt werden. Die GitHub-Pages-Adresse der App wird als autorisierte JavaScript-Quelle eingetragen. Solange sich der OAuth-Zustimmungsbildschirm im Testmodus befindet, müssen beide Google-Konten als Testnutzer eingetragen sein.</p>
 
 <h3>HTML-Exporte</h3>
 <ul>

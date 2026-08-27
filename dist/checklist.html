@@ -174,12 +174,16 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 .cl-dialog-inner{display:grid;gap:var(--qrx-s-3);padding:var(--qrx-s-5)}.cl-dialog header,.cl-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:var(--qrx-s-3)}.cl-dialog h2{margin:.1rem 0 0}.cl-dialog textarea{resize:vertical}.cl-dialog details{padding:.7rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle)}.cl-dialog details p{margin:.5rem 0 0}.cl-dialog footer{justify-content:flex-end;margin-top:var(--qrx-s-2)}.cl-error{min-height:1.4rem;margin:0;color:var(--qrx-danger)}
 .cl-profile-list{display:grid;gap:var(--qrx-s-2)}.cl-profile-row{display:grid;grid-template-columns:1fr auto;gap:var(--qrx-s-3);align-items:center;padding:.75rem;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius)}.cl-profile-row small{display:block;color:var(--qrx-text-muted)}
 .cl-share-dialog{width:min(620px,calc(100% - 2rem))}.cl-share-dialog p{margin:0;color:var(--qrx-text-muted)}.cl-share-qr{display:grid;place-items:center;min-height:220px;padding:var(--qrx-s-3);border-radius:var(--qrx-radius);background:#fff}.cl-share-qr svg{display:block;max-width:min(100%,360px);height:auto}.cl-share-link{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--qrx-s-2)}.cl-share-link input{font-family:var(--qrx-font-mono);font-size:.75rem}
+.cl-drive-dialog{width:min(680px,calc(100% - 2rem))}.cl-drive-dialog>form>p{margin:0;color:var(--qrx-text-muted)}.cl-field small{color:var(--qrx-text-subtle);font-size:.75rem}.cl-drive-actions{display:flex;gap:var(--qrx-s-2);flex-wrap:wrap}.cl-drive-state{display:flex;align-items:center;gap:.55rem;padding:.65rem .75rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle);font-weight:650}.cl-drive-indicator{width:.7rem;height:.7rem;border-radius:50%;background:var(--qrx-text-subtle)}.cl-drive-indicator.is-connected{background:var(--qrx-success)}.cl-drive-indicator.is-busy{background:var(--qrx-accent)}.cl-drive-indicator.is-error{background:var(--qrx-danger)}
 .cl-edit-dialog{width:min(720px,calc(100% - 2rem))}.cl-edit-grid{display:grid;grid-template-columns:2fr 1fr;gap:var(--qrx-s-3)}.cl-edit-name,.cl-edit-note{grid-column:1/-1}
 .cl-app.is-read-mode{padding-left:var(--qrx-s-5)}.cl-app.is-read-mode .cl-side-menu,.cl-app.is-read-mode .cl-menu-toggle,.cl-app.is-read-mode .cl-menu-backdrop,.cl-app.is-read-mode .cl-profile-bar,.cl-app.is-read-mode .cl-add-form,.cl-app.is-read-mode .cl-toolbar,.cl-app.is-read-mode .cl-tag-filters{display:none}.cl-app.is-read-mode .cl-title{cursor:default}.cl-app.is-read-mode .cl-title:focus{outline:0}.cl-app.is-read-mode .cl-item{grid-template-columns:auto minmax(0,1fr);padding:.58rem .85rem}.cl-app.is-read-mode .cl-item-note,.cl-app.is-read-mode .cl-item-tags{display:none}.cl-app.is-read-mode .cl-groups{gap:var(--qrx-s-3)}.cl-app.is-read-mode .cl-group h2{padding:.55rem .85rem}.cl-app.is-read-mode .cl-status{margin:.35rem 0;min-height:0}
 @media(max-width:760px){.cl-app{padding:var(--qrx-s-5) var(--qrx-s-3)}.cl-hero{grid-template-columns:1fr;gap:var(--qrx-s-3)}.cl-mode-switch{justify-content:flex-start}.cl-add-form{grid-template-columns:1fr 1fr}.cl-field-main,.cl-add{grid-column:1/-1}.cl-toggle{width:100%;margin-bottom:.25rem}.cl-item{padding:.7rem}.cl-actions{flex-direction:column}.cl-profile-bar label{flex-basis:100%}.cl-profile-bar select{flex:1 1 100%}.cl-autosave{margin-left:0}.cl-menu-toggle{display:grid;place-items:center}.cl-side-menu{top:0;right:0;left:auto;width:min(320px,88vw);height:100dvh;padding:var(--qrx-s-4);border:0;border-radius:0;box-shadow:var(--qrx-shadow-lg);transform:translateX(105%);transition:transform 180ms ease}.cl-side-menu.is-open{transform:translateX(0)}.cl-side-menu-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--qrx-s-2)}.cl-menu-btn{justify-content:flex-start;width:100%;min-height:46px;padding:.65rem .75rem;gap:.8rem}.cl-menu-btn>span:first-child{width:1.6rem;text-align:center}.cl-menu-btn>span:last-child{display:inline}.cl-menu-btn::after{display:none}.cl-app.is-read-mode{padding:.8rem}.cl-app.is-read-mode .cl-hero{margin-bottom:.75rem}.cl-app.is-read-mode .cl-title{font-size:1.7rem}.cl-app.is-read-mode .cl-progress-text{margin-top:.2rem;font-size:.85rem}.cl-app.is-read-mode .cl-hero-tools{gap:.6rem}.cl-app.is-read-mode .cl-group{border-radius:var(--qrx-radius)}.cl-app.is-read-mode .cl-item{padding:.52rem .65rem;gap:.65rem}.cl-app.is-read-mode .cl-item-check{width:1.4rem;height:1.4rem}.cl-app.is-read-mode .cl-item-line{gap:.4rem}.cl-app.is-read-mode .cl-item-name{font-size:.95rem}}
 @media(max-width:520px){.cl-edit-grid{grid-template-columns:1fr}.cl-edit-name,.cl-edit-note{grid-column:auto}.cl-share-link{grid-template-columns:1fr}.cl-share-qr{min-height:180px;padding:.5rem}}
 .fdb-shell-mark{display:inline-grid;place-items:center;min-width:2.5rem;height:2.5rem;padding:0 .5rem;border-radius:var(--qrx-radius);background:var(--qrx-gradient);color:var(--qrx-text-on-brand);font-weight:800;letter-spacing:.04em}.fdb-shell-name{font-weight:700}
 </style>
+
+<!-- Google Identity Services for optional Drive synchronization -->
+<script src="https://accounts.google.com/gsi/client"></script>
 </head>
 <body>
 
@@ -227,7 +231,13 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 <p><b>Liste teilen</b> erzeugt einen komprimierten Link und den passenden QR-Code. Die vollständige Checkliste befindet sich im Fragment des Links und wird nicht an einen zusätzlichen QR- oder Speicherdienst übertragen. Nach dem Scannen öffnet das Mobiltelefon eine unabhängige lokale Kopie direkt im Read-Modus. Spätere Änderungen werden nicht zwischen den Geräten synchronisiert.</p>
 
 <h3>Lokale Speicherung</h3>
-<p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden ausschließlich im <code>localStorage</code> des Browsers gespeichert. Es gibt kein Backend und keine Cloud-Synchronisation. JSON-Export dient als transportables Backup.</p>
+<p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden grundsätzlich im <code>localStorage</code> des Browsers gespeichert. JSON-Export dient als transportables Backup. Optional kann die aktive Liste zusätzlich mit Google Drive synchronisiert werden.</p>
+
+<h3>Google-Drive-Synchronisation</h3>
+<p>Unter <b>Google Drive</b> kann eine Google OAuth-Client-ID hinterlegt werden. Nach der Anmeldung legt die App auf Wunsch den Ordner <code>FDB Apps Checklisten</code> und darin die Datei <code>checklist.json</code> an. Änderungen werden nach kurzer Verzögerung hochgeladen; beim Zurückkehren zur App wird nach einem neueren Drive-Stand gesucht.</p>
+<p>Der Ordner kann in Google Drive mit Schreibrechten geteilt werden. Auf einem weiteren Gerät werden dieselbe OAuth-Client-ID und die Ordner-ID eingetragen. Die App verwendet ausschließlich den eingeschränkten Scope <code>drive.file</code>. Zugriffstoken bleiben im Arbeitsspeicher und werden weder lokal gespeichert noch exportiert.</p>
+<p>Wenn lokale und entfernte Liste parallel geändert wurden, stoppt die automatische Synchronisation. Mit <b>Drive-Stand laden</b> werden lokale Änderungen verworfen; <b>Drive überschreiben</b> ersetzt den entfernten Stand bewusst durch die lokale Liste.</p>
+<p>Für die Einrichtung muss in der Google Cloud Console die Drive API aktiviert und eine OAuth-Client-ID vom Typ Webanwendung erstellt werden. Die GitHub-Pages-Adresse der App wird als autorisierte JavaScript-Quelle eingetragen. Solange sich der OAuth-Zustimmungsbildschirm im Testmodus befindet, müssen beide Google-Konten als Testnutzer eingetragen sein.</p>
 
 <h3>HTML-Exporte</h3>
 <ul>
@@ -249,6 +259,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     <button id="manageProfiles" class="cl-menu-btn" type="button" aria-label="Profile verwalten" data-tooltip="Eigene Profile duplizieren oder löschen"><span aria-hidden="true">☷</span><span>Profile verwalten</span></button>
     <div class="cl-menu-separator"></div>
     <button id="shareList" class="cl-menu-btn" type="button" aria-label="Liste teilen" data-tooltip="Aktuelle Liste als Link und QR-Code weitergeben"><span aria-hidden="true">⌁</span><span>Liste teilen</span></button>
+    <button id="driveSync" class="cl-menu-btn" type="button" aria-label="Google Drive synchronisieren" data-tooltip="Liste über eine JSON-Datei in Google Drive synchronisieren"><span aria-hidden="true">G↕</span><span>Google Drive</span></button>
     <button id="openImport" class="cl-menu-btn" type="button" aria-label="Importieren" data-tooltip="Eine JSON-, Markdown- oder Textliste importieren"><span aria-hidden="true">⇥</span><span>Importieren</span></button>
     <button id="exportJson" class="cl-menu-btn" type="button" aria-label="JSON exportieren" data-tooltip="Vollständige Checkliste als JSON sichern"><span aria-hidden="true">{ }</span><span>JSON exportieren</span></button>
     <button id="exportMarkdown" class="cl-menu-btn" type="button" aria-label="Markdown exportieren" data-tooltip="Lesbare Checkliste als Markdown exportieren"><span aria-hidden="true">M↓</span><span>Markdown exportieren</span></button>
@@ -348,6 +359,34 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
       <label for="shareUrl">Teilbarer Link</label>
       <div class="cl-share-link"><input id="shareUrl" type="text" readonly><button id="copyShareUrl" class="cl-btn" type="button">Link kopieren</button></div>
       <p id="shareError" class="cl-error" role="alert"></p>
+      <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="driveDialog" class="cl-dialog cl-drive-dialog">
+    <form method="dialog" class="cl-dialog-inner">
+      <header><div><span class="cl-eyebrow">Optionale Synchronisation</span><h2>Google Drive</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
+      <p>Die aktive Liste wird als <code>checklist.json</code> in einem von FDB Apps angelegten oder bereits verbundenen Drive-Ordner gespeichert.</p>
+      <div class="cl-field">
+        <label for="driveClientId">Google OAuth-Client-ID</label>
+        <input id="driveClientId" type="text" autocomplete="off" placeholder="…apps.googleusercontent.com">
+        <small>Die Client-ID wird nur in diesem Browser gespeichert.</small>
+      </div>
+      <div class="cl-field">
+        <label for="driveFolderId">Drive-Ordner-ID</label>
+        <input id="driveFolderId" type="text" autocomplete="off" placeholder="Leer lassen, um einen neuen Ordner anzulegen">
+        <small>Zum Verbinden eines geteilten Ordners dessen ID aus der Drive-URL einfügen.</small>
+      </div>
+      <div class="cl-drive-actions">
+        <button id="connectDrive" class="cl-btn cl-primary" type="button">Mit Google verbinden</button>
+        <button id="createDriveFolder" class="cl-btn" type="button" disabled>Neuen App-Ordner anlegen</button>
+        <button id="syncDriveNow" class="cl-btn" type="button" disabled>Jetzt synchronisieren</button>
+        <button id="loadDriveNow" class="cl-btn" type="button" disabled>Drive-Stand laden</button>
+        <button id="overwriteDrive" class="cl-btn cl-danger" type="button" disabled>Drive überschreiben</button>
+      </div>
+      <div class="cl-drive-state" aria-live="polite"><span id="driveIndicator" class="cl-drive-indicator"></span><span id="driveStatus">Nicht verbunden</span></div>
+      <p id="driveError" class="cl-error" role="alert"></p>
+      <details><summary>Ordner mit einer anderen Person teilen</summary><p>Öffne den angelegten Ordner in Google Drive und teile ihn mit Schreibrechten. Auf dem zweiten Gerät dieselbe OAuth-Client-ID und die Ordner-ID eintragen.</p></details>
       <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
     </form>
   </dialog>
@@ -3325,6 +3364,8 @@ var qrcode = function() {
 
   const model = window.fdbChecklistModel;
   const STORAGE_KEY = 'fdb_apps_checklist_v1';
+  const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+  const DRIVE_API = 'https://www.googleapis.com/drive/v3';
   const SHOPPING_PROFILE_VERSION = 2;
   const $ = (id) => document.getElementById(id);
   const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -3384,6 +3425,7 @@ var qrcode = function() {
   function defaultState() {
     const active = listFromProfile(builtinProfiles[0]);
     return { active, customProfiles: [], hideCompleted: false, tagFilters: [], viewMode: 'edit',
+      drive: { clientId: '', folderId: '', fileId: '', fileVersion: '', dirty: false, lastSync: '' },
       savedLists: { 'profile:shopping': clone(active) },
       builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
@@ -3409,6 +3451,14 @@ var qrcode = function() {
         hideCompleted: Boolean(value?.hideCompleted),
         tagFilters: model.normalizeTags(value?.tagFilters || []),
         viewMode: value?.viewMode === 'read' ? 'read' : 'edit',
+        drive: {
+          clientId: String(value?.drive?.clientId || ''),
+          folderId: String(value?.drive?.folderId || ''),
+          fileId: String(value?.drive?.fileId || ''),
+          fileVersion: String(value?.drive?.fileVersion || ''),
+          dirty: Boolean(value?.drive?.dirty),
+          lastSync: String(value?.drive?.lastSync || ''),
+        },
         savedLists,
         builtinProfileVersions: { ...(value?.builtinProfileVersions || {}) },
       };
@@ -3432,14 +3482,17 @@ var qrcode = function() {
 
   let state = load();
   let editingItemId = null;
+  const driveRuntime = { accessToken: '', expiresAt: 0, tokenClient: null, syncing: false, timer: null };
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
 
-  function save() {
+  function save(options = {}) {
     state.active.updatedAt = new Date().toISOString();
     state.savedLists = state.savedLists || {};
     state.savedLists[draftKey(state.active)] = clone(state.active);
+    if (!options.remote) state.drive.dirty = true;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+    if (!options.remote) scheduleDriveSync();
   }
 
   function announce(message, error = false) {
@@ -3756,6 +3809,213 @@ var qrcode = function() {
     }
   }
 
+  function setDriveStatus(message, kind = '') {
+    $('driveStatus').textContent = message;
+    $('driveIndicator').className = `cl-drive-indicator${kind ? ` is-${kind}` : ''}`;
+    $('driveError').textContent = kind === 'error' ? message : '';
+    const connected = Boolean(driveRuntime.accessToken);
+    $('createDriveFolder').disabled = !connected;
+    $('syncDriveNow').disabled = !connected || !state.drive.folderId;
+    $('loadDriveNow').disabled = !connected || !state.drive.fileId;
+    $('overwriteDrive').disabled = !connected || !state.drive.fileId;
+  }
+
+  function driveHeaders(json = false) {
+    const headers = { Authorization: `Bearer ${driveRuntime.accessToken}` };
+    if (json) headers['Content-Type'] = 'application/json';
+    return headers;
+  }
+
+  async function driveRequest(url, options = {}) {
+    const response = await fetch(url, options);
+    if (response.status === 401) {
+      driveRuntime.accessToken = '';
+      throw new Error('Die Google-Anmeldung ist abgelaufen. Bitte erneut verbinden.');
+    }
+    if (!response.ok) {
+      let detail = '';
+      try { detail = (await response.json())?.error?.message || ''; } catch (_) {}
+      throw new Error(detail || `Google Drive antwortet mit Status ${response.status}.`);
+    }
+    if (response.status === 204) return null;
+    return response.json();
+  }
+
+  function driveFileBody() {
+    return JSON.stringify({ format: 'fdb-checklist-drive', version: 1, list: state.active }, null, 2);
+  }
+
+  async function createDriveFile() {
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify({ name: 'checklist.json', parents: [state.drive.folderId], mimeType: 'application/json' })], { type: 'application/json' }));
+    form.append('file', new Blob([driveFileBody()], { type: 'application/json' }));
+    const file = await driveRequest('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,version,modifiedTime', {
+      method: 'POST', headers: driveHeaders(), body: form,
+    });
+    state.drive.fileId = file.id;
+    state.drive.fileVersion = String(file.version || '');
+    state.drive.dirty = false;
+    state.drive.lastSync = new Date().toISOString();
+    save({ remote: true });
+    return file;
+  }
+
+  async function findDriveFile() {
+    const query = `'${state.drive.folderId.replace(/'/g, "\\'")}' in parents and name = 'checklist.json' and trashed = false`;
+    const result = await driveRequest(`${DRIVE_API}/files?q=${encodeURIComponent(query)}&spaces=drive&fields=files(id,name,version,modifiedTime)&orderBy=modifiedTime desc&pageSize=1`, {
+      headers: driveHeaders(),
+    });
+    return result.files?.[0] || null;
+  }
+
+  async function readDriveFile(fileId) {
+    const response = await fetch(`${DRIVE_API}/files/${encodeURIComponent(fileId)}?alt=media`, { headers: driveHeaders() });
+    if (!response.ok) throw new Error(`Die Drive-Datei konnte nicht gelesen werden (${response.status}).`);
+    const document = await response.json();
+    if (document?.format !== 'fdb-checklist-drive' || document?.version !== 1) throw new Error('Die Drive-Datei ist keine unterstützte FDB-Checkliste.');
+    return model.normalizeList(document.list);
+  }
+
+  async function pullDriveFile(file) {
+    state.active = await readDriveFile(file.id);
+    state.drive.fileId = file.id;
+    state.drive.fileVersion = String(file.version || '');
+    state.drive.dirty = false;
+    state.drive.lastSync = new Date().toISOString();
+    save({ remote: true });
+    render();
+    setDriveStatus('Drive-Stand geladen.', 'connected');
+  }
+
+  async function uploadDriveFile() {
+    if (!driveRuntime.accessToken || !state.drive.fileId || driveRuntime.syncing) return;
+    driveRuntime.syncing = true;
+    setDriveStatus('Synchronisierung läuft …', 'busy');
+    try {
+      const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
+      if (state.drive.fileVersion && String(remote.version || '') !== state.drive.fileVersion && state.drive.dirty) {
+        throw new Error('Die Liste wurde auf einem anderen Gerät geändert. Bitte den Drive-Stand laden oder die lokale Liste bewusst überschreiben.');
+      }
+      const updated = await driveRequest(`https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(state.drive.fileId)}?uploadType=media&fields=id,version,modifiedTime`, {
+        method: 'PATCH', headers: driveHeaders(true), body: driveFileBody(),
+      });
+      state.drive.fileVersion = String(updated.version || '');
+      state.drive.dirty = false;
+      state.drive.lastSync = new Date().toISOString();
+      save({ remote: true });
+      setDriveStatus(`Synchronisiert um ${new Date().toLocaleTimeString('de', { hour: '2-digit', minute: '2-digit' })}.`, 'connected');
+    } catch (error) {
+      setDriveStatus(error.message, 'error');
+    } finally { driveRuntime.syncing = false; }
+  }
+
+  function scheduleDriveSync() {
+    clearTimeout(driveRuntime.timer);
+    if (!driveRuntime.accessToken || !state.drive.fileId || !state.drive.dirty) return;
+    driveRuntime.timer = setTimeout(uploadDriveFile, 1200);
+  }
+
+  async function connectDriveFolder() {
+    setDriveStatus('Drive-Ordner wird geprüft …', 'busy');
+    const file = await findDriveFile();
+    if (!file) {
+      await createDriveFile();
+      setDriveStatus('Neue checklist.json angelegt und synchronisiert.', 'connected');
+      return;
+    }
+    state.drive.fileId = file.id;
+    const remoteChanged = state.drive.fileVersion && String(file.version || '') !== state.drive.fileVersion;
+    if (!state.drive.fileVersion || remoteChanged) {
+      const loadRemote = confirm('Im Drive-Ordner wurde eine Checkliste gefunden. Den Drive-Stand laden?\n\n„Abbrechen“ behält den lokalen Stand; er wird noch nicht überschrieben.');
+      if (loadRemote) { await pullDriveFile(file); return; }
+      state.drive.fileVersion = String(file.version || '');
+      save({ remote: true });
+      setDriveStatus('Lokaler Stand beibehalten. Mit „Jetzt synchronisieren“ kann er hochgeladen werden.', 'connected');
+      return;
+    }
+    setDriveStatus('Mit Google Drive verbunden.', 'connected');
+    scheduleDriveSync();
+  }
+
+  function initDriveClient() {
+    const clientId = $('driveClientId').value.trim();
+    if (!clientId.endsWith('.apps.googleusercontent.com')) throw new Error('Bitte eine gültige Google OAuth-Client-ID eingeben.');
+    if (!window.google?.accounts?.oauth2) throw new Error('Google Identity Services konnte nicht geladen werden.');
+    state.drive.clientId = clientId;
+    state.drive.folderId = $('driveFolderId').value.trim();
+    if (!state.drive.folderId) { state.drive.fileId = ''; state.drive.fileVersion = ''; }
+    save({ remote: true });
+    driveRuntime.tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: DRIVE_SCOPE,
+      callback: async (token) => {
+        if (token.error) { setDriveStatus(token.error_description || token.error, 'error'); return; }
+        driveRuntime.accessToken = token.access_token;
+        driveRuntime.expiresAt = Date.now() + Number(token.expires_in || 3600) * 1000;
+        setDriveStatus('Mit Google verbunden.', 'connected');
+        try { if (state.drive.folderId) await connectDriveFolder(); } catch (error) { setDriveStatus(error.message, 'error'); }
+      },
+    });
+    driveRuntime.tokenClient.requestAccessToken({ prompt: '' });
+  }
+
+  async function createDriveFolder() {
+    setDriveStatus('Drive-Ordner wird angelegt …', 'busy');
+    try {
+      const folder = await driveRequest(`${DRIVE_API}/files?fields=id,name`, {
+        method: 'POST', headers: driveHeaders(true),
+        body: JSON.stringify({ name: 'FDB Apps Checklisten', mimeType: 'application/vnd.google-apps.folder' }),
+      });
+      state.drive.folderId = folder.id;
+      state.drive.fileId = '';
+      state.drive.fileVersion = '';
+      $('driveFolderId').value = folder.id;
+      save({ remote: true });
+      await connectDriveFolder();
+    } catch (error) { setDriveStatus(error.message, 'error'); }
+  }
+
+  async function syncDriveNow() {
+    if (!state.drive.fileId) {
+      try { await connectDriveFolder(); } catch (error) { setDriveStatus(error.message, 'error'); }
+      return;
+    }
+    await uploadDriveFile();
+  }
+
+  async function loadDriveNow() {
+    if (state.drive.dirty && !confirm('Lokale Änderungen verwerfen und den Drive-Stand laden?')) return;
+    try {
+      const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
+      await pullDriveFile(remote);
+      announce('Drive-Stand geladen.');
+    } catch (error) { setDriveStatus(error.message, 'error'); }
+  }
+
+  async function overwriteDrive() {
+    if (!confirm('Die aktuelle Drive-Datei mit dem lokalen Stand überschreiben? Änderungen vom anderen Gerät gehen dabei verloren.')) return;
+    try {
+      const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version`, { headers: driveHeaders() });
+      state.drive.fileVersion = String(remote.version || '');
+      state.drive.dirty = true;
+      await uploadDriveFile();
+    } catch (error) { setDriveStatus(error.message, 'error'); }
+  }
+
+  async function refreshDriveIfChanged() {
+    if (!driveRuntime.accessToken || !state.drive.fileId || driveRuntime.syncing) return;
+    try {
+      const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
+      if (String(remote.version || '') === state.drive.fileVersion) return;
+      if (state.drive.dirty) {
+        setDriveStatus('Drive und lokale Liste wurden geändert. Öffne Google Drive und entscheide, welchen Stand du behalten möchtest.', 'error');
+        return;
+      }
+      await pullDriveFile(remote);
+      announce('Neueren Stand aus Google Drive geladen.');
+    } catch (error) { setDriveStatus(error.message, 'error'); }
+  }
+
   $('addForm').addEventListener('submit', (event) => {
     event.preventDefault();
     const item = model.normalizeItem({ text: $('itemText').value, quantity: $('itemQuantity').value, category: $('itemCategory').value, tags: $('itemTags').value });
@@ -3816,6 +4076,19 @@ var qrcode = function() {
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
   $('shareList').addEventListener('click', openShareDialog);
+  $('driveSync').addEventListener('click', () => {
+    $('driveClientId').value = state.drive.clientId;
+    $('driveFolderId').value = state.drive.folderId;
+    setDriveStatus(driveRuntime.accessToken ? 'Mit Google Drive verbunden.' : 'Nicht verbunden', driveRuntime.accessToken ? 'connected' : '');
+    $('driveDialog').showModal();
+  });
+  $('connectDrive').addEventListener('click', () => {
+    try { initDriveClient(); } catch (error) { setDriveStatus(error.message, 'error'); }
+  });
+  $('createDriveFolder').addEventListener('click', createDriveFolder);
+  $('syncDriveNow').addEventListener('click', syncDriveNow);
+  $('loadDriveNow').addEventListener('click', loadDriveNow);
+  $('overwriteDrive').addEventListener('click', overwriteDrive);
   $('copyShareUrl').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText($('shareUrl').value);
@@ -3854,9 +4127,19 @@ var qrcode = function() {
   $('menuBackdrop').addEventListener('click', () => setMenu(false));
   $('sideMenu').querySelectorAll('.cl-menu-btn').forEach((control) => control.addEventListener('click', () => setMenu(false)));
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setMenu(false); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshDriveIfChanged(); });
 
-  window.qurixApp.serializeState = () => clone(state);
-  window.qurixApp.hydrateState = (snapshot) => { state = normalizeState(snapshot); save(); render(); announce('Momentaufnahme wiederhergestellt.'); };
+  window.qurixApp.serializeState = () => {
+    const snapshot = clone(state);
+    snapshot.drive = defaultState().drive;
+    return snapshot;
+  };
+  window.qurixApp.hydrateState = (snapshot) => {
+    const localDrive = clone(state.drive);
+    state = normalizeState(snapshot);
+    state.drive = localDrive;
+    save(); render(); announce('Momentaufnahme wiederhergestellt.');
+  };
 
   importSharedList().finally(render);
 })();
