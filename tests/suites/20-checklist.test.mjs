@@ -218,6 +218,19 @@ test('profile selector and active list expose clear status badges', () => {
   assert.doesNotMatch(appSource, /mitgeliefert/);
 });
 
+test('saving a reusable profile gives its working list an independent identity', () => {
+  const handler = appSource.match(/\$\('saveProfile'\)\.addEventListener\('click',[\s\S]+?\n  \}\);/)?.[0] || '';
+  assert.match(handler, /save\(\{ localOnly: true \}\)/);
+  assert.match(handler, /state\.active = model\.normalizeList\(\{ \.\.\.clone\(state\.active\), id: '', profile: profile\.id \}\)/);
+  assert.match(handler, /activateDriveBinding\(\)/);
+  assert.doesNotMatch(handler, /state\.active\.profile = profile\.id/);
+});
+
+test('legacy duplicate list identities are separated during state normalization', () => {
+  assert.match(appSource, /const listIds = new Set\(\[active\.id\]\)/);
+  assert.match(appSource, /if \(listIds\.has\(list\.id\)\) list\.id = newId\('list'\)/);
+});
+
 test('local view settings do not dirty or synchronize the Drive checklist', () => {
   const readHandler = appSource.match(/\$\('readMode'\)\.addEventListener\('change',[\s\S]+?\n  \}\);/)?.[0] || '';
   const hideHandler = appSource.match(/\$\('hideCompleted'\)\.addEventListener\('change',[^\n]+/)?.[0] || '';

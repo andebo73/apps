@@ -117,7 +117,13 @@
       }
       const active = model.normalizeList(value?.active || fallback.active);
       const activeKey = draftKey(active);
-      if (!value?.active?.id && savedLists[activeKey]) savedLists[activeKey].id = active.id;
+      if (savedLists[activeKey]) savedLists[activeKey].id = active.id;
+      const listIds = new Set([active.id]);
+      for (const [key, list] of Object.entries(savedLists)) {
+        if (key === activeKey) continue;
+        if (listIds.has(list.id)) list.id = newId('list');
+        listIds.add(list.id);
+      }
       const resetDriveLayout = Number(value?.driveLayoutVersion || 0) < DRIVE_LAYOUT_VERSION;
       const driveBindings = {};
       if (!resetDriveLayout && value?.driveBindings && typeof value.driveBindings === 'object') {
@@ -1028,7 +1034,13 @@
   });
   $('saveProfile').addEventListener('click', () => {
     const name = prompt('Name des neuen Profils', state.active.title); if (!name?.trim()) return;
-    const profile = createProfile(name.trim(), state.active.items); state.active.profile = profile.id; save(); render(); announce('Profil gespeichert.');
+    save({ localOnly: true });
+    const profile = normalizeProfile({ id: newId('profile'), name: name.trim(), items: clone(state.active.items) });
+    state.customProfiles.push(profile);
+    state.active = model.normalizeList({ ...clone(state.active), id: '', profile: profile.id });
+    activateDriveBinding();
+    save({ localOnly: true }); render();
+    announce('Profil gespeichert. Die neue Profil-Liste kann unabhängig synchronisiert werden.');
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
   $('shareList').addEventListener('click', openShareDialog);
