@@ -89,7 +89,7 @@
       <label class="cl-file-label" for="importFile">Oder Datei auswählen</label>
       <input id="importFile" type="file" accept=".json,.md,.markdown,.txt,application/json,text/markdown,text/plain">
       <label for="importTarget">Übernehmen als</label>
-      <select id="importTarget"><option value="list">Neue aktive Checkliste</option><option value="profile">Neues Profil</option></select>
+      <select id="importTarget"><option value="append">Zur aktuellen Checkliste hinzufügen</option><option value="list">Neue aktive Checkliste</option><option value="profile">Neues Profil</option></select>
       <details><summary>Prompt für eine KI</summary><p>„Erstelle eine Checkliste als Markdown. Verwende eine H1-Überschrift, H2-Kategorien und Einträge im Format <code>- [ ] Menge Bezeichnung</code>.“</p></details>
       <p id="importError" class="cl-error" role="alert"></p>
       <footer><button class="cl-btn" value="cancel">Abbrechen</button><button id="confirmImport" class="cl-btn cl-primary" value="default">Importieren</button></footer>

@@ -102,6 +102,14 @@ test('empty or invalid imports fail with useful errors', () => {
   assert.throws(() => model.parseText('\n\n'), /keine Listeneinträge/);
 });
 
+test('imports can append items without replacing the active checklist identity', () => {
+  assert.match(contentSource, /option value="append">Zur aktuellen Checkliste hinzufügen/);
+  const handler = appSource.match(/\$\('confirmImport'\)\.addEventListener\('click',[\s\S]+?\n  \}\);/)?.[0] || '';
+  assert.match(handler, /importTarget'\)\.value === 'append'/);
+  assert.match(handler, /imported\.items\.map\(\(item\) => \(\{ \.\.\.item, id: '' \}\)\)/);
+  assert.match(handler, /state\.active\.items\.push\(\.\.\.appendedItems\)/);
+});
+
 test('read mode is switchable, persisted and removes editing controls', () => {
   assert.match(contentSource, /id="readMode"[^>]+role="switch"/);
   assert.match(appSource, /viewMode: 'edit'/);

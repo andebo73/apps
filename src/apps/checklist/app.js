@@ -1126,6 +1126,11 @@
       const imported = model.parse($('importText').value, $('importFormat').value);
       if ($('importTarget').value === 'profile') {
         createProfile(imported.title, imported.items); announce('Profil importiert.');
+      } else if ($('importTarget').value === 'append') {
+        const appendedItems = model.normalizeItems(imported.items.map((item) => ({ ...item, id: '' })));
+        state.active.items.push(...appendedItems);
+        state.tagFilters = [];
+        save(); render(); announce(`${appendedItems.length} Einträge zur aktuellen Checkliste hinzugefügt.`);
       } else {
         state.active = imported; activateDriveBinding(); state.tagFilters = []; save(); render(); announce(`${imported.items.length} Einträge importiert.`);
       }

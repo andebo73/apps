@@ -229,7 +229,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 <p>Jeder Eintrag kann mehrere, durch Kommas getrennte Tags erhalten, zum Beispiel <code>Bio, Angebot</code>. Oberhalb der Liste erscheinen alle verwendeten Tags als Filter. Sind mehrere Tags aktiv, werden Einträge angezeigt, die mindestens einen davon besitzen.</p>
 
 <h3>Import und Export</h3>
-<p>Importiert werden JSON, Markdown und einfacher Text. Bei einfachem Text wird jede nicht leere Zeile zu einem Eintrag. Markdown unterstützt Überschriften als Kategorien, Checkboxen und Hashtag-Tags wie <code>- [ ] Milch #Frühstück #Bio</code>. Ein Import kann direkt zur aktiven Liste oder zu einem neuen Profil werden.</p>
+<p>Importiert werden JSON, Markdown und einfacher Text. Bei einfachem Text wird jede nicht leere Zeile zu einem Eintrag. Markdown unterstützt Überschriften als Kategorien, Checkboxen und Hashtag-Tags wie <code>- [ ] Milch #Frühstück #Bio</code>. Ein Import kann eine neue aktive Liste oder ein neues Profil erzeugen oder Einträge zur aktuellen Checkliste hinzufügen. Beim Hinzufügen bleiben Titel, Profil, Listen-ID und Drive-Verknüpfung erhalten; die ergänzten Einträge bekommen neue interne IDs.</p>
 <p>JSON bewahrt alle Felder verlustfrei. Markdown eignet sich besonders zum Teilen und für KI-generierte Listen. Der Importdialog enthält dafür einen Beispielprompt.</p>
 
 <h3>Per QR-Code teilen</h3>
@@ -348,7 +348,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
       <label class="cl-file-label" for="importFile">Oder Datei auswählen</label>
       <input id="importFile" type="file" accept=".json,.md,.markdown,.txt,application/json,text/markdown,text/plain">
       <label for="importTarget">Übernehmen als</label>
-      <select id="importTarget"><option value="list">Neue aktive Checkliste</option><option value="profile">Neues Profil</option></select>
+      <select id="importTarget"><option value="append">Zur aktuellen Checkliste hinzufügen</option><option value="list">Neue aktive Checkliste</option><option value="profile">Neues Profil</option></select>
       <details><summary>Prompt für eine KI</summary><p>„Erstelle eine Checkliste als Markdown. Verwende eine H1-Überschrift, H2-Kategorien und Einträge im Format <code>- [ ] Menge Bezeichnung</code>.“</p></details>
       <p id="importError" class="cl-error" role="alert"></p>
       <footer><button class="cl-btn" value="cancel">Abbrechen</button><button id="confirmImport" class="cl-btn cl-primary" value="default">Importieren</button></footer>
@@ -4515,6 +4515,11 @@ var qrcode = function() {
       const imported = model.parse($('importText').value, $('importFormat').value);
       if ($('importTarget').value === 'profile') {
         createProfile(imported.title, imported.items); announce('Profil importiert.');
+      } else if ($('importTarget').value === 'append') {
+        const appendedItems = model.normalizeItems(imported.items.map((item) => ({ ...item, id: '' })));
+        state.active.items.push(...appendedItems);
+        state.tagFilters = [];
+        save(); render(); announce(`${appendedItems.length} Einträge zur aktuellen Checkliste hinzugefügt.`);
       } else {
         state.active = imported; activateDriveBinding(); state.tagFilters = []; save(); render(); announce(`${imported.items.length} Einträge importiert.`);
       }
