@@ -39,6 +39,8 @@
   <section class="cl-card cl-profile-bar" aria-label="Profil und Listenaktionen">
     <label for="profileSelect">Profil</label>
     <select id="profileSelect"></select>
+    <div id="profileBadges" class="cl-profile-badges" aria-live="polite" aria-label="Status der ausgewählten Liste"></div>
+    <button id="driveListAction" class="cl-btn cl-drive-list-action" type="button">Mit Drive synchronisieren</button>
     <span class="cl-autosave"><span aria-hidden="true">✓</span> Automatisch gespeichert</span>
   </section>
 
@@ -118,15 +120,9 @@
   <dialog id="driveDialog" class="cl-dialog cl-drive-dialog">
     <form method="dialog" class="cl-dialog-inner">
       <header><div><span class="cl-eyebrow">Optionale Synchronisation</span><h2>Google Drive</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
-      <p>Die aktive Liste wird als <code>checklist.json</code> in einem von FDB Apps angelegten oder bereits verbundenen Drive-Ordner gespeichert.</p>
-      <div class="cl-field">
-        <label for="driveFolderId">Drive-Ordner-ID</label>
-        <input id="driveFolderId" type="text" autocomplete="off" placeholder="Leer lassen, um einen neuen Ordner anzulegen">
-        <small>Zum Verbinden eines geteilten Ordners dessen ID aus der Drive-URL einfügen.</small>
-      </div>
+      <p>Jede Liste wird als eigene Datei unter <code>Meine Ablage/FDB Apps/Checklisten</code> gespeichert. Freigaben gelten nur für die jeweilige Datei.</p>
       <div class="cl-drive-actions">
-        <button id="connectDrive" class="cl-btn cl-primary" type="button">Mit Google verbinden</button>
-        <button id="createDriveFolder" class="cl-btn" type="button" disabled>Neuen App-Ordner anlegen</button>
+        <button id="connectDrive" class="cl-btn cl-primary" type="button">Google Drive verbinden</button>
         <button id="syncDriveNow" class="cl-btn" type="button" disabled>Jetzt synchronisieren</button>
         <button id="loadDriveNow" class="cl-btn" type="button" disabled>Drive-Stand laden</button>
         <button id="overwriteDrive" class="cl-btn cl-danger" type="button" disabled>Drive überschreiben</button>

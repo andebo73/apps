@@ -61,6 +61,7 @@
     return {
       format: FORMAT,
       version: VERSION,
+      id: text(source.id) || id('list'),
       title: text(source.title) || fallbackTitle,
       profile: text(source.profile),
       items: normalizeItems(source.items || []),

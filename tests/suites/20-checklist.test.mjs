@@ -29,6 +29,7 @@ test('checklist JSON is normalized and round-trips', () => {
     [['Pass', true, 'Dokumente', ['Wichtig', 'Reise']], ['Ladekabel', false, '', []]],
   );
   const again = model.parseJson(model.toJson(parsed));
+  assert.equal(again.id, parsed.id);
   assert.deepEqual(
     plain(again.items.map((item) => [item.text, item.checked, item.category, item.tags])),
     [['Pass', true, 'Dokumente', ['Wichtig', 'Reise']], ['Ladekabel', false, '', []]],
@@ -169,10 +170,52 @@ test('Drive sharing creates a least-privilege invitation link with automatic set
   assert.match(appSource, /\/permissions\?sendNotificationEmail=true/);
   assert.match(appSource, /role: 'writer'/);
   assert.match(appSource, /url\.hash = `drive-invite=\$\{encodeDriveInvite/);
-  assert.match(appSource, /if \(driveRuntime\.pendingInvite\) await acceptDriveInvite\(\)/);
+  assert.match(appSource, /driveRuntime\.pendingInvite[\s\S]+?await acceptDriveInvite\(\)/);
   assert.doesNotMatch(appSource, /drive-invite=.*accessToken/);
   assert.doesNotMatch(contentSource, /id="driveClientId"/);
   assert.match(appSource, /const GOOGLE_CLIENT_ID = '62330084475-[^']+\.apps\.googleusercontent\.com'/);
+  assert.match(appSource, /url\.hash = `drive-invite=\$\{encodeDriveInvite\(\{ fileId:/);
+});
+
+test('each checklist keeps an independent Drive binding', () => {
+  assert.match(appSource, /driveBindings: \{\}/);
+  assert.match(appSource, /state\.driveBindings\[state\.active\.id\] = clone\(state\.drive\)/);
+  assert.match(appSource, /state\.drive = clone\(state\.driveBindings\?\.\[state\.active\.id\]/);
+  assert.match(appSource, /function switchToProfile\(profile\)[\s\S]+?activateDriveBinding\(\)[\s\S]+?save\(\{ localOnly: true \}\)/);
+  assert.match(appSource, /function switchToFreeList\(\)[\s\S]+?activateDriveBinding\(\)[\s\S]+?save\(\{ localOnly: true \}\)/);
+  assert.match(appSource, /driveLayoutVersion: DRIVE_LAYOUT_VERSION/);
+});
+
+test('Drive uses one FDB Apps checklist library and shares individual files', () => {
+  assert.match(appSource, /findDriveFolder\('FDB Apps', 'root'\)/);
+  assert.match(appSource, /findDriveFolder\('Checklisten', state\.driveLibrary\.rootFolderId\)/);
+  assert.match(appSource, /\.fdb-checklist\.json/);
+  assert.match(appSource, /appProperties: \{ fdbApp: 'checklist', listId: state\.active\.id/);
+  assert.match(appSource, /files\/\$\{encodeURIComponent\(state\.drive\.fileId\)\}\/permissions/);
+  assert.doesNotMatch(contentSource, /id="driveFolderId"|id="createDriveFolder"/);
+});
+
+test('Drive authorization is global and valid tokens are reused for list actions', () => {
+  assert.match(contentSource, /id="driveListAction"[^>]*>Mit Drive synchronisieren/);
+  assert.match(contentSource, /id="connectDrive"[^>]*>Google Drive verbinden/);
+  assert.match(appSource, /function hasValidDriveToken\(\)/);
+  assert.match(appSource, /if \(hasValidDriveToken\(\)\) \{[\s\S]+?action\(\)/);
+  assert.match(appSource, /requestDriveAuthorization\(connectDriveList\)/);
+  assert.match(appSource, /pendingAuthorizedAction/);
+  assert.doesNotMatch(appSource, /shareSetup/);
+});
+
+test('profile selector and active list expose clear status badges', () => {
+  assert.match(contentSource, /id="profileBadges"/);
+  assert.match(appSource, /label: 'Standard'/);
+  assert.match(appSource, /label: 'Angepasst'/);
+  assert.match(appSource, /label: 'Eigene Vorlage'/);
+  assert.match(appSource, /label: 'Freigegeben'/);
+  assert.match(appSource, /label: 'Synchronisiert'/);
+  assert.match(appSource, /label: 'Änderungen offen'/);
+  assert.match(appSource, /label: 'Konflikt'/);
+  assert.match(appSource, /function profileIsChanged/);
+  assert.doesNotMatch(appSource, /mitgeliefert/);
 });
 
 test('local view settings do not dirty or synchronize the Drive checklist', () => {
