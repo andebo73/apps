@@ -176,6 +176,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 .cl-profile-list{display:grid;gap:var(--qrx-s-2)}.cl-profile-row{display:grid;grid-template-columns:1fr auto;gap:var(--qrx-s-3);align-items:center;padding:.75rem;border:1px solid var(--qrx-border);border-radius:var(--qrx-radius)}.cl-profile-row small{display:block;color:var(--qrx-text-muted)}
 .cl-share-dialog{width:min(620px,calc(100% - 2rem))}.cl-share-dialog p{margin:0;color:var(--qrx-text-muted)}.cl-share-qr{display:grid;place-items:center;min-height:220px;padding:var(--qrx-s-3);border-radius:var(--qrx-radius);background:#fff}.cl-share-qr svg{display:block;max-width:min(100%,360px);height:auto}.cl-share-link{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--qrx-s-2)}.cl-share-link input{font-family:var(--qrx-font-mono);font-size:.75rem}
 .cl-drive-dialog{width:min(680px,calc(100% - 2rem))}.cl-drive-dialog>form>p{margin:0;color:var(--qrx-text-muted)}.cl-field small{color:var(--qrx-text-subtle);font-size:.75rem}.cl-drive-actions{display:flex;gap:var(--qrx-s-2);flex-wrap:wrap}.cl-drive-state{display:flex;align-items:center;gap:.55rem;padding:.65rem .75rem;border-radius:var(--qrx-radius);background:var(--qrx-bg-subtle);font-weight:650}.cl-drive-indicator{width:.7rem;height:.7rem;border-radius:50%;background:var(--qrx-text-subtle)}.cl-drive-indicator.is-connected{background:var(--qrx-success)}.cl-drive-indicator.is-busy{background:var(--qrx-accent)}.cl-drive-indicator.is-error{background:var(--qrx-danger)}
+.cl-drive-invite-notice{padding:.8rem;border:1px solid var(--qrx-primary);border-radius:var(--qrx-radius);background:color-mix(in srgb,var(--qrx-primary) 8%,var(--qrx-surface))}.cl-drive-invite-notice p{margin:.25rem 0 0;color:var(--qrx-text-muted)}.cl-drive-share-form{display:grid;gap:var(--qrx-s-3)}#driveInviteResult{display:grid;gap:.35rem}#driveInviteResult small{color:var(--qrx-text-subtle)}
 .cl-edit-dialog{width:min(720px,calc(100% - 2rem))}.cl-edit-grid{display:grid;grid-template-columns:2fr 1fr;gap:var(--qrx-s-3)}.cl-edit-name,.cl-edit-note{grid-column:1/-1}
 .cl-app.is-read-mode{padding-left:var(--qrx-s-5)}.cl-app.is-read-mode .cl-side-menu,.cl-app.is-read-mode .cl-menu-toggle,.cl-app.is-read-mode .cl-menu-backdrop,.cl-app.is-read-mode .cl-profile-bar,.cl-app.is-read-mode .cl-add-form,.cl-app.is-read-mode .cl-toolbar,.cl-app.is-read-mode .cl-tag-filters{display:none}.cl-app.is-read-mode .cl-title{cursor:default}.cl-app.is-read-mode .cl-title:focus{outline:0}.cl-app.is-read-mode .cl-item{grid-template-columns:auto minmax(0,1fr);padding:.58rem .85rem}.cl-app.is-read-mode .cl-item-note,.cl-app.is-read-mode .cl-item-tags{display:none}.cl-app.is-read-mode .cl-groups{gap:var(--qrx-s-3)}.cl-app.is-read-mode .cl-group h2{padding:.55rem .85rem}.cl-app.is-read-mode .cl-status{margin:.35rem 0;min-height:0}
 @media(max-width:760px){.cl-app{padding:var(--qrx-s-5) var(--qrx-s-3)}.cl-hero{grid-template-columns:1fr;gap:var(--qrx-s-3)}.cl-mode-switch{justify-content:flex-start}.cl-add-form{grid-template-columns:1fr 1fr}.cl-field-main,.cl-add{grid-column:1/-1}.cl-toggle{width:100%;margin-bottom:.25rem}.cl-item{padding:.7rem}.cl-actions{flex-direction:column}.cl-profile-bar label{flex-basis:100%}.cl-profile-bar select{flex:1 1 100%}.cl-autosave{margin-left:0}.cl-menu-toggle{display:grid;place-items:center}.cl-side-menu{top:0;right:0;left:auto;width:min(320px,88vw);height:100dvh;padding:var(--qrx-s-4);border:0;border-radius:0;box-shadow:var(--qrx-shadow-lg);transform:translateX(105%);transition:transform 180ms ease}.cl-side-menu.is-open{transform:translateX(0)}.cl-side-menu-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--qrx-s-2)}.cl-menu-btn{justify-content:flex-start;width:100%;min-height:46px;padding:.65rem .75rem;gap:.8rem}.cl-menu-btn>span:first-child{width:1.6rem;text-align:center}.cl-menu-btn>span:last-child{display:inline}.cl-menu-btn::after{display:none}.cl-app.is-read-mode{padding:.8rem}.cl-app.is-read-mode .cl-hero{margin-bottom:.75rem}.cl-app.is-read-mode .cl-title{font-size:1.7rem}.cl-app.is-read-mode .cl-progress-text{margin-top:.2rem;font-size:.85rem}.cl-app.is-read-mode .cl-hero-tools{gap:.6rem}.cl-app.is-read-mode .cl-group{border-radius:var(--qrx-radius)}.cl-app.is-read-mode .cl-item{padding:.52rem .65rem;gap:.65rem}.cl-app.is-read-mode .cl-item-check{width:1.4rem;height:1.4rem}.cl-app.is-read-mode .cl-item-line{gap:.4rem}.cl-app.is-read-mode .cl-item-name{font-size:.95rem}}
@@ -236,10 +237,10 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
 <p>Die aktive Liste, eigene Profile und die Ansichtsoptionen werden grundsätzlich im <code>localStorage</code> des Browsers gespeichert. JSON-Export dient als transportables Backup. Optional kann die aktive Liste zusätzlich mit Google Drive synchronisiert werden.</p>
 
 <h3>Google-Drive-Synchronisation</h3>
-<p>Unter <b>Google Drive</b> kann eine Google OAuth-Client-ID hinterlegt werden. Nach der Anmeldung legt die App auf Wunsch den Ordner <code>FDB Apps Checklisten</code> und darin die Datei <code>checklist.json</code> an. Änderungen werden nach kurzer Verzögerung über eine revisionssichere Warteschlange hochgeladen. Netzwerkfehler werden automatisch erneut versucht. Solange die App sichtbar und verbunden ist, prüft sie Drive zusätzlich alle zehn Sekunden sowie beim Zurückkehren und nach Wiederherstellung der Netzwerkverbindung.</p>
+<p>Unter <b>Google Drive</b> kann die App mit dem Google-Konto verbunden werden. Die benötigte OAuth-Client-ID ist bereits in der App konfiguriert. Nach der Anmeldung legt die App auf Wunsch den Ordner <code>FDB Apps Checklisten</code> und darin die Datei <code>checklist.json</code> an. Änderungen werden nach kurzer Verzögerung über eine revisionssichere Warteschlange hochgeladen. Netzwerkfehler werden automatisch erneut versucht. Solange die App sichtbar und verbunden ist, prüft sie Drive zusätzlich alle zehn Sekunden sowie beim Zurückkehren und nach Wiederherstellung der Netzwerkverbindung.</p>
 <p>Der Drive-Status erscheint dauerhaft neben dem Edit/Read-Schalter und ist auch mobil im Read-Modus erreichbar. Er unterscheidet zwischen ausstehenden Änderungen, laufender Synchronisierung, aktuellem Stand, Verbindungsfehlern und Konflikten.</p>
 <p>Reine Ansichtseinstellungen wie Edit/Read, Tag-Filter oder „Erledigte ausblenden“ bleiben pro Gerät lokal. Sie verändern weder die Drive-Datei noch den Synchronisationsstatus. Nur Änderungen am eigentlichen Listeninhalt werden übertragen.</p>
-<p>Der Ordner kann in Google Drive mit Schreibrechten geteilt werden. Auf einem weiteren Gerät werden dieselbe OAuth-Client-ID und die Ordner-ID eingetragen. Die App verwendet ausschließlich den eingeschränkten Scope <code>drive.file</code>. Zugriffstoken bleiben im Arbeitsspeicher und werden weder lokal gespeichert noch exportiert.</p>
+<p>Über den eigenen Menüpunkt <b>Gemeinsam teilen</b> kann der Ordner mit Schreibrechten für ein anderes Google-Konto freigegeben werden. Der erzeugte Einladungslink verbindet auf dem zweiten Gerät automatisch Ordner und Datei. Die eingeladene Person muss nur einmal ihr berechtigtes Google-Konto bestätigen. Der Link enthält weder die Client-ID noch Checklisteninhalte oder Zugangsdaten. Die App verwendet ausschließlich den eingeschränkten Scope <code>drive.file</code>. Zugriffstoken bleiben im Arbeitsspeicher und werden weder lokal gespeichert noch exportiert.</p>
 <p>Wenn lokale und entfernte Liste parallel geändert wurden, stoppt die automatische Synchronisation. Mit <b>Drive-Stand laden</b> werden lokale Änderungen verworfen; <b>Drive überschreiben</b> ersetzt den entfernten Stand bewusst durch die lokale Liste.</p>
 <p>Für die Einrichtung muss in der Google Cloud Console die Drive API aktiviert und eine OAuth-Client-ID vom Typ Webanwendung erstellt werden. Die GitHub-Pages-Adresse der App wird als autorisierte JavaScript-Quelle eingetragen. Solange sich der OAuth-Zustimmungsbildschirm im Testmodus befindet, müssen beide Google-Konten als Testnutzer eingetragen sein.</p>
 
@@ -263,6 +264,7 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
     <button id="manageProfiles" class="cl-menu-btn" type="button" aria-label="Profile verwalten" data-tooltip="Eigene Profile duplizieren oder löschen"><span aria-hidden="true">☷</span><span>Profile verwalten</span></button>
     <div class="cl-menu-separator"></div>
     <button id="shareList" class="cl-menu-btn" type="button" aria-label="Liste teilen" data-tooltip="Aktuelle Liste als Link und QR-Code weitergeben"><span aria-hidden="true">⌁</span><span>Liste teilen</span></button>
+    <button id="shareDriveList" class="cl-menu-btn" type="button" aria-label="Gemeinsam teilen" data-tooltip="Eine gemeinsam synchronisierte Liste per Google Drive teilen"><span aria-hidden="true">G＋</span><span>Gemeinsam teilen</span></button>
     <button id="driveSync" class="cl-menu-btn" type="button" aria-label="Google Drive synchronisieren" data-tooltip="Liste über eine JSON-Datei in Google Drive synchronisieren"><span aria-hidden="true">G↕</span><span>Google Drive</span></button>
     <button id="openImport" class="cl-menu-btn" type="button" aria-label="Importieren" data-tooltip="Eine JSON-, Markdown- oder Textliste importieren"><span aria-hidden="true">⇥</span><span>Importieren</span></button>
     <button id="exportJson" class="cl-menu-btn" type="button" aria-label="JSON exportieren" data-tooltip="Vollständige Checkliste als JSON sichern"><span aria-hidden="true">{ }</span><span>JSON exportieren</span></button>
@@ -373,11 +375,6 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
       <header><div><span class="cl-eyebrow">Optionale Synchronisation</span><h2>Google Drive</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
       <p>Die aktive Liste wird als <code>checklist.json</code> in einem von FDB Apps angelegten oder bereits verbundenen Drive-Ordner gespeichert.</p>
       <div class="cl-field">
-        <label for="driveClientId">Google OAuth-Client-ID</label>
-        <input id="driveClientId" type="text" autocomplete="off" placeholder="…apps.googleusercontent.com">
-        <small>Die Client-ID wird nur in diesem Browser gespeichert.</small>
-      </div>
-      <div class="cl-field">
         <label for="driveFolderId">Drive-Ordner-ID</label>
         <input id="driveFolderId" type="text" autocomplete="off" placeholder="Leer lassen, um einen neuen Ordner anzulegen">
         <small>Zum Verbinden eines geteilten Ordners dessen ID aus der Drive-URL einfügen.</small>
@@ -391,7 +388,32 @@ code { font-family: var(--qrx-font-mono); font-size: 0.9em;
       </div>
       <div class="cl-drive-state" aria-live="polite"><span id="driveIndicator" class="cl-drive-indicator"></span><span id="driveStatus">Nicht verbunden</span></div>
       <p id="driveError" class="cl-error" role="alert"></p>
-      <details><summary>Ordner mit einer anderen Person teilen</summary><p>Öffne den angelegten Ordner in Google Drive und teile ihn mit Schreibrechten. Auf dem zweiten Gerät dieselbe OAuth-Client-ID und die Ordner-ID eintragen.</p></details>
+      <section id="driveInviteNotice" class="cl-drive-invite-notice" hidden>
+        <strong>Einladung zu einer gemeinsamen Liste</strong>
+        <p>Verbinde einmal dein Google-Konto. Danach wird die freigegebene Liste automatisch geöffnet und synchronisiert.</p>
+      </section>
+      <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
+    </form>
+  </dialog>
+
+  <dialog id="driveShareDialog" class="cl-dialog cl-drive-dialog">
+    <form method="dialog" class="cl-dialog-inner">
+      <header><div><span class="cl-eyebrow">Gemeinsam synchronisieren</span><h2>Liste gemeinsam teilen</h2></div><button class="cl-icon-btn" value="cancel" aria-label="Dialog schließen">×</button></header>
+      <p>Gib das Google-Konto der anderen Person ein. Die App richtet den Drive-Zugriff ein und erzeugt anschließend einen persönlichen Einladungslink.</p>
+      <button id="connectDriveForShare" class="cl-btn cl-primary" type="button">Mit Google verbinden und Liste vorbereiten</button>
+      <section id="driveShareForm" class="cl-drive-share-form" hidden>
+        <div class="cl-field">
+          <label for="driveShareEmail">Google-Konto der eingeladenen Person</label>
+          <input id="driveShareEmail" type="email" autocomplete="email" placeholder="name@gmail.com">
+        </div>
+        <button id="createDriveInvite" class="cl-btn" type="button" disabled>Zugriff erteilen und Link erzeugen</button>
+        <div id="driveInviteResult" hidden>
+          <label for="driveInviteUrl">Einladungslink</label>
+          <div class="cl-share-link"><input id="driveInviteUrl" type="text" readonly><button id="copyDriveInvite" class="cl-btn" type="button">Link kopieren</button></div>
+          <small>Der Link enthält keine Checklisteninhalte und keine Zugangsdaten.</small>
+        </div>
+        <p id="driveInviteError" class="cl-error" role="alert"></p>
+      </section>
       <footer><button class="cl-btn cl-primary" value="default">Fertig</button></footer>
     </form>
   </dialog>
@@ -3371,6 +3393,7 @@ var qrcode = function() {
   const STORAGE_KEY = 'fdb_apps_checklist_v1';
   const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
   const DRIVE_API = 'https://www.googleapis.com/drive/v3';
+  const GOOGLE_CLIENT_ID = '62330084475-ijkku75lsnci3cf5ipm272mod6t8dnva.apps.googleusercontent.com';
   const SHOPPING_PROFILE_VERSION = 2;
   const $ = (id) => document.getElementById(id);
   const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -3442,7 +3465,7 @@ var qrcode = function() {
   function defaultState() {
     const active = listFromProfile(builtinProfiles[0]);
     return { active, customProfiles: [], hideCompleted: false, tagFilters: [], viewMode: 'edit',
-      drive: { clientId: '', folderId: '', fileId: '', fileVersion: '', syncedFingerprint: '', dirty: false, lastSync: '' },
+      drive: { clientId: GOOGLE_CLIENT_ID, folderId: '', fileId: '', fileVersion: '', syncedFingerprint: '', dirty: false, lastSync: '' },
       savedLists: { 'profile:shopping': clone(active) },
       builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
@@ -3469,7 +3492,7 @@ var qrcode = function() {
         tagFilters: model.normalizeTags(value?.tagFilters || []),
         viewMode: value?.viewMode === 'read' ? 'read' : 'edit',
         drive: {
-          clientId: String(value?.drive?.clientId || ''),
+          clientId: GOOGLE_CLIENT_ID,
           folderId: String(value?.drive?.folderId || ''),
           fileId: String(value?.drive?.fileId || ''),
           fileVersion: String(value?.drive?.fileVersion || ''),
@@ -3506,7 +3529,7 @@ var qrcode = function() {
   const driveRuntime = {
     accessToken: '', expiresAt: 0, tokenClient: null, syncing: false,
     timer: null, pollTimer: null, revision: state.drive.dirty ? 1 : 0,
-    retryDelay: 3000, conflict: false, lastStatus: '', lastKind: '',
+    retryDelay: 3000, conflict: false, lastStatus: '', lastKind: '', pendingInvite: null, shareSetup: false,
   };
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
@@ -3844,6 +3867,36 @@ var qrcode = function() {
     }
   }
 
+  function encodeDriveInvite(invite) {
+    return bytesToBase64Url(new TextEncoder().encode(JSON.stringify({ version: 1, ...invite })));
+  }
+
+  function readDriveInvite() {
+    const match = window.location.hash.match(/^#drive-invite=([A-Za-z0-9_-]+)$/);
+    if (!match) return false;
+    try {
+      const invite = JSON.parse(new TextDecoder().decode(base64UrlToBytes(match[1])));
+      if (invite?.version !== 1 || !invite.folderId || !invite.fileId) {
+        throw new Error('Der Einladungslink ist unvollständig oder ungültig.');
+      }
+      driveRuntime.pendingInvite = {
+        folderId: String(invite.folderId), fileId: String(invite.fileId),
+      };
+      state.drive.clientId = GOOGLE_CLIENT_ID;
+      state.drive.folderId = driveRuntime.pendingInvite.folderId;
+      state.drive.fileId = driveRuntime.pendingInvite.fileId;
+      state.drive.fileVersion = '';
+      state.drive.syncedFingerprint = '';
+      state.drive.dirty = false;
+      save({ remote: true });
+      return true;
+    } catch (error) {
+      announce(error.message || 'Der Einladungslink konnte nicht geöffnet werden.', true);
+      history.replaceState(null, '', `${location.pathname}${location.search}`);
+      return false;
+    }
+  }
+
   function setDriveStatus(message, kind = '') {
     driveRuntime.lastStatus = message;
     driveRuntime.lastKind = kind;
@@ -3855,6 +3908,8 @@ var qrcode = function() {
     $('syncDriveNow').disabled = !connected || !state.drive.folderId;
     $('loadDriveNow').disabled = !connected || !state.drive.fileId;
     $('overwriteDrive').disabled = !connected || !state.drive.fileId;
+    $('createDriveInvite').disabled = !connected || !state.drive.folderId || !state.drive.fileId;
+    updateDriveShareState();
     updateDriveQuickStatus(message, kind);
   }
 
@@ -3952,6 +4007,21 @@ var qrcode = function() {
     setDriveStatus('Drive-Stand geladen.', 'connected');
   }
 
+  async function acceptDriveInvite() {
+    const invite = driveRuntime.pendingInvite;
+    if (!invite) return false;
+    setDriveStatus('Freigegebene Liste wird geöffnet …', 'busy');
+    const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(invite.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
+    save({ localOnly: true });
+    await pullDriveFile(remote);
+    driveRuntime.pendingInvite = null;
+    history.replaceState(null, '', `${location.pathname}${location.search}`);
+    $('driveInviteNotice').hidden = true;
+    $('driveDialog').close();
+    announce(`Gemeinsame Liste „${state.active.title}“ verbunden.`);
+    return true;
+  }
+
   async function uploadDriveFile() {
     if (!driveRuntime.accessToken || !state.drive.fileId || driveRuntime.syncing) return;
     driveRuntime.syncing = true;
@@ -4030,15 +4100,13 @@ var qrcode = function() {
   }
 
   function initDriveClient() {
-    const clientId = $('driveClientId').value.trim();
-    if (!clientId.endsWith('.apps.googleusercontent.com')) throw new Error('Bitte eine gültige Google OAuth-Client-ID eingeben.');
     if (!window.google?.accounts?.oauth2) throw new Error('Google Identity Services konnte nicht geladen werden.');
-    state.drive.clientId = clientId;
+    state.drive.clientId = GOOGLE_CLIENT_ID;
     state.drive.folderId = $('driveFolderId').value.trim();
     if (!state.drive.folderId) { state.drive.fileId = ''; state.drive.fileVersion = ''; }
     save({ remote: true });
     driveRuntime.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: clientId,
+      client_id: GOOGLE_CLIENT_ID,
       scope: DRIVE_SCOPE,
       callback: async (token) => {
         if (token.error) { setDriveStatus(token.error_description || token.error, 'error'); return; }
@@ -4047,7 +4115,17 @@ var qrcode = function() {
         driveRuntime.conflict = false;
         startDrivePolling();
         setDriveStatus('Mit Google verbunden.', 'connected');
-        try { if (state.drive.folderId) await connectDriveFolder(); } catch (error) { setDriveStatus(error.message, 'error'); }
+        try {
+          if (driveRuntime.pendingInvite) await acceptDriveInvite();
+          else if (driveRuntime.shareSetup && !state.drive.folderId) await createDriveFolder();
+          else if (state.drive.folderId) await connectDriveFolder();
+          driveRuntime.shareSetup = false;
+          updateDriveShareState();
+        } catch (error) {
+          setDriveStatus(error.message === 'The user does not have sufficient permissions for this file.'
+            ? 'Dieses Google-Konto hat keinen Zugriff auf die eingeladene Liste. Bitte mit dem freigegebenen Konto anmelden.'
+            : error.message, 'error');
+        }
       },
     });
     driveRuntime.tokenClient.requestAccessToken({ prompt: '' });
@@ -4067,6 +4145,37 @@ var qrcode = function() {
       save({ remote: true });
       await connectDriveFolder();
     } catch (error) { setDriveStatus(error.message, 'error'); }
+  }
+
+  async function createDriveInvite() {
+    const emailAddress = $('driveShareEmail').value.trim();
+    $('driveInviteError').textContent = '';
+    $('driveInviteResult').hidden = true;
+    if (!emailAddress || !$('driveShareEmail').checkValidity()) {
+      $('driveInviteError').textContent = 'Bitte eine gültige Google-E-Mail-Adresse eingeben.';
+      $('driveShareEmail').focus();
+      return;
+    }
+    const button = $('createDriveInvite');
+    button.disabled = true;
+    setDriveStatus('Drive-Zugriff wird erteilt …', 'busy');
+    try {
+      await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.folderId)}/permissions?sendNotificationEmail=true&fields=id`, {
+        method: 'POST', headers: driveHeaders(true),
+        body: JSON.stringify({ type: 'user', role: 'writer', emailAddress }),
+      });
+      const url = new URL(window.location.href);
+      url.hash = `drive-invite=${encodeDriveInvite({ folderId: state.drive.folderId, fileId: state.drive.fileId })}`;
+      $('driveInviteUrl').value = url.href;
+      $('driveInviteResult').hidden = false;
+      setDriveStatus(`Zugriff für ${emailAddress} erteilt.`, 'connected');
+      announce('Einladungslink erstellt.');
+    } catch (error) {
+      $('driveInviteError').textContent = error.message || 'Die Einladung konnte nicht erstellt werden.';
+      setDriveStatus('Die Drive-Freigabe ist fehlgeschlagen.', 'error');
+    } finally {
+      button.disabled = !driveRuntime.accessToken || !state.drive.folderId || !state.drive.fileId;
+    }
   }
 
   async function syncDriveNow() {
@@ -4172,9 +4281,24 @@ var qrcode = function() {
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
   $('shareList').addEventListener('click', openShareDialog);
+  function updateDriveShareState() {
+    const ready = Boolean(driveRuntime.accessToken && state.drive.folderId && state.drive.fileId);
+    if (!$('driveShareForm')) return;
+    $('driveShareForm').hidden = !ready;
+    $('connectDriveForShare').hidden = ready;
+    $('createDriveInvite').disabled = !ready;
+  }
+  function openDriveShareDialog() {
+    $('driveInviteResult').hidden = true;
+    $('driveInviteError').textContent = '';
+    updateDriveShareState();
+    $('driveShareDialog').showModal();
+  }
   function openDriveDialog() {
-    $('driveClientId').value = state.drive.clientId;
     $('driveFolderId').value = state.drive.folderId;
+    $('driveInviteNotice').hidden = !driveRuntime.pendingInvite;
+    $('driveInviteResult').hidden = true;
+    $('driveInviteError').textContent = '';
     setDriveStatus(
       driveRuntime.lastStatus || (driveRuntime.accessToken ? 'Mit Google Drive verbunden.' : 'Nicht verbunden'),
       driveRuntime.lastKind || (driveRuntime.accessToken ? 'connected' : ''),
@@ -4182,14 +4306,26 @@ var qrcode = function() {
     $('driveDialog').showModal();
   }
   $('driveSync').addEventListener('click', openDriveDialog);
+  $('shareDriveList').addEventListener('click', openDriveShareDialog);
   $('driveQuickStatus').addEventListener('click', openDriveDialog);
   $('connectDrive').addEventListener('click', () => {
+    try { initDriveClient(); } catch (error) { setDriveStatus(error.message, 'error'); }
+  });
+  $('connectDriveForShare').addEventListener('click', () => {
+    driveRuntime.shareSetup = true;
     try { initDriveClient(); } catch (error) { setDriveStatus(error.message, 'error'); }
   });
   $('createDriveFolder').addEventListener('click', createDriveFolder);
   $('syncDriveNow').addEventListener('click', syncDriveNow);
   $('loadDriveNow').addEventListener('click', loadDriveNow);
   $('overwriteDrive').addEventListener('click', overwriteDrive);
+  $('createDriveInvite').addEventListener('click', createDriveInvite);
+  $('copyDriveInvite').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText($('driveInviteUrl').value);
+      announce('Einladungslink kopiert.');
+    } catch { $('driveInviteUrl').select(); announce('Bitte den markierten Link kopieren.', true); }
+  });
   $('copyShareUrl').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText($('shareUrl').value);
@@ -4244,7 +4380,11 @@ var qrcode = function() {
     save(); render(); announce('Momentaufnahme wiederhergestellt.');
   };
 
-  importSharedList().finally(render);
+  const hasDriveInvite = readDriveInvite();
+  importSharedList().finally(() => {
+    render();
+    if (hasDriveInvite) openDriveDialog();
+  });
 })();
 </script>
 

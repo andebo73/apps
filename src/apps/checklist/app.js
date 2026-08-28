@@ -5,6 +5,7 @@
   const STORAGE_KEY = 'fdb_apps_checklist_v1';
   const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
   const DRIVE_API = 'https://www.googleapis.com/drive/v3';
+  const GOOGLE_CLIENT_ID = '62330084475-ijkku75lsnci3cf5ipm272mod6t8dnva.apps.googleusercontent.com';
   const SHOPPING_PROFILE_VERSION = 2;
   const $ = (id) => document.getElementById(id);
   const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -76,7 +77,7 @@
   function defaultState() {
     const active = listFromProfile(builtinProfiles[0]);
     return { active, customProfiles: [], hideCompleted: false, tagFilters: [], viewMode: 'edit',
-      drive: { clientId: '', folderId: '', fileId: '', fileVersion: '', syncedFingerprint: '', dirty: false, lastSync: '' },
+      drive: { clientId: GOOGLE_CLIENT_ID, folderId: '', fileId: '', fileVersion: '', syncedFingerprint: '', dirty: false, lastSync: '' },
       savedLists: { 'profile:shopping': clone(active) },
       builtinProfileVersions: { shopping: SHOPPING_PROFILE_VERSION } };
   }
@@ -103,7 +104,7 @@
         tagFilters: model.normalizeTags(value?.tagFilters || []),
         viewMode: value?.viewMode === 'read' ? 'read' : 'edit',
         drive: {
-          clientId: String(value?.drive?.clientId || ''),
+          clientId: GOOGLE_CLIENT_ID,
           folderId: String(value?.drive?.folderId || ''),
           fileId: String(value?.drive?.fileId || ''),
           fileVersion: String(value?.drive?.fileVersion || ''),
@@ -140,7 +141,7 @@
   const driveRuntime = {
     accessToken: '', expiresAt: 0, tokenClient: null, syncing: false,
     timer: null, pollTimer: null, revision: state.drive.dirty ? 1 : 0,
-    retryDelay: 3000, conflict: false, lastStatus: '', lastKind: '',
+    retryDelay: 3000, conflict: false, lastStatus: '', lastKind: '', pendingInvite: null, shareSetup: false,
   };
   const allProfiles = () => [...builtinProfiles, ...state.customProfiles];
   function draftKey(list) { return list.profile ? `profile:${list.profile}` : 'free'; }
@@ -478,6 +479,36 @@
     }
   }
 
+  function encodeDriveInvite(invite) {
+    return bytesToBase64Url(new TextEncoder().encode(JSON.stringify({ version: 1, ...invite })));
+  }
+
+  function readDriveInvite() {
+    const match = window.location.hash.match(/^#drive-invite=([A-Za-z0-9_-]+)$/);
+    if (!match) return false;
+    try {
+      const invite = JSON.parse(new TextDecoder().decode(base64UrlToBytes(match[1])));
+      if (invite?.version !== 1 || !invite.folderId || !invite.fileId) {
+        throw new Error('Der Einladungslink ist unvollständig oder ungültig.');
+      }
+      driveRuntime.pendingInvite = {
+        folderId: String(invite.folderId), fileId: String(invite.fileId),
+      };
+      state.drive.clientId = GOOGLE_CLIENT_ID;
+      state.drive.folderId = driveRuntime.pendingInvite.folderId;
+      state.drive.fileId = driveRuntime.pendingInvite.fileId;
+      state.drive.fileVersion = '';
+      state.drive.syncedFingerprint = '';
+      state.drive.dirty = false;
+      save({ remote: true });
+      return true;
+    } catch (error) {
+      announce(error.message || 'Der Einladungslink konnte nicht geöffnet werden.', true);
+      history.replaceState(null, '', `${location.pathname}${location.search}`);
+      return false;
+    }
+  }
+
   function setDriveStatus(message, kind = '') {
     driveRuntime.lastStatus = message;
     driveRuntime.lastKind = kind;
@@ -489,6 +520,8 @@
     $('syncDriveNow').disabled = !connected || !state.drive.folderId;
     $('loadDriveNow').disabled = !connected || !state.drive.fileId;
     $('overwriteDrive').disabled = !connected || !state.drive.fileId;
+    $('createDriveInvite').disabled = !connected || !state.drive.folderId || !state.drive.fileId;
+    updateDriveShareState();
     updateDriveQuickStatus(message, kind);
   }
 
@@ -586,6 +619,21 @@
     setDriveStatus('Drive-Stand geladen.', 'connected');
   }
 
+  async function acceptDriveInvite() {
+    const invite = driveRuntime.pendingInvite;
+    if (!invite) return false;
+    setDriveStatus('Freigegebene Liste wird geöffnet …', 'busy');
+    const remote = await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(invite.fileId)}?fields=id,version,modifiedTime`, { headers: driveHeaders() });
+    save({ localOnly: true });
+    await pullDriveFile(remote);
+    driveRuntime.pendingInvite = null;
+    history.replaceState(null, '', `${location.pathname}${location.search}`);
+    $('driveInviteNotice').hidden = true;
+    $('driveDialog').close();
+    announce(`Gemeinsame Liste „${state.active.title}“ verbunden.`);
+    return true;
+  }
+
   async function uploadDriveFile() {
     if (!driveRuntime.accessToken || !state.drive.fileId || driveRuntime.syncing) return;
     driveRuntime.syncing = true;
@@ -664,15 +712,13 @@
   }
 
   function initDriveClient() {
-    const clientId = $('driveClientId').value.trim();
-    if (!clientId.endsWith('.apps.googleusercontent.com')) throw new Error('Bitte eine gültige Google OAuth-Client-ID eingeben.');
     if (!window.google?.accounts?.oauth2) throw new Error('Google Identity Services konnte nicht geladen werden.');
-    state.drive.clientId = clientId;
+    state.drive.clientId = GOOGLE_CLIENT_ID;
     state.drive.folderId = $('driveFolderId').value.trim();
     if (!state.drive.folderId) { state.drive.fileId = ''; state.drive.fileVersion = ''; }
     save({ remote: true });
     driveRuntime.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: clientId,
+      client_id: GOOGLE_CLIENT_ID,
       scope: DRIVE_SCOPE,
       callback: async (token) => {
         if (token.error) { setDriveStatus(token.error_description || token.error, 'error'); return; }
@@ -681,7 +727,17 @@
         driveRuntime.conflict = false;
         startDrivePolling();
         setDriveStatus('Mit Google verbunden.', 'connected');
-        try { if (state.drive.folderId) await connectDriveFolder(); } catch (error) { setDriveStatus(error.message, 'error'); }
+        try {
+          if (driveRuntime.pendingInvite) await acceptDriveInvite();
+          else if (driveRuntime.shareSetup && !state.drive.folderId) await createDriveFolder();
+          else if (state.drive.folderId) await connectDriveFolder();
+          driveRuntime.shareSetup = false;
+          updateDriveShareState();
+        } catch (error) {
+          setDriveStatus(error.message === 'The user does not have sufficient permissions for this file.'
+            ? 'Dieses Google-Konto hat keinen Zugriff auf die eingeladene Liste. Bitte mit dem freigegebenen Konto anmelden.'
+            : error.message, 'error');
+        }
       },
     });
     driveRuntime.tokenClient.requestAccessToken({ prompt: '' });
@@ -701,6 +757,37 @@
       save({ remote: true });
       await connectDriveFolder();
     } catch (error) { setDriveStatus(error.message, 'error'); }
+  }
+
+  async function createDriveInvite() {
+    const emailAddress = $('driveShareEmail').value.trim();
+    $('driveInviteError').textContent = '';
+    $('driveInviteResult').hidden = true;
+    if (!emailAddress || !$('driveShareEmail').checkValidity()) {
+      $('driveInviteError').textContent = 'Bitte eine gültige Google-E-Mail-Adresse eingeben.';
+      $('driveShareEmail').focus();
+      return;
+    }
+    const button = $('createDriveInvite');
+    button.disabled = true;
+    setDriveStatus('Drive-Zugriff wird erteilt …', 'busy');
+    try {
+      await driveRequest(`${DRIVE_API}/files/${encodeURIComponent(state.drive.folderId)}/permissions?sendNotificationEmail=true&fields=id`, {
+        method: 'POST', headers: driveHeaders(true),
+        body: JSON.stringify({ type: 'user', role: 'writer', emailAddress }),
+      });
+      const url = new URL(window.location.href);
+      url.hash = `drive-invite=${encodeDriveInvite({ folderId: state.drive.folderId, fileId: state.drive.fileId })}`;
+      $('driveInviteUrl').value = url.href;
+      $('driveInviteResult').hidden = false;
+      setDriveStatus(`Zugriff für ${emailAddress} erteilt.`, 'connected');
+      announce('Einladungslink erstellt.');
+    } catch (error) {
+      $('driveInviteError').textContent = error.message || 'Die Einladung konnte nicht erstellt werden.';
+      setDriveStatus('Die Drive-Freigabe ist fehlgeschlagen.', 'error');
+    } finally {
+      button.disabled = !driveRuntime.accessToken || !state.drive.folderId || !state.drive.fileId;
+    }
   }
 
   async function syncDriveNow() {
@@ -806,9 +893,24 @@
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
   $('shareList').addEventListener('click', openShareDialog);
+  function updateDriveShareState() {
+    const ready = Boolean(driveRuntime.accessToken && state.drive.folderId && state.drive.fileId);
+    if (!$('driveShareForm')) return;
+    $('driveShareForm').hidden = !ready;
+    $('connectDriveForShare').hidden = ready;
+    $('createDriveInvite').disabled = !ready;
+  }
+  function openDriveShareDialog() {
+    $('driveInviteResult').hidden = true;
+    $('driveInviteError').textContent = '';
+    updateDriveShareState();
+    $('driveShareDialog').showModal();
+  }
   function openDriveDialog() {
-    $('driveClientId').value = state.drive.clientId;
     $('driveFolderId').value = state.drive.folderId;
+    $('driveInviteNotice').hidden = !driveRuntime.pendingInvite;
+    $('driveInviteResult').hidden = true;
+    $('driveInviteError').textContent = '';
     setDriveStatus(
       driveRuntime.lastStatus || (driveRuntime.accessToken ? 'Mit Google Drive verbunden.' : 'Nicht verbunden'),
       driveRuntime.lastKind || (driveRuntime.accessToken ? 'connected' : ''),
@@ -816,14 +918,26 @@
     $('driveDialog').showModal();
   }
   $('driveSync').addEventListener('click', openDriveDialog);
+  $('shareDriveList').addEventListener('click', openDriveShareDialog);
   $('driveQuickStatus').addEventListener('click', openDriveDialog);
   $('connectDrive').addEventListener('click', () => {
+    try { initDriveClient(); } catch (error) { setDriveStatus(error.message, 'error'); }
+  });
+  $('connectDriveForShare').addEventListener('click', () => {
+    driveRuntime.shareSetup = true;
     try { initDriveClient(); } catch (error) { setDriveStatus(error.message, 'error'); }
   });
   $('createDriveFolder').addEventListener('click', createDriveFolder);
   $('syncDriveNow').addEventListener('click', syncDriveNow);
   $('loadDriveNow').addEventListener('click', loadDriveNow);
   $('overwriteDrive').addEventListener('click', overwriteDrive);
+  $('createDriveInvite').addEventListener('click', createDriveInvite);
+  $('copyDriveInvite').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText($('driveInviteUrl').value);
+      announce('Einladungslink kopiert.');
+    } catch { $('driveInviteUrl').select(); announce('Bitte den markierten Link kopieren.', true); }
+  });
   $('copyShareUrl').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText($('shareUrl').value);
@@ -878,5 +992,9 @@
     save(); render(); announce('Momentaufnahme wiederhergestellt.');
   };
 
-  importSharedList().finally(render);
+  const hasDriveInvite = readDriveInvite();
+  importSharedList().finally(() => {
+    render();
+    if (hasDriveInvite) openDriveDialog();
+  });
 })();

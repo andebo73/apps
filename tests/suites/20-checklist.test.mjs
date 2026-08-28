@@ -160,6 +160,21 @@ test('Drive autosync preserves in-flight edits, retries failures and polls remot
   assert.match(appSource, /window\.addEventListener\('online'/);
 });
 
+test('Drive sharing creates a least-privilege invitation link with automatic setup', () => {
+  assert.match(contentSource, /id="shareDriveList"/);
+  assert.match(contentSource, /id="driveShareDialog"/);
+  assert.match(contentSource, /id="driveShareEmail"[^>]+type="email"/);
+  assert.match(contentSource, /id="createDriveInvite"/);
+  assert.match(contentSource, /id="driveInviteUrl"/);
+  assert.match(appSource, /\/permissions\?sendNotificationEmail=true/);
+  assert.match(appSource, /role: 'writer'/);
+  assert.match(appSource, /url\.hash = `drive-invite=\$\{encodeDriveInvite/);
+  assert.match(appSource, /if \(driveRuntime\.pendingInvite\) await acceptDriveInvite\(\)/);
+  assert.doesNotMatch(appSource, /drive-invite=.*accessToken/);
+  assert.doesNotMatch(contentSource, /id="driveClientId"/);
+  assert.match(appSource, /const GOOGLE_CLIENT_ID = '62330084475-[^']+\.apps\.googleusercontent\.com'/);
+});
+
 test('local view settings do not dirty or synchronize the Drive checklist', () => {
   const readHandler = appSource.match(/\$\('readMode'\)\.addEventListener\('change',[\s\S]+?\n  \}\);/)?.[0] || '';
   const hideHandler = appSource.match(/\$\('hideCompleted'\)\.addEventListener\('change',[^\n]+/)?.[0] || '';
