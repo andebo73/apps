@@ -72,7 +72,11 @@
   }
 
   function listFromProfile(profile) {
-    return model.normalizeList({ title: profile.name, profile: profile.id, items: freshItems(profile.items) });
+    return model.normalizeList({
+      title: profile.name, profile: profile.id, items: freshItems(profile.items),
+      categorySort: profile.categorySort, categoryOrder: profile.categoryOrder,
+      uncategorizedPosition: profile.uncategorizedPosition,
+    });
   }
 
   function normalizeDriveBinding(value = {}) {
@@ -103,7 +107,15 @@
   function normalizeProfile(profile) {
     const name = String(profile?.name || '').trim();
     if (!name) return null;
-    return { id: String(profile.id || newId('profile')), name, builtin: false, items: model.normalizeItems(profile.items || []) };
+    const settings = model.normalizeList({
+      items: profile.items || [], categorySort: profile.categorySort,
+      categoryOrder: profile.categoryOrder, uncategorizedPosition: profile.uncategorizedPosition,
+    });
+    return {
+      id: String(profile.id || newId('profile')), name, builtin: false, items: settings.items,
+      categorySort: settings.categorySort, categoryOrder: settings.categoryOrder,
+      uncategorizedPosition: settings.uncategorizedPosition,
+    };
   }
 
   function normalizeState(value) {
@@ -166,6 +178,7 @@
     state.drive.syncedFingerprint = checklistFingerprint(state.active);
   }
   let editingItemId = null;
+  let categoryOrderDraft = [];
   const driveRuntime = {
     accessToken: '', expiresAt: 0, tokenClient: null, syncing: false,
     timer: null, pollTimer: null, revision: state.drive.dirty ? 1 : 0,
@@ -240,7 +253,10 @@
 
   function profileIsChanged(profile, list) {
     if (!profile?.builtin || !list) return false;
-    return JSON.stringify(comparableProfileItems(list.items)) !== JSON.stringify(comparableProfileItems(profile.items));
+    return JSON.stringify(comparableProfileItems(list.items)) !== JSON.stringify(comparableProfileItems(profile.items))
+      || list.categorySort !== (profile.categorySort || 'list')
+      || list.uncategorizedPosition !== (profile.uncategorizedPosition || 'last')
+      || JSON.stringify(list.categoryOrder || []) !== JSON.stringify(profile.categoryOrder || []);
   }
 
   function statusesForList(profile, list, binding, active = false) {
@@ -303,6 +319,71 @@
     }));
   }
 
+  function categoryNames() {
+    return [...new Set(state.active.items.map((item) => item.category).filter(Boolean))];
+  }
+
+  function completeCategoryOrder(order = state.active.categoryOrder) {
+    const categories = categoryNames();
+    const available = new Map(categories.map((category) => [category.toLocaleLowerCase('de'), category]));
+    const result = [];
+    for (const category of order || []) {
+      const key = category.toLocaleLowerCase('de');
+      if (!available.has(key)) continue;
+      result.push(available.get(key)); available.delete(key);
+    }
+    result.push(...available.values());
+    return result;
+  }
+
+  function orderedGroups(groups) {
+    const uncategorized = groups.get('');
+    const entries = [...groups.entries()].filter(([category]) => category);
+    if (state.active.categorySort === 'alphabetical') {
+      entries.sort(([left], [right]) => left.localeCompare(right, 'de', { sensitivity: 'base' }));
+    } else if (state.active.categorySort === 'manual') {
+      const rank = new Map(completeCategoryOrder().map((category, index) => [category.toLocaleLowerCase('de'), index]));
+      entries.sort(([left], [right]) => (rank.get(left.toLocaleLowerCase('de')) ?? Number.MAX_SAFE_INTEGER)
+        - (rank.get(right.toLocaleLowerCase('de')) ?? Number.MAX_SAFE_INTEGER));
+    }
+    if (uncategorized) {
+      const entry = ['', uncategorized];
+      if (state.active.uncategorizedPosition === 'first') entries.unshift(entry); else entries.push(entry);
+    }
+    return entries;
+  }
+
+  function renderCategoryOrderEditor() {
+    const host = $('categoryOrderList'); host.replaceChildren();
+    $('manualCategorySection').hidden = $('categorySortMode').value !== 'manual';
+    if (!categoryOrderDraft.length) {
+      const empty = document.createElement('p'); empty.className = 'cl-category-order-empty'; empty.textContent = 'Diese Liste enthält noch keine Kategorien.';
+      host.appendChild(empty); return;
+    }
+    categoryOrderDraft.forEach((category, index) => {
+      const row = document.createElement('div'); row.className = 'cl-category-order-row';
+      const label = document.createElement('span'); label.textContent = category;
+      const up = button('↑', `${category} nach oben`, () => moveCategoryDraft(index, -1)); up.disabled = index === 0;
+      const down = button('↓', `${category} nach unten`, () => moveCategoryDraft(index, 1)); down.disabled = index === categoryOrderDraft.length - 1;
+      row.append(label, up, down); host.appendChild(row);
+    });
+  }
+
+  function moveCategoryDraft(index, delta) {
+    const target = index + delta;
+    if (target < 0 || target >= categoryOrderDraft.length) return;
+    [categoryOrderDraft[index], categoryOrderDraft[target]] = [categoryOrderDraft[target], categoryOrderDraft[index]];
+    renderCategoryOrderEditor();
+  }
+
+  function openCategorySortDialog() {
+    categoryOrderDraft = completeCategoryOrder();
+    $('categorySortMode').value = state.active.categorySort;
+    $('uncategorizedPosition').value = state.active.uncategorizedPosition;
+    renderCategoryOrderEditor();
+    $('categorySortDialog').showModal();
+  }
+
   function renderTagFilters() {
     const tags = model.normalizeTags(state.active.items.flatMap((item) => item.tags || []))
       .sort((a, b) => a.localeCompare(b, 'de'));
@@ -355,16 +436,16 @@
     });
     const groups = new Map();
     visible.forEach((item) => {
-      const category = item.category || 'Ohne Kategorie';
+      const category = item.category || '';
       if (!groups.has(category)) groups.set(category, []);
       groups.get(category).push(item);
     });
 
     const container = $('listGroups');
     container.replaceChildren();
-    for (const [category, items] of groups) {
+    for (const [category, items] of orderedGroups(groups)) {
       const section = document.createElement('section'); section.className = 'cl-group';
-      const heading = document.createElement('h2'); heading.textContent = category; section.appendChild(heading);
+      const heading = document.createElement('h2'); heading.textContent = category || 'Ohne Kategorie'; section.appendChild(heading);
       const list = document.createElement('ul'); list.className = 'cl-list';
       for (const item of items) {
         const row = document.createElement('li'); row.className = `cl-item${item.checked ? ' is-done' : ''}`;
@@ -430,8 +511,8 @@
     save(); render(); announce('Eintrag gelöscht.');
   }
 
-  function createProfile(name, items) {
-    const profile = normalizeProfile({ id: newId('profile'), name, items: clone(items) });
+  function createProfile(name, items, settings = {}) {
+    const profile = normalizeProfile({ ...settings, id: newId('profile'), name, items: clone(items) });
     state.customProfiles.push(profile); save({ localOnly: true }); render(); return profile;
   }
 
@@ -485,7 +566,7 @@
       info.append(name, meta);
       const actions = document.createElement('div'); actions.className = 'cl-actions';
       actions.append(button('⧉', `${profile.name} duplizieren`, () => {
-        createProfile(`${profile.name} – Kopie`, profile.items); renderProfileManager(); announce('Profil dupliziert.');
+        createProfile(`${profile.name} – Kopie`, profile.items, profile); renderProfileManager(); announce('Profil dupliziert.');
       }));
       if (!profile.builtin) actions.append(button('×', `${profile.name} löschen`, () => {
         if (!confirm(`Profil „${profile.name}“ löschen?`)) return;
@@ -1035,7 +1116,11 @@
   $('saveProfile').addEventListener('click', () => {
     const name = prompt('Name des neuen Profils', state.active.title); if (!name?.trim()) return;
     save({ localOnly: true });
-    const profile = normalizeProfile({ id: newId('profile'), name: name.trim(), items: clone(state.active.items) });
+    const profile = normalizeProfile({
+      id: newId('profile'), name: name.trim(), items: clone(state.active.items),
+      categorySort: state.active.categorySort, categoryOrder: state.active.categoryOrder,
+      uncategorizedPosition: state.active.uncategorizedPosition,
+    });
     state.customProfiles.push(profile);
     state.active = model.normalizeList({ ...clone(state.active), id: '', profile: profile.id });
     activateDriveBinding();
@@ -1043,6 +1128,15 @@
     announce('Profil gespeichert. Die neue Profil-Liste kann unabhängig synchronisiert werden.');
   });
   $('manageProfiles').addEventListener('click', () => { renderProfileManager(); $('profilesDialog').showModal(); });
+  $('sortCategories').addEventListener('click', openCategorySortDialog);
+  $('categorySortMode').addEventListener('change', renderCategoryOrderEditor);
+  $('saveCategorySort').addEventListener('click', () => {
+    state.active.categorySort = $('categorySortMode').value;
+    state.active.uncategorizedPosition = $('uncategorizedPosition').value;
+    state.active.categoryOrder = [...categoryOrderDraft];
+    $('categorySortDialog').close();
+    save(); render(); announce('Kategoriesortierung gespeichert.');
+  });
   $('shareList').addEventListener('click', openShareDialog);
   function updateDriveShareState() {
     const ready = Boolean(hasValidDriveToken() && state.drive.fileId);
@@ -1125,7 +1219,7 @@
     try {
       const imported = model.parse($('importText').value, $('importFormat').value);
       if ($('importTarget').value === 'profile') {
-        createProfile(imported.title, imported.items); announce('Profil importiert.');
+        createProfile(imported.title, imported.items, imported); announce('Profil importiert.');
       } else if ($('importTarget').value === 'append') {
         const appendedItems = model.normalizeItems(imported.items.map((item) => ({ ...item, id: '' })));
         state.active.items.push(...appendedItems);

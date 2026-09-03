@@ -82,6 +82,15 @@ test('tags normalize comma-separated input without case-insensitive duplicates',
   assert.deepEqual(plain(model.normalizeTags('Bio, Angebot, bio,  Regional ')), ['Bio', 'Angebot', 'Regional']);
 });
 
+test('category sorting settings normalize and round-trip with a checklist', () => {
+  const list = model.normalizeList({ title: 'Laden', items: [], categorySort: 'manual', categoryOrder: ['Kühlung', 'Obst', 'kühlung', ''], uncategorizedPosition: 'first' });
+  assert.equal(list.categorySort, 'manual');
+  assert.deepEqual(plain(list.categoryOrder), ['Kühlung', 'Obst']);
+  assert.equal(list.uncategorizedPosition, 'first');
+  const again = model.parseJson(model.toJson(list));
+  assert.deepEqual(plain(again.categoryOrder), ['Kühlung', 'Obst']);
+});
+
 test('profile migration preserves existing state and adds new template items', () => {
   const merged = model.mergeProfileItems(
     [{ text: 'Milch', quantity: '1 l', checked: true }, { text: 'Eigener Artikel', tags: ['Privat'] }],
@@ -224,6 +233,17 @@ test('profile selector and active list expose clear status badges', () => {
   assert.match(appSource, /label: 'Konflikt'/);
   assert.match(appSource, /function profileIsChanged/);
   assert.doesNotMatch(appSource, /mitgeliefert/);
+});
+
+test('categories support list, alphabetical and manual per-list ordering', () => {
+  assert.match(contentSource, /id="sortCategories"/);
+  assert.match(contentSource, /id="categorySortMode"/);
+  assert.match(contentSource, /id="categoryOrderList"/);
+  assert.match(appSource, /function orderedGroups\(groups\)/);
+  assert.match(appSource, /categorySort === 'alphabetical'/);
+  assert.match(appSource, /categorySort === 'manual'/);
+  assert.match(appSource, /uncategorizedPosition === 'first'/);
+  assert.match(appSource, /state\.active\.categoryOrder = \[\.\.\.categoryOrderDraft\]/);
 });
 
 test('saving a reusable profile gives its working list an independent identity', () => {

@@ -58,6 +58,15 @@
 
   function normalizeList(value, fallbackTitle = 'Neue Checkliste') {
     const source = Array.isArray(value) ? { items: value } : (value || {});
+    const categorySort = ['list', 'alphabetical', 'manual'].includes(source.categorySort) ? source.categorySort : 'list';
+    const categoryOrder = [];
+    const seenCategories = new Set();
+    for (const value of Array.isArray(source.categoryOrder) ? source.categoryOrder : []) {
+      const category = text(value);
+      const key = category.toLocaleLowerCase('de');
+      if (!category || seenCategories.has(key)) continue;
+      seenCategories.add(key); categoryOrder.push(category);
+    }
     return {
       format: FORMAT,
       version: VERSION,
@@ -65,6 +74,9 @@
       title: text(source.title) || fallbackTitle,
       profile: text(source.profile),
       items: normalizeItems(source.items || []),
+      categorySort,
+      categoryOrder,
+      uncategorizedPosition: source.uncategorizedPosition === 'first' ? 'first' : 'last',
       createdAt: text(source.createdAt) || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
