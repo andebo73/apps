@@ -246,6 +246,16 @@ test('categories support list, alphabetical and manual per-list ordering', () =>
   assert.match(appSource, /state\.active\.categoryOrder = \[\.\.\.categoryOrderDraft\]/);
 });
 
+test('printing and PDF export use the currently rendered filtered view', () => {
+  assert.match(contentSource, /id="printList"[^>]+Drucken oder als PDF speichern/);
+  assert.match(contentSource, /id="printListRead"/);
+  assert.match(appSource, /function printCurrentView\(\)[\s\S]+?window\.print\(\)/);
+  assert.match(cssSource, /@media print/);
+  assert.match(cssSource, /\.qrx-shell-header,\.qrx-shell-footer\{display:none!important\}/);
+  assert.match(cssSource, /\.cl-actions[^}]+display:none!important/);
+  assert.doesNotMatch(appSource.match(/function printCurrentView\(\)[\s\S]+?\n  \}/)?.[0] || '', /state\.tagFilters\s*=|state\.hideCompleted\s*=/);
+});
+
 test('saving a reusable profile gives its working list an independent identity', () => {
   const handler = appSource.match(/\$\('saveProfile'\)\.addEventListener\('click',[\s\S]+?\n  \}\);/)?.[0] || '';
   assert.match(handler, /save\(\{ localOnly: true \}\)/);

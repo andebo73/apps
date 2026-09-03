@@ -1233,6 +1233,12 @@
   });
   $('exportJson').addEventListener('click', () => download(model.toJson(state.active), `${slug()}.json`, 'application/json;charset=utf-8'));
   $('exportMarkdown').addEventListener('click', () => download(model.toMarkdown(state.active), `${slug()}.md`, 'text/markdown;charset=utf-8'));
+  function printCurrentView() {
+    setMenu(false);
+    window.print();
+  }
+  $('printList').addEventListener('click', printCurrentView);
+  $('printListRead').addEventListener('click', printCurrentView);
   $('menuToggle').addEventListener('click', () => setMenu(!$('sideMenu').classList.contains('is-open')));
   $('menuClose').addEventListener('click', () => setMenu(false));
   $('menuBackdrop').addEventListener('click', () => setMenu(false));
